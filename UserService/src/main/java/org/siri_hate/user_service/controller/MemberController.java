@@ -22,8 +22,9 @@ public class MemberController {
 
     final private MemberService memberService;
 
+
     @Autowired
-    MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService) {
         this.memberService = memberService;
     }
 
@@ -41,12 +42,12 @@ public class MemberController {
     }
 
     @PostMapping("/password_recovery/request")
-    public String memberPasswordRecoveryRequest(@RequestBody String login) {
+    public String memberPasswordRecoveryRequest(@RequestBody String email) {
         return "redirect:/login";
     }
 
     @PostMapping("/password_recovery/confirm")
-    public String memberPasswordRecoveryConfirm() {
+    public String memberPasswordRecoveryConfirm(@RequestBody String newPassword) {
         return "redirect:/login";
     }
 
@@ -56,20 +57,13 @@ public class MemberController {
         return new ResponseEntity<>(memberList, HttpStatus.OK);
     }
 
-//    @GetMapping("/get/{id}")
-//    public ResponseEntity<Member> getMemberById(
-//            @PathVariable @Positive(message = "ID should be greater than zero") Long id
-//    ) {
-//        Member member = memberService.getMemberById(id);
-//        return new ResponseEntity<>(member, HttpStatus.OK);
-//    }
-
-//    @GetMapping("/get/{username}")
-//    public Optional<Member> getMemberById(
-//            @PathVariable String username
-//    ) {
-//        return memberRepository.findMemberByUsername(username);
-//    }
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Member> getMemberById(
+            @PathVariable @Positive(message = "ID should be greater than zero") Long id
+    ) {
+        Member member = memberService.getMemberById(id);
+        return new ResponseEntity<>(member, HttpStatus.OK);
+    }
 
     @PostMapping("/update/{id}")
     public ResponseEntity<Member> memberUpdate(

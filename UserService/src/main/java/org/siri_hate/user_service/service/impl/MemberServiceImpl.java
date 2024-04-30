@@ -7,15 +7,16 @@ import org.siri_hate.user_service.model.entity.Member;
 import org.siri_hate.user_service.model.forms.LoginForm;
 import org.siri_hate.user_service.repository.MemberRepository;
 import org.siri_hate.user_service.security.JWTService;
+import org.siri_hate.user_service.service.ConfirmationTokenService;
 import org.siri_hate.user_service.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -30,17 +31,21 @@ public class MemberServiceImpl implements MemberService {
 
     final private JWTService jwtService;
 
+    final private ConfirmationTokenService confirmationTokenService;
+
     @Autowired
     private MemberServiceImpl(
             MemberRepository memberRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
-            JWTService jwtService
+            JWTService jwtService,
+            @Lazy ConfirmationTokenService confirmationTokenService
     ) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
     @Override
@@ -53,26 +58,40 @@ public class MemberServiceImpl implements MemberService {
 
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberRepository.save(member);
+        confirmationTokenService.sendConfirmationToken(member.getId(), member.getName(), member.getEmail());
+    }
+
+    @Override
+    public void activateMemberAccount(Long id) {
+
+        Optional<Member> memberOptional = memberRepository.findById(id);
+
+        if (memberOptional.isEmpty()) {
+            throw new EntityNotFoundException("Member with id: " + id + " not found!");
+        }
+
+        Member member = memberOptional.get();
+        member.setEnabled(true);
+        memberRepository.save(member);
     }
 
     @Override
     public String memberLogin(LoginForm loginForm) {
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginForm.getLogin(),
-                        loginForm.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(loginForm.getLogin(), loginForm.getPassword()));
+
         if (authentication.isAuthenticated()) {
-            String token = jwtService.generateToken(loginForm.getLogin());
-            return token;
+            return jwtService.generateToken(loginForm.getLogin());
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }
+
     }
 
     @Override
-    public Member membersPasswordRecovery(String login) {
-        return null;
+    public void memberPasswordRecovery(String newPassword) {
+
     }
 
     @Override

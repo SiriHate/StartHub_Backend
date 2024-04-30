@@ -24,6 +24,11 @@ public class Moderator extends User {
         setRole(UserRole.MODERATOR.getValue());
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "avatar")
     Byte avatar;
 

@@ -1,5 +1,6 @@
 package org.siri_hate.user_service.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.siri_hate.user_service.model.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,7 +25,13 @@ public class Member extends User {
 
     {
         setRole(UserRole.MEMBER.getValue());
+        setEnabled(false);
     }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "avatar")
     private Byte avatar;
@@ -34,7 +42,7 @@ public class Member extends User {
 
     @Column(name = "email", nullable = false, unique = true)
     @NotBlank(message = "Email should not be null")
-    @Email
+    @Email(message = "Must provide a valid email address")
     private String email;
 
     @Column(name = "phone", nullable = false, unique = true)
@@ -43,7 +51,11 @@ public class Member extends User {
 
     @Column(name = "birth_day", nullable = false)
     @NotNull(message = "Birth day should not be null")
-    private String birthDay;
+    private LocalDate birthDay;
+
+    @Column(name = "account_enabled", nullable = false)
+    @JsonIgnore
+    private boolean isEnabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -67,7 +79,7 @@ public class Member extends User {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 
 }

@@ -32,11 +32,6 @@ public class ModeratorServiceImpl implements ModeratorService {
     @Override
     @Transactional
     public void moderatorRegistration(Moderator moderator) {
-
-        if (moderatorRepository.findModeratorByUsername(moderator.getUsername()).isPresent()) {
-            throw new UserAlreadyExistsException("Moderator with provided employee login already exists");
-        }
-
         moderator.setPassword(passwordEncoder.encode(moderator.getPassword()));
         moderatorRepository.save(moderator);
     }

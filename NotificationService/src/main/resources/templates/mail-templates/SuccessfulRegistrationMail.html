@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-size: 24px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .blue-box {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            display: inline-block;
+            width: 100%;
+        }
+        h3 {
+            font-size: 50px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="blue-box">
+        <h3>Добро пожаловать на StartHub</h3>
+    </div>
+    <p>Уважаемый(ая) <span th:text="${fullName}"></span>,</p>
+    <p>Мы рады приветствовать вас на платформе развития стартапов StartHub. Ваша регистрация прошла успешно!</p>
+    <p>Мы уверены, что вы найдете много интересного на нашей платформе. Если у вас есть какие-либо вопросы или нужна помощь, не стесняйтесь обращаться к нам.</p>
+    <p>С уважением,<br>Команда StartHub</p>
+</div>
+</body>
+</html>

@@ -2,16 +2,17 @@ package org.siri_hate.user_service.service;
 
 import org.siri_hate.user_service.model.entity.Member;
 import org.siri_hate.user_service.model.forms.LoginForm;
-
 import java.util.List;
 
 public interface MemberService {
 
     public void memberRegistration(Member member);
 
+    public void activateMemberAccount(Long id);
+
     public String memberLogin(LoginForm loginForm);
 
-    public Member membersPasswordRecovery(String login);
+    public void memberPasswordRecovery(String newPassword);
 
     public List<Member> getAllMembers();
 
