@@ -2,7 +2,7 @@ package org.siri_hate.user_service.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import org.siri_hate.user_service.model.forms.LoginForm;
+import org.siri_hate.user_service.model.request.LoginForm;
 import org.siri_hate.user_service.model.entity.Moderator;
 import org.siri_hate.user_service.service.ModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class ModeratorController {
         return "redirect:/login";
     }
 
-    @PostMapping("/get")
+    @GetMapping("/get")
     public ResponseEntity<List<Moderator>> getAllModerators() {
         List<Moderator> moderators = moderatorService.getAllModerators();
         return ResponseEntity.ok(moderators);
@@ -56,7 +56,13 @@ public class ModeratorController {
         return ResponseEntity.ok(moderator);
     }
 
-    @PostMapping("/update/{id}")
+    @GetMapping("/search")
+    public ResponseEntity<List<Moderator>> searchModeratorsByUsername(@RequestParam("username") String username) {
+        List<Moderator> moderatorList = moderatorService.searchModeratorsByUsername(username);
+        return new ResponseEntity<>(moderatorList, HttpStatus.OK);
+    }
+
+    @PutMapping("/update/{id}")
     public ResponseEntity<Moderator> moderatorUpdate(
             @PathVariable @Positive(message = "ID should be greater than zero") Long id,
             @Valid Moderator moderator
@@ -65,12 +71,13 @@ public class ModeratorController {
         return ResponseEntity.ok(updatedModerator);
     }
 
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteModeratorById(
             @PathVariable @Positive(message = "ID should be greater than zero") Long id
     ) {
         moderatorService.deleteModeratorById(id);
         return ResponseEntity.noContent().build();
     }
+
 
 }

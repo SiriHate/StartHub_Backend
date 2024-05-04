@@ -18,17 +18,21 @@ public class JWTService {
 
     public static final String SECRET = System.getenv("JWT_SECRET");
 
-    public String generateToken(String userName) {
+    public String generateToken(String username, long userId) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userName);
+        return createToken(claims, username, userId);
     }
 
-    private String createToken(Map<String, Object> claims, String userName) {
+
+    private String createToken(Map<String, Object> claims, String username, long userId) {
+        claims.put("userId", userId);
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userName)
+                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                // TODO Вернуть время жизни токена поосле отладки
+                .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365))
+                // .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
@@ -39,6 +43,10 @@ public class JWTService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", Long.class));
     }
 
     public Date extractExpiration(String token) {

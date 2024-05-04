@@ -5,9 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.util.Base64;
-import java.util.Date;
 
 @Entity
 @NoArgsConstructor
@@ -19,6 +17,9 @@ public class ConfirmationToken {
     @Column(name="id")
     private Long id;
 
+    @Column(name = "token_type")
+    private String tokenType;
+
     @Column(name = "userId")
     private Long userId;
 
@@ -28,14 +29,14 @@ public class ConfirmationToken {
     @Column(name = "email")
     private String email;
 
-    @Column(name="confirmation_token")
-    private String confirmationToken;
+    @Column(name="token_value")
+    private String tokenValue;
 
     public ConfirmationToken(Long userId, String name, String email) {
         this.userId = userId;
         this.name = name;
         this.email = email;
-        this.confirmationToken = generateTokenBasedOnUserId(userId);
+        this.tokenValue = generateTokenBasedOnUserId(userId);
     }
 
     private String generateTokenBasedOnUserId(Long userId) {

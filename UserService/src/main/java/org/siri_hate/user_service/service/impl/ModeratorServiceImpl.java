@@ -2,8 +2,8 @@ package org.siri_hate.user_service.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.siri_hate.user_service.exception.UserAlreadyExistsException;
-import org.siri_hate.user_service.model.forms.LoginForm;
+import org.siri_hate.user_service.exception.NoSuchUserException;
+import org.siri_hate.user_service.model.request.LoginForm;
 import org.siri_hate.user_service.model.entity.Moderator;
 import org.siri_hate.user_service.repository.ModeratorRepository;
 import org.siri_hate.user_service.service.ModeratorService;
@@ -53,7 +53,18 @@ public class ModeratorServiceImpl implements ModeratorService {
         List<Moderator> moderatorList = moderatorRepository.findAll();
 
         if (moderatorList.isEmpty()) {
-            throw new EntityNotFoundException("No moderator was found!");
+            throw new NoSuchUserException("No moderator was found!");
+        }
+
+        return moderatorList;
+    }
+
+    @Override
+    public List<Moderator> searchModeratorsByUsername(String username) {
+        List<Moderator> moderatorList = moderatorRepository.findModeratorByUsernameStartingWithIgnoreCase(username);
+
+        if (moderatorList.isEmpty()) {
+            throw new NoSuchUserException("No moderator was found!");
         }
 
         return moderatorList;

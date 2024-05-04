@@ -1,6 +1,6 @@
 package org.siri_hate.user_service.controller;
 
-import org.siri_hate.user_service.service.ConfirmationTokenService;
+import org.siri_hate.user_service.service.ConfirmationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,16 +8,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/users/confirmation")
 public class ConfirmationController {
 
-    private final ConfirmationTokenService confirmationTokenService;
+    private final ConfirmationService confirmationService;
 
     @Autowired
-    public ConfirmationController(ConfirmationTokenService confirmationTokenService) {
-        this.confirmationTokenService = confirmationTokenService;
+    public ConfirmationController(ConfirmationService confirmationService) {
+        this.confirmationService = confirmationService;
     }
 
-    @GetMapping("/member/confirm-registration/{token}")
-    public void confirmRegistration(@PathVariable String token) {
-        confirmationTokenService.checkMemberConfirmationToken(token);
+    @PostMapping("/member/confirm-registration")
+    public void confirmMemberRegistration(@RequestBody String token) {
+        System.out.println("! "+token);
+        confirmationService.checkMemberConfirmationToken(token);
     }
 
 }

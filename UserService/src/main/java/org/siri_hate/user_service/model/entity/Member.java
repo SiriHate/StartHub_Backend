@@ -1,6 +1,5 @@
 package org.siri_hate.user_service.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -21,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
+@PrimaryKeyJoinColumn(name = "user_id")
 public class Member extends User {
 
     {
@@ -53,10 +53,6 @@ public class Member extends User {
     @NotNull(message = "Birth day should not be null")
     private LocalDate birthDay;
 
-    @Column(name = "account_enabled", nullable = false)
-    @JsonIgnore
-    private boolean isEnabled;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
@@ -79,7 +75,7 @@ public class Member extends User {
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return super.isEnabled();
     }
 
 }

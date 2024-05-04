@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleThrowableException(Exception e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         log.error(e.getMessage());
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(NoSuchUserException e) {
+    public ResponseEntity<ErrorResponse> handleNoSuchUserException(NoSuchUserException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         log.error(e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
@@ -54,6 +54,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleNoSuchConfirmationTokenException(NoSuchConfirmationTokenException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        log.error(e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleMismatchedPasswordException(MismatchedPasswordException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         log.error(e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);

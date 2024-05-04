@@ -1,6 +1,8 @@
 package org.siri_hate.user_service.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,15 +14,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@MappedSuperclass
+@Entity
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@JsonIgnoreProperties({"id", "role"})
 public abstract class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonDeserialize
     @Column(name = "id")
     private Long id;
 
@@ -33,7 +37,12 @@ public abstract class User implements UserDetails {
     @Size(min = 8, message = "Password must contain more than 8 characters")
     private String password;
 
+    @JsonDeserialize
     @Column(name = "role", nullable = false)
     private String role;
+
+    @JsonDeserialize
+    @Column(name = "account_enabled", nullable = false)
+    private boolean isEnabled;
 
 }

@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
+@PrimaryKeyJoinColumn(name = "user_id")
 public class Moderator extends User {
 
     {
