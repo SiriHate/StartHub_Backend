@@ -1,10 +1,16 @@
 package org.siri_hate.user_service.controller;
 
+import org.siri_hate.user_service.model.request.RegistrationTokenRequest;
 import org.siri_hate.user_service.service.ConfirmationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
+@Validated
 @RequestMapping("/api/v1/users/confirmation")
 public class ConfirmationController {
 
@@ -15,10 +21,16 @@ public class ConfirmationController {
         this.confirmationService = confirmationService;
     }
 
-    @PostMapping("/member/confirm-registration")
-    public void confirmMemberRegistration(@RequestBody String token) {
-        System.out.println("! "+token);
-        confirmationService.checkMemberConfirmationToken(token);
+    @GetMapping("/check_confirmation_token")
+    public ResponseEntity<String> checkConfirmationToken(@RequestParam String token) {
+        confirmationService.findConfirmationTokenByTokenValue(token);
+        return new ResponseEntity<>("Confirmation token found", HttpStatus.OK);
+    }
+
+    @PostMapping("/confirm-registration")
+    public ResponseEntity<String> confirmRegistration(@RequestBody RegistrationTokenRequest registrationTokenRequest) {
+        confirmationService.checkConfirmationToken(registrationTokenRequest.getToken());
+        return new ResponseEntity<>("Registration has been successfully confirmed", HttpStatus.OK);
     }
 
 }

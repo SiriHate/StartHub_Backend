@@ -34,7 +34,8 @@ public class Member extends User {
     private Long id;
 
     @Column(name = "avatar")
-    private Byte avatar;
+    @Lob
+    private byte[] avatar;
 
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Name should not be null")

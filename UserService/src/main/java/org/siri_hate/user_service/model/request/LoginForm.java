@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public class LoginForm {
 
-    @NotBlank
+    @NotBlank(message = "Username must not be null")
     String username;
 
-    @NotBlank
+    @NotBlank(message = "Password must not be null")
     String password;
 
 }

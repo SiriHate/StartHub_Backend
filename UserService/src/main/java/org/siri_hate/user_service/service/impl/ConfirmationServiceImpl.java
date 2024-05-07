@@ -1,23 +1,32 @@
 package org.siri_hate.user_service.service.impl;
 
 import jakarta.transaction.Transactional;
+import org.hibernate.StaleObjectStateException;
 import org.siri_hate.user_service.exception.NoSuchConfirmationTokenException;
 import org.siri_hate.user_service.kafka.KafkaProducerService;
 import org.siri_hate.user_service.kafka.messages.ConfirmationMessage;
 import org.siri_hate.user_service.model.entity.ConfirmationToken;
 import org.siri_hate.user_service.model.enums.ConfirmationMessageType;
+import org.siri_hate.user_service.model.enums.TokenType;
 import org.siri_hate.user_service.repository.ConfirmationTokenRepository;
 import org.siri_hate.user_service.service.ConfirmationService;
 import org.siri_hate.user_service.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.crypto.keygen.BytesKeyGenerator;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
+
+import java.util.Base64;
+import java.util.ConcurrentModificationException;
+import java.util.Optional;
 
 @Service
 public class ConfirmationServiceImpl implements ConfirmationService {
 
-    private  final ConfirmationTokenRepository confirmationTokenRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
-    private  final MemberService memberService;
+    private final MemberService memberService;
 
     private final KafkaProducerService kafkaProducerService;
 
@@ -33,10 +42,30 @@ public class ConfirmationServiceImpl implements ConfirmationService {
     }
 
     @Override
-    public void sendMemberConfirmRegistration(Long userId, String name, String email) {
+    public String generateConfirmationToken() {
+        BytesKeyGenerator keyGenerator = KeyGenerators.secureRandom(32);
+        byte[] key = keyGenerator.generateKey();
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(key);
+    }
+
+    @Override
+    public void sendRegistrationConfirmation(Long userId, String name, String email) {
         ConfirmationMessageType messageType = ConfirmationMessageType.REGISTRATION_CONFIRMATION;
-        ConfirmationToken confirmationToken = new ConfirmationToken(userId, name, email);
-        confirmationToken.setTokenType("ConfirmMemberRegistrationToken");
+        String tokenValue = generateConfirmationToken();
+        String tokenType = TokenType.CONFIRM_REGISTRATION.getValue();
+        ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, userId, name, email, tokenValue);
+        confirmationTokenRepository.save(confirmationToken);
+        String confirmationTokenValue = confirmationToken.getTokenValue();
+        ConfirmationMessage confirmationMessage = new ConfirmationMessage(messageType, name, email, confirmationTokenValue);
+       kafkaProducerService.sendConfirmationToken(confirmationMessage);
+    }
+
+    @Override
+    public void sendChangePasswordConfirmation(Long userId, String name, String email) {
+        ConfirmationMessageType messageType = ConfirmationMessageType.CHANGE_PASSWORD_CONFIRMATION;
+        String tokenValue = generateConfirmationToken();
+        String tokenType = TokenType.CONFIRM_CHANGE_PASSWORD.getValue();
+        ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, userId, name, email, tokenValue);
         confirmationTokenRepository.save(confirmationToken);
         String confirmationTokenValue = confirmationToken.getTokenValue();
         ConfirmationMessage confirmationMessage = new ConfirmationMessage(messageType, name, email, confirmationTokenValue);
@@ -45,14 +74,55 @@ public class ConfirmationServiceImpl implements ConfirmationService {
 
     @Override
     @Transactional
-    public void checkMemberConfirmationToken(String token) {
-        ConfirmationToken foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
-        if (foundToken != null) {
-            memberService.activateMemberAccount(foundToken.getUserId());
-            confirmationTokenRepository.delete(foundToken);
-        } else {
+    public void checkConfirmationToken(String token) {
+
+        try {
+            Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
+            if (foundToken.isPresent()) {
+                Long userId = foundToken.get().getUserId();
+                memberService.activateMemberAccount(userId);
+                confirmationTokenRepository.delete(foundToken.get());
+            } else {
+                throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
+            }
+        } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
+            throw new ConcurrentModificationException("The confirmation token was modified or deleted by another transaction.");
+        }
+
+    }
+
+    @Override
+    public Long getUserIdByToken(String token) {
+
+        Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
+
+        if (foundToken.isEmpty()) {
+            throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
+        }
+
+        return foundToken.get().getUserId();
+    }
+
+    @Override
+    public void deleteConfirmationTokenByTokenValue(String token) {
+
+        Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
+
+        if (foundToken.isEmpty()) {
+            throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
+        }
+
+        ConfirmationToken confirmationToken = foundToken.get();
+        confirmationTokenRepository.delete(confirmationToken);
+    }
+
+    @Override
+    public void findConfirmationTokenByTokenValue(String token) {
+        Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
+        if (foundToken.isEmpty()) {
             throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
         }
     }
+
 
 }

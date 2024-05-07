@@ -18,14 +18,13 @@ public class JWTService {
 
     public static final String SECRET = System.getenv("JWT_SECRET");
 
-    public String generateToken(String username, long userId) {
+    public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username, userId);
+        return createToken(claims, username);
     }
 
 
-    private String createToken(Map<String, Object> claims, String username, long userId) {
-        claims.put("userId", userId);
+    private String createToken(Map<String, Object> claims, String username) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)

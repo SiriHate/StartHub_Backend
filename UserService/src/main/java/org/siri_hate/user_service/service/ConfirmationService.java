@@ -2,8 +2,18 @@ package org.siri_hate.user_service.service;
 
 public interface ConfirmationService {
 
-    void sendMemberConfirmRegistration(Long userId, String name, String email);
+    void sendRegistrationConfirmation(Long userId, String name, String email);
 
-    void checkMemberConfirmationToken(String token);
+    void sendChangePasswordConfirmation(Long userId, String name, String email);
+
+    public String generateConfirmationToken();
+
+    void checkConfirmationToken(String token);
+
+    Long getUserIdByToken(String token);
+
+    void deleteConfirmationTokenByTokenValue(String token);
+
+    void findConfirmationTokenByTokenValue(String token);
 
 }

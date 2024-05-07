@@ -18,8 +18,22 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendDeletedAccountMessage(String name, String email) {
+    public void sendSuccessfulRegistrationNotification(String name, String email) {
+        NotificationMessageType messageType = NotificationMessageType.SUCCESSFUL_REGISTRATION_NOTIFICATION;
+        NotificationMessage notificationMessage = new NotificationMessage(messageType, name, email);
+        kafkaProducerService.sendNotification(notificationMessage);
+    }
+
+    @Override
+    public void sendDeletedAccountNotification(String name, String email) {
         NotificationMessageType messageType = NotificationMessageType.DELETED_ACCOUNT_NOTIFICATION;
+        NotificationMessage notificationMessage = new NotificationMessage(messageType, name, email);
+        kafkaProducerService.sendNotification(notificationMessage);
+    }
+
+    @Override
+    public void sendChangedPasswordNotification(String name, String email) {
+        NotificationMessageType messageType = NotificationMessageType.CHANGED_PASSWORD_NOTIFICATION;
         NotificationMessage notificationMessage = new NotificationMessage(messageType, name, email);
         kafkaProducerService.sendNotification(notificationMessage);
     }

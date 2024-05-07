@@ -1,11 +1,8 @@
 package org.siri_hate.user_service.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
-import org.siri_hate.user_service.model.request.ChangePasswordForm;
-import org.siri_hate.user_service.model.request.PersonalData;
-import org.siri_hate.user_service.model.request.LoginForm;
+import org.siri_hate.user_service.model.request.*;
 import org.siri_hate.user_service.model.entity.Member;
 import org.siri_hate.user_service.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +14,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/users/member")
 @Validated
+@RequestMapping("/api/v1/users/member")
 public class MemberController {
 
     final private MemberService memberService;
@@ -43,21 +43,19 @@ public class MemberController {
         return new ResponseEntity<>("Successful registration", HttpStatus.OK);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> memberLogin(@RequestBody @Valid LoginForm loginForm) {
-        String token = memberService.memberLogin(loginForm);
-        return ResponseEntity.ok(token);
-    }
-
     @PostMapping("/password_recovery/request")
-    public ResponseEntity<String> memberPasswordRecoveryRequest(@RequestBody String email) {
-        memberService.memberPasswordRecoveryRequest(email);
+    public ResponseEntity<String> memberPasswordRecoveryRequest(
+            @RequestBody RecoveryPasswordRequest recoveryPasswordRequest
+    ) {
+        memberService.memberPasswordRecoveryRequest(recoveryPasswordRequest);
         return new ResponseEntity<>("Request to change the password has been successfully sent", HttpStatus.OK);
     }
 
     @PostMapping("/password_recovery/confirm")
-    public ResponseEntity<String> memberPasswordRecoveryConfirm(@RequestBody String newPassword) {
-        memberService.memberPasswordRecoveryConfirmation(newPassword);
+    public ResponseEntity<String> memberPasswordRecoveryConfirm(
+            @RequestBody ChangePasswordTokenRequest changePasswordTokenRequest
+    ) {
+        memberService.memberPasswordRecoveryConfirmation(changePasswordTokenRequest);
         return new ResponseEntity<>("Password has been successfully changed", HttpStatus.OK);
     }
 
@@ -118,11 +116,16 @@ public class MemberController {
     }
 
     @PostMapping("/change_avatar")
-    public ResponseEntity<String> changeMemberPasswordByAuth(@RequestBody Byte avatar) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        memberService.memberChangeAvatar(username, avatar);
-        return new ResponseEntity<>("Password has been successfully changed", HttpStatus.OK);
+    public ResponseEntity<String> changeMemberAvatar(@RequestPart("avatar") MultipartFile avatarFile) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            byte[] avatarBytes = avatarFile.getBytes();
+            memberService.memberChangeAvatar(username, avatarBytes);
+            return new ResponseEntity<>("Avatar has been successfully changed", HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Failed to change avatar", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/change_personal_info")

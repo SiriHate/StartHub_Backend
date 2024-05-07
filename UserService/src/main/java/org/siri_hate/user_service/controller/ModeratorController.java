@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/users/moderator")
 @Validated
+@RequestMapping("/api/v1/users/moderator")
 public class ModeratorController {
 
     final private ModeratorService moderatorService;
@@ -25,21 +25,10 @@ public class ModeratorController {
         this.moderatorService = moderatorService;
     }
 
-    @PostMapping("/registration")
+    @PostMapping
     public ResponseEntity<String> moderatorRegistration(@RequestBody @Valid Moderator moderator) {
         moderatorService.moderatorRegistration(moderator);
         return new ResponseEntity<>("Successful registration", HttpStatus.OK);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> moderatorLogin(@RequestBody @Valid LoginForm loginForm) {
-        return new ResponseEntity<>("Successful login", HttpStatus.OK);
-    }
-
-    @PostMapping("/password_recovery")
-    public String moderatorPasswordRecovery(@RequestBody String login) {
-        moderatorService.moderatorPasswordRecovery(login);
-        return "redirect:/login";
     }
 
     @GetMapping("/get")

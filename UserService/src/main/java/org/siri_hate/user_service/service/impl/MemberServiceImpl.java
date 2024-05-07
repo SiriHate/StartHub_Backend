@@ -5,20 +5,13 @@ import jakarta.transaction.Transactional;
 import org.siri_hate.user_service.exception.MismatchedPasswordException;
 import org.siri_hate.user_service.exception.UserAlreadyExistsException;
 import org.siri_hate.user_service.model.entity.Member;
-import org.siri_hate.user_service.model.request.ChangePasswordForm;
-import org.siri_hate.user_service.model.request.LoginForm;
-import org.siri_hate.user_service.model.request.PersonalData;
+import org.siri_hate.user_service.model.request.*;
 import org.siri_hate.user_service.repository.MemberRepository;
-import org.siri_hate.user_service.security.JWTService;
 import org.siri_hate.user_service.service.ConfirmationService;
 import org.siri_hate.user_service.service.MemberService;
 import org.siri_hate.user_service.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -31,10 +24,6 @@ public class MemberServiceImpl implements MemberService {
 
     final private PasswordEncoder passwordEncoder;
 
-    final private AuthenticationManager authenticationManager;
-
-    final private JWTService jwtService;
-
     final private ConfirmationService confirmationService;
 
     final private NotificationService notificationService;
@@ -43,15 +32,11 @@ public class MemberServiceImpl implements MemberService {
     private MemberServiceImpl(
             MemberRepository memberRepository,
             PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager,
-            JWTService jwtService,
             @Lazy ConfirmationService confirmationService,
             NotificationService notificationService
     ) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
         this.confirmationService = confirmationService;
         this.notificationService = notificationService;
     }
@@ -66,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
 
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberRepository.save(member);
-        confirmationService.sendMemberConfirmRegistration(member.getId(), member.getName(), member.getEmail());
+        //confirmationService.sendRegistrationConfirmation(member.getId(), member.getName(), member.getEmail());
     }
 
     @Override
@@ -81,38 +66,62 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberOptional.get();
         member.setEnabled(true);
         memberRepository.save(member);
+
+        String memberName = member.getName();
+        String memberEmail = member.getEmail();
+        //notificationService.sendSuccessfulRegistrationNotification(memberName, memberEmail);
     }
 
     @Override
-    public String memberLogin(LoginForm loginForm) {
+    public void memberPasswordRecoveryRequest(RecoveryPasswordRequest recoveryPasswordRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword()));
+        String email = recoveryPasswordRequest.getEmail();
 
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(loginForm.getUsername(), 142);
-        } else {
-            throw new UsernameNotFoundException("Invalid user request!");
+        Optional<Member> memberOptional = memberRepository.findMemberByEmail(email);
+
+        if (memberOptional.isEmpty()) {
+            throw new EntityNotFoundException("Member with email: " + email + " not found!");
         }
 
+        Member member = memberOptional.get();
+
+        Long memberId = member.getId();
+        String memberName = member.getName();
+        String memberEmail = member.getEmail();
+        confirmationService.sendChangePasswordConfirmation(memberId, memberName, memberEmail);
     }
 
     @Override
-    public void memberPasswordRecoveryRequest(String newPassword) {
+    public void memberPasswordRecoveryConfirmation(ChangePasswordTokenRequest changePasswordTokenRequest) {
 
-    }
+        String token = changePasswordTokenRequest.getToken();
+        String newPassword = changePasswordTokenRequest.getNewPassword();
 
-    @Override
-    public void memberPasswordRecoveryConfirmation(String newPassword) {
+        Long userId = confirmationService.getUserIdByToken(token);
+        Optional<Member> memberOptional = memberRepository.findById(userId);
 
+        if (memberOptional.isEmpty()) {
+            throw new EntityNotFoundException("Member with id: " + userId + " not found!");
+        }
+
+        Member member = memberOptional.get();
+
+        member.setPassword(passwordEncoder.encode(newPassword));
+        memberRepository.save(member);
+        confirmationService.deleteConfirmationTokenByTokenValue(token);
+
+        String memberName = member.getName();
+        String memberEmail = member.getEmail();
+
+        //notificationService.sendChangedPasswordNotification(memberName, memberEmail);
     }
 
     @Override
     @Transactional
     public void memberPasswordChange(String username, ChangePasswordForm changePasswordForm) {
 
+        String currentPassword = changePasswordForm.getCurrentPassword();
         String newPassword = changePasswordForm.getNewPassword();
-        String oldPassword = changePasswordForm.getOldPassword();
 
         Optional<Member> memberOptional = memberRepository.findMemberByUsername(username);
 
@@ -122,7 +131,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = memberOptional.get();
 
-        if (passwordEncoder.matches(oldPassword, member.getPassword())) {
+        if (passwordEncoder.matches(currentPassword, member.getPassword())) {
             member.setPassword(passwordEncoder.encode(newPassword));
         } else {
             throw new MismatchedPasswordException("Entered password does not match the current one");
@@ -183,7 +192,7 @@ public class MemberServiceImpl implements MemberService {
             memberRepository.delete(member);
             String name = member.getName();
             String email = member.getEmail();
-            notificationService.sendDeletedAccountMessage(name, email);
+            notificationService.sendDeletedAccountNotification(name, email);
         } else {
             throw new EntityNotFoundException("Member with id: " + id + " not found!");
         }
@@ -202,7 +211,7 @@ public class MemberServiceImpl implements MemberService {
             memberRepository.delete(member);
             String name = member.getName();
             String email = member.getEmail();
-            notificationService.sendDeletedAccountMessage(name, email);
+            //notificationService.sendDeletedAccountNotification(name, email);
         } else {
             throw new EntityNotFoundException("Member with username: " + username + " not found!");
         }
@@ -211,7 +220,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void memberChangeAvatar(String username, Byte avatar) {
+    public void memberChangeAvatar(String username, byte[] avatar) {
         Member member = findMemberByUsername(username);
         member.setAvatar(avatar);
         memberRepository.save(member);
@@ -221,10 +230,12 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void memberChangePersonalInfo(String username, PersonalData personalData) {
         Member member = findMemberByUsername(username);
+        System.out.println("member = " + member);
+        System.out.println("personalData" + personalData);
         member.setName(personalData.getName());
         member.setPhone(personalData.getPhone());
         member.setEmail(personalData.getEmail());
-        member.setBirthDay(personalData.getBirthDay());
+        member.setBirthDay(personalData.getBirthday());
         memberRepository.save(member);
     }
 

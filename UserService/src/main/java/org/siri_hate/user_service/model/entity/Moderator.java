@@ -30,9 +30,6 @@ public class Moderator extends User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "avatar")
-    Byte avatar;
-
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Name should not be null")
     String name;

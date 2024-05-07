@@ -1,9 +1,7 @@
 package org.siri_hate.user_service.service;
 
 import org.siri_hate.user_service.model.entity.Member;
-import org.siri_hate.user_service.model.request.ChangePasswordForm;
-import org.siri_hate.user_service.model.request.PersonalData;
-import org.siri_hate.user_service.model.request.LoginForm;
+import org.siri_hate.user_service.model.request.*;
 
 import java.util.List;
 
@@ -13,11 +11,9 @@ public interface MemberService {
 
     void activateMemberAccount(Long id);
 
-    String memberLogin(LoginForm loginForm);
+    void memberPasswordRecoveryRequest(RecoveryPasswordRequest recoveryPasswordRequest);
 
-    void memberPasswordRecoveryRequest(String newPassword);
-
-    void memberPasswordRecoveryConfirmation(String newPassword);
+    void memberPasswordRecoveryConfirmation(ChangePasswordTokenRequest changePasswordTokenRequest);
 
     void memberPasswordChange(String username, ChangePasswordForm changePasswordForm);
 
@@ -31,7 +27,7 @@ public interface MemberService {
 
     void deleteMemberByUserName(String username);
 
-    void memberChangeAvatar(String username, Byte avatar);
+    void memberChangeAvatar(String username, byte[] avatar);
 
     void memberChangePersonalInfo(String username, PersonalData personalData);
 

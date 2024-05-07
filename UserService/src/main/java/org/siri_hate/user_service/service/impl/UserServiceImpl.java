@@ -1,11 +1,16 @@
 package org.siri_hate.user_service.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.siri_hate.user_service.model.entity.Member;
 import org.siri_hate.user_service.model.entity.User;
+import org.siri_hate.user_service.model.request.LoginForm;
 import org.siri_hate.user_service.repository.UserRepository;
+import org.siri_hate.user_service.security.JWTService;
 import org.siri_hate.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,9 +20,32 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    final private AuthenticationManager authenticationManager;
+
+    final private JWTService jwtService;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            AuthenticationManager authenticationManager,
+            JWTService jwtService
+    ) {
         this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
+
+    @Override
+    public String userLogin(LoginForm loginForm) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword()));
+
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(loginForm.getUsername());
+        } else {
+            throw new UsernameNotFoundException("Invalid user request!");
+        }
+
     }
 
     @Override
