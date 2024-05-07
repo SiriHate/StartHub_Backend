@@ -1,2 +1,12 @@
-package org.siri_hate.chat_service.repository;public class ChatRoomRepository {
+package org.siri_hate.chat_service.repository;
+
+
+
+import org.siri_hate.chat_service.model.ChatRoom;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
+    Optional<ChatRoom> findBySenderIdAndRecipientId(String senderId, String recipientId);
 }

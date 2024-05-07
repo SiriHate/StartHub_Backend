@@ -1,5 +1,6 @@
 package org.siri_hate.main_service.service.impl;
 
+import jakarta.transaction.Transactional;
 import org.siri_hate.main_service.model.Project;
 import org.siri_hate.main_service.repository.ProjectRepository;
 import org.siri_hate.main_service.service.ProjectService;
@@ -20,7 +21,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void createProject(Project project) {
+    @Transactional
+    public void createProject(String username, Project project) {
+        project.setProjectOwnerUsername(username);
         projectRepository.save(project);
     }
 
@@ -38,6 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<Project> searchProjectsByName(String projectName) {
+
         List<Project> projectList = projectRepository.findProjectsByProjectNameContainingIgnoreCase(projectName);
 
         if (projectList.isEmpty()) {
@@ -48,7 +52,19 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project getProjectById(long id) {
+    public List<Project> searchProjectsByOwnerUsername(String username) {
+
+        List<Project> projectList = projectRepository.findProjectsByProjectOwnerUsername(username);
+
+        if (projectList.isEmpty()) {
+            throw new RuntimeException("No projects have been found for user with" + username + " username");
+        }
+
+        return projectList;
+    }
+
+    @Override
+    public Project getProjectById(Long id) {
 
         Optional<Project> projectOptional = projectRepository.findById(id);
 
@@ -72,7 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void deleteProjectById(long id) {
+    public void deleteProjectById(Long id) {
         Optional<Project> projectOptional = projectRepository.findById(id);
 
         if (projectOptional.isEmpty()) {

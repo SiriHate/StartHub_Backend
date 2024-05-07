@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findProjectsByProjectNameContainingIgnoreCase(String projectName);
-}
+    List<Project> findProjectsByProjectOwnerUsername(String username);
+ }

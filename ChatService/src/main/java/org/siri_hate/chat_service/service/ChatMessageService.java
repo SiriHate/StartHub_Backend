@@ -1,8 +1,12 @@
 package org.siri_hate.chat_service.service;
 
+import org.siri_hate.chat_service.model.ChatMessage;
+import org.siri_hate.chat_service.model.enums.MessageStatus;
+import org.siri_hate.chat_service.repository.ChatMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ChatMessageService {

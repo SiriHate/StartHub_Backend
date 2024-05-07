@@ -1,6 +1,7 @@
 package org.siri_hate.main_service.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,17 +22,19 @@ public class Project {
     private Long id;
 
     @Column(name = "project_name")
+    @NotBlank(message = "Project name should not be null")
     String projectName;
 
+    @Lob
     @Column(name = "project_picture")
-    Byte projectPicture;
+    byte[] projectPicture;
 
-    @Column(name = "project_owner_id")
-    Long projectOwnerId;
-
-    Set<Long> projectTeam;
+    @Column(name = "project_owner_username")
+    @NotBlank(message = "Project owner username should not be null")
+    String projectOwnerUsername;
 
     @Column(name = "project_description")
+    @NotBlank(message = "Project description should not be null")
     String projectDescription;
 
     @Column(name = "project_likes")

@@ -5,6 +5,8 @@ import org.siri_hate.main_service.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -19,9 +21,19 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
+//    @PostMapping
+//    public ResponseEntity<String> createProject(@RequestBody Project project) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//        projectService.createProject(username, project);
+//        return new ResponseEntity<>("Project has been successfully created", HttpStatus.CREATED);
+//    }
+
+
     @PostMapping
-    public ResponseEntity<String> createProject(@RequestBody Project project) {
-        projectService.createProject(project);
+    public ResponseEntity<String> createProject() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getName());
         return new ResponseEntity<>("Project has been successfully created", HttpStatus.CREATED);
     }
 
@@ -31,8 +43,8 @@ public class ProjectController {
         return new ResponseEntity<>(projectList, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<Project> getProjectById(@RequestParam long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
         Project project = projectService.getProjectById(id);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
@@ -43,8 +55,8 @@ public class ProjectController {
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> deleteProjectById(@RequestParam long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProjectById(@PathVariable Long id) {
         projectService.deleteProjectById(id);
         return new ResponseEntity<>("Project was successfully deleted", HttpStatus.NO_CONTENT);
     }
