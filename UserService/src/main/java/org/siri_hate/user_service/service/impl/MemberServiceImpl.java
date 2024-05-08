@@ -167,6 +167,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member getMemberByUsername(String username) {
+
+        Optional<Member> memberOptional = memberRepository.findMemberByUsername(username);
+
+        if (memberOptional.isEmpty()) {
+            throw new EntityNotFoundException("Member with username: " + username + " not found!");
+        }
+
+        return memberOptional.get();
+    }
+
+    @Override
     @Transactional
     public Member memberUpdate(Long id, Member member) {
 
@@ -235,7 +247,7 @@ public class MemberServiceImpl implements MemberService {
         member.setName(personalData.getName());
         member.setPhone(personalData.getPhone());
         member.setEmail(personalData.getEmail());
-        member.setBirthDay(personalData.getBirthday());
+        member.setBirthday(personalData.getBirthday());
         memberRepository.save(member);
     }
 

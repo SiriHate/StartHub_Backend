@@ -99,6 +99,14 @@ public class MemberController {
         return new ResponseEntity<>("Successful delete", HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/personInfo")
+    public ResponseEntity<Member> getMyPersonInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Member member = memberService.getMemberByUsername(username);
+        return new ResponseEntity<>(member, HttpStatus.OK);
+    }
+
     @DeleteMapping("/delete_my_account")
     public ResponseEntity<String> deleteMemberByAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

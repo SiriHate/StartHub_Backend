@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.siri_hate.user_service.model.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import java.time.LocalDate;
@@ -33,8 +34,7 @@ public class Member extends User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "avatar")
-    @Lob
+    @Column(name = "avatar", columnDefinition = "bytea")
     private byte[] avatar;
 
     @Column(name = "name", nullable = false)
@@ -50,9 +50,9 @@ public class Member extends User {
     @NotBlank(message = "Phone should not be null")
     private String phone;
 
-    @Column(name = "birth_day", nullable = false)
+    @Column(name = "birthday", nullable = false)
     @NotNull(message = "Birth day should not be null")
-    private LocalDate birthDay;
+    private LocalDate birthday;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

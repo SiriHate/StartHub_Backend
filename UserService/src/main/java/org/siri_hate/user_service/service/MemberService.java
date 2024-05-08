@@ -21,6 +21,8 @@ public interface MemberService {
 
     Member getMemberById(Long id);
 
+    Member getMemberByUsername(String username);
+
     Member memberUpdate(Long id, Member member);
 
     void deleteMemberById(Long id);
