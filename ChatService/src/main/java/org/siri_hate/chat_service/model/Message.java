@@ -2,24 +2,26 @@ package org.siri_hate.chat_service.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.siri_hate.chat_service.model.enums.MessageStatus;
-import org.springframework.data.annotation.Id;
-import java.util.Date;
 
-@Data
+@Entity
+@Table(name = "messages")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Entity
-
-public class ChatMessage {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
+
+    @Column(name = "sender")
+    String sender;
+
+    @Column(name = "recipient")
+    String recipient;
+
+    @Column(name = "message")
+    String message;
 
 }

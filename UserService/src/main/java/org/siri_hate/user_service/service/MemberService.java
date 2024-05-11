@@ -23,13 +23,15 @@ public interface MemberService {
 
     Member getMemberByUsername(String username);
 
+    List<Member> searchMemberByUsername(String username);
+
     Member memberUpdate(Long id, Member member);
 
     void deleteMemberById(Long id);
 
     void deleteMemberByUserName(String username);
 
-    void memberChangeAvatar(String username, byte[] avatar);
+    void memberChangeAvatar(String username, AvatarRequest avatar);
 
     void memberChangePersonalInfo(String username, PersonalData personalData);
 

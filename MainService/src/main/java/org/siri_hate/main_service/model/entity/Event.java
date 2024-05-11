@@ -1,7 +1,8 @@
-package org.siri_hate.main_service.model;
+package org.siri_hate.main_service.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Cleanup;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,16 +20,19 @@ public class Event {
     @Column(name = "id")
     Long id;
 
-    @Column(name = "event_owner")
+    @Column(name = "owner")
     String username;
 
-    @Column(name = "event_name")
+    @Column(name = "name")
     String eventName;
 
-    @Column(name = "event_description")
+    @Column(name = "category")
+    String category;
+
+    @Column(name = "description")
     String eventDescription;
 
-    @Column(name = "event_date")
+    @Column(name = "date")
     LocalDateTime EventDate;
 
     @Column(name = "online_conference_link")

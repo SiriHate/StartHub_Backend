@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
                 new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword()));
 
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(loginForm.getUsername());
+            return jwtService.generateToken(loginForm.getUsername(), authentication.getAuthorities());
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }

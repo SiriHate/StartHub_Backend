@@ -1,7 +1,7 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
-import org.siri_hate.main_service.model.Project;
+import org.siri_hate.main_service.model.entity.Project;
 import org.siri_hate.main_service.repository.ProjectRepository;
 import org.siri_hate.main_service.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void createProject(String username, Project project) {
-        project.setProjectOwnerUsername(username);
+        project.setProjectOwner(username);
         projectRepository.save(project);
     }
 
@@ -54,7 +54,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> searchProjectsByOwnerUsername(String username) {
 
-        List<Project> projectList = projectRepository.findProjectsByProjectOwnerUsername(username);
+        List<Project> projectList = projectRepository.findProjectsByProjectOwner(username);
 
         if (projectList.isEmpty()) {
             throw new RuntimeException("No projects have been found for user with" + username + " username");
@@ -64,18 +64,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public Project getProjectById(Long id) {
-
-        Optional<Project> projectOptional = projectRepository.findById(id);
-
-        if (projectOptional.isEmpty()) {
-            throw new RuntimeException("No project with id " + id + " found");
-        }
-
-        return projectOptional.get();
+        return projectRepository.findById(id).map(project -> {
+            project.getMembers().size(); // Явное обращение к коллекции для ее инициализации
+            return project;
+        }).orElseThrow(() -> new RuntimeException("No project with id " + id + " found"));
     }
 
     @Override
+    @Transactional
     public void updateProject(Project project) {
 
         Optional<Project> projectOptional = projectRepository.findById(project.getId());
@@ -88,6 +86,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public void deleteProjectById(Long id) {
         Optional<Project> projectOptional = projectRepository.findById(id);
 

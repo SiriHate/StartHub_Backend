@@ -1,5 +1,7 @@
 package org.siri_hate.user_service.model.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 import org.siri_hate.user_service.model.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import java.time.LocalDate;
@@ -31,15 +32,22 @@ public class Member extends User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonDeserialize
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "avatar", columnDefinition = "bytea")
-    private byte[] avatar;
+    @Column(name = "avatar_url")
+    private String avatarUrl;
 
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Name should not be null")
     private String name;
+
+    @Column(name = "specialization")
+    String specialization;
+
+    @Column(name = "about")
+    private String about;
 
     @Column(name = "email", nullable = false, unique = true)
     @NotBlank(message = "Email should not be null")

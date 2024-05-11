@@ -1,5 +1,7 @@
 package org.siri_hate.user_service.model.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +30,7 @@ public class Moderator extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonDeserialize
     private Long id;
 
     @Column(name = "name", nullable = false)

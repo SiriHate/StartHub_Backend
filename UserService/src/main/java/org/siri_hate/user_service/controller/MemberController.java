@@ -59,19 +59,31 @@ public class MemberController {
         return new ResponseEntity<>("Password has been successfully changed", HttpStatus.OK);
     }
 
-    @GetMapping("/getAll")
+    @GetMapping
     public ResponseEntity<List<Member>> getAllMembers() {
         List<Member> memberList = memberService.getAllMembers();
         return new ResponseEntity<>(memberList, HttpStatus.OK);
     }
 
-    @GetMapping("/getById")
+    @GetMapping("/{id}")
     public ResponseEntity<Member> getMemberById(
             @Positive(message = "ID should be greater than zero")
-            @RequestParam("id") Long id
+            @PathVariable("id") Long id
     ) {
         Member member = memberService.getMemberById(id);
         return new ResponseEntity<>(member, HttpStatus.OK);
+    }
+
+    @GetMapping("/by-username/{username}")
+    public ResponseEntity<Member> getMemberByUsername(@PathVariable String username) {
+        Member member = memberService.getMemberByUsername(username);
+        return new ResponseEntity<>(member, HttpStatus.OK);
+    }
+
+    @GetMapping("/search-by-username/{username}")
+    public ResponseEntity<List<Member>> searchMemberByUsername(@PathVariable String username) {
+        List<Member> members = memberService.searchMemberByUsername(username);
+        return new ResponseEntity<>(members, HttpStatus.OK);
     }
 
     @PutMapping("/update")
@@ -124,16 +136,11 @@ public class MemberController {
     }
 
     @PostMapping("/change_avatar")
-    public ResponseEntity<String> changeMemberAvatar(@RequestPart("avatar") MultipartFile avatarFile) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            byte[] avatarBytes = avatarFile.getBytes();
-            memberService.memberChangeAvatar(username, avatarBytes);
-            return new ResponseEntity<>("Avatar has been successfully changed", HttpStatus.OK);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Failed to change avatar", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<String> changeMemberAvatar(@RequestBody @Valid AvatarRequest avatar) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        memberService.memberChangeAvatar(username, avatar);
+        return new ResponseEntity<>("Avatar has been successfully changed", HttpStatus.OK);
     }
 
     @PostMapping("/change_personal_info")

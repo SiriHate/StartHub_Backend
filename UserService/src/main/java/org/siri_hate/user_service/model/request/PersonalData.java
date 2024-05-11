@@ -21,4 +21,8 @@ public class PersonalData {
     @NotNull(message = "Birthday must not be null")
     LocalDate birthday;
 
+    String about;
+
+    String specialization;
+
 }

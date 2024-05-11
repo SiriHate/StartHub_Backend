@@ -179,6 +179,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public List<Member> searchMemberByUsername(String username) {
+
+        List<Member> memberList = memberRepository.findMemberByUsernameStartingWithIgnoreCase(username);
+
+        if (memberList.isEmpty()) {
+            throw new EntityNotFoundException("No member found with username: " + username + " not found!");
+        }
+
+        return memberList;
+    }
+
+    @Override
     @Transactional
     public Member memberUpdate(Long id, Member member) {
 
@@ -232,9 +244,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void memberChangeAvatar(String username, byte[] avatar) {
+    public void memberChangeAvatar(String username, AvatarRequest avatar) {
         Member member = findMemberByUsername(username);
-        member.setAvatar(avatar);
+        String avatarUrl = avatar.getAvatarUrl();
+        member.setAvatarUrl(avatarUrl);
         memberRepository.save(member);
     }
 
@@ -248,6 +261,8 @@ public class MemberServiceImpl implements MemberService {
         member.setPhone(personalData.getPhone());
         member.setEmail(personalData.getEmail());
         member.setBirthday(personalData.getBirthday());
+        member.setSpecialization(personalData.getSpecialization());
+        member.setAbout(personalData.getAbout());
         memberRepository.save(member);
     }
 

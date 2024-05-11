@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class ChangePasswordForm {
 
-    @NotBlank
+    @NotBlank(message = "Current password must contain more than 8 characters")
     String currentPassword;
 
     @NotBlank
-    @Size(min = 8, message = "Password must contain more than 8 characters")
+    @Size(min = 8, message = "New password must contain more than 8 characters")
     String newPassword;
 
 }
