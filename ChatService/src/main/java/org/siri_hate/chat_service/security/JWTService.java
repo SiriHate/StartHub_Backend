@@ -1,4 +1,4 @@
-package org.siri_hate.chat_service.security;
+package org.siri_hate.main_service.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
