@@ -3,8 +3,12 @@ package org.siri_hate.user_service.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.siri_hate.user_service.exception.NoSuchUserException;
-import org.siri_hate.user_service.model.request.LoginForm;
+import org.siri_hate.user_service.model.dto.request.LoginForm;
 import org.siri_hate.user_service.model.entity.Moderator;
+import org.siri_hate.user_service.model.dto.request.moderator.ModeratorFullRequest;
+import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResponse;
+import org.siri_hate.user_service.model.dto.response.moderator.ModeratorSummaryResponse;
+import org.siri_hate.user_service.model.dto.mapper.ModeratorMapper;
 import org.siri_hate.user_service.repository.ModeratorRepository;
 import org.siri_hate.user_service.service.ModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +24,30 @@ public class ModeratorServiceImpl implements ModeratorService {
 
     final private PasswordEncoder passwordEncoder;
 
+    final private ModeratorMapper moderatorMapper;
+
     @Autowired
     private ModeratorServiceImpl(
             ModeratorRepository moderatorRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            ModeratorMapper moderatorMapper
     ) {
         this.moderatorRepository = moderatorRepository;
         this.passwordEncoder = passwordEncoder;
+        this.moderatorMapper = moderatorMapper;
     }
 
     @Override
     @Transactional
-    public void moderatorRegistration(Moderator moderator) {
-        moderator.setPassword(passwordEncoder.encode(moderator.getPassword()));
-        moderatorRepository.save(moderator);
+    public void moderatorRegistration(ModeratorFullRequest moderator) {
+        Moderator moderator1 = new Moderator();
+        moderator1.setName(moderator.getName());
+        moderator1.setUsername(moderator.getUsername());
+        moderator1.setEmployeeId(moderator.getEmployeeId());
+        moderator1.setPassword(moderator1.getPassword());
+        moderator1.setPassword(passwordEncoder.encode(moderator.getPassword()));
+        moderator1.setRole("MODERATOR");
+        moderatorRepository.save(moderator1);
     }
 
     @Override
@@ -48,7 +62,7 @@ public class ModeratorServiceImpl implements ModeratorService {
 
     @Override
     @Transactional
-    public List<Moderator> getAllModerators() {
+    public List<ModeratorSummaryResponse> getAllModerators() {
 
         List<Moderator> moderatorList = moderatorRepository.findAll();
 
@@ -56,45 +70,48 @@ public class ModeratorServiceImpl implements ModeratorService {
             throw new NoSuchUserException("No moderator was found!");
         }
 
-        return moderatorList;
+        return moderatorMapper.toModeratorSummaryResponseList(moderatorList);
     }
 
     @Override
-    public List<Moderator> searchModeratorsByUsername(String username) {
+    public List<ModeratorSummaryResponse> searchModeratorsByUsername(String username) {
+
         List<Moderator> moderatorList = moderatorRepository.findModeratorByUsernameStartingWithIgnoreCase(username);
 
         if (moderatorList.isEmpty()) {
             throw new NoSuchUserException("No moderator was found!");
         }
 
-        return moderatorList;
+        return moderatorMapper.toModeratorSummaryResponseList(moderatorList);
     }
 
     @Override
     @Transactional
-    public Moderator getModeratorById(Long id) {
-
+    public ModeratorFullResponse getModeratorById(Long id) {
         Optional<Moderator> moderatorOptional = moderatorRepository.findById(id);
 
         if (moderatorOptional.isEmpty()) {
             throw new EntityNotFoundException("Moderator with id: " + id + " not found!");
         }
 
-        return moderatorOptional.get();
+        return moderatorMapper.toModeratorFullResponse(moderatorOptional.get());
     }
 
     @Override
     @Transactional
-    public Moderator moderatorUpdate(Long id, Moderator moderator) {
-
+    public ModeratorFullResponse moderatorUpdate(Long id, ModeratorFullRequest moderator) {
         Optional<Moderator> moderatorOptional = moderatorRepository.findById(id);
 
         if (moderatorOptional.isEmpty()) {
             throw new EntityNotFoundException("Moderator with id: " + id + " not found!");
         }
 
-        moderator.setId(id);
-        return moderatorRepository.save(moderator);
+        Moderator moderatorToUpdate = moderatorMapper.toModerator(moderator);
+        moderatorToUpdate.setId(id);
+
+        Moderator updatedModerator = moderatorRepository.save(moderatorToUpdate);
+
+        return moderatorMapper.toModeratorFullResponse(updatedModerator);
     }
 
     @Override

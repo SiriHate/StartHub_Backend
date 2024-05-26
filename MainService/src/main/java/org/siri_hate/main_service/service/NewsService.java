@@ -1,20 +1,23 @@
 package org.siri_hate.main_service.service;
 
+import org.siri_hate.main_service.model.dto.request.news.NewsFullRequest;
+import org.siri_hate.main_service.model.dto.response.news.NewsFullResponse;
+import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
 import org.siri_hate.main_service.model.entity.News;
 
 import java.util.List;
 
 public interface NewsService {
 
-    News createNews(News news);
+    void createNews(String username, NewsFullRequest news);
 
-    News getNewsById(Long id);
+    NewsFullResponse getNewsById(Long id);
 
-    List<News> getNewsByCategory(String category);
+    List<NewsSummaryResponse> getNewsByCategory(String category);
 
-    List<News> getAllNews();
+    List<NewsSummaryResponse> getAllNews();
 
-    List<News> searchNewsByOwnerUsername(String username);
+    List<NewsSummaryResponse> searchNewsByOwnerUsername(String username);
 
     void updateNews(Long id, News newsDetails);
 

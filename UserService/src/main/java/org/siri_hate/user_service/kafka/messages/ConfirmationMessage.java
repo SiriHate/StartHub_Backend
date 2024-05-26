@@ -1,27 +1,80 @@
 package org.siri_hate.user_service.kafka.messages;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.siri_hate.user_service.model.enums.ConfirmationMessageType;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
+import java.util.Objects;
+
 public class ConfirmationMessage {
 
-    @NotNull(message = "Message type should not be null")
     private ConfirmationMessageType messageType;
 
-    @NotBlank(message = "User full name should not be null")
     private String userFullName;
 
-    @NotBlank(message = "Email should not be null")
     private String userEmail;
 
-    @NotBlank(message = "Confirmation token should not be null")
     private String userConfirmationToken;
+
+    public ConfirmationMessage() {}
+
+    public ConfirmationMessage(ConfirmationMessageType messageType, String userFullName, String userEmail, String userConfirmationToken) {
+        this.messageType = messageType;
+        this.userFullName = userFullName;
+        this.userEmail = userEmail;
+        this.userConfirmationToken = userConfirmationToken;
+    }
+
+    public ConfirmationMessageType getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(ConfirmationMessageType messageType) {
+        this.messageType = messageType;
+    }
+
+    public String getUserFullName() {
+        return userFullName;
+    }
+
+    public void setUserFullName(String userFullName) {
+        this.userFullName = userFullName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserConfirmationToken() {
+        return userConfirmationToken;
+    }
+
+    public void setUserConfirmationToken(String userConfirmationToken) {
+        this.userConfirmationToken = userConfirmationToken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConfirmationMessage that = (ConfirmationMessage) o;
+        return messageType == that.messageType && Objects.equals(userFullName, that.userFullName) && Objects.equals(userEmail, that.userEmail) && Objects.equals(userConfirmationToken, that.userConfirmationToken);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(messageType, userFullName, userEmail, userConfirmationToken);
+    }
+
+    @Override
+    public String toString() {
+        return "ConfirmationMessage{" +
+                "messageType=" + messageType +
+                ", userFullName='" + userFullName + '\'' +
+                ", userEmail='" + userEmail + '\'' +
+                ", userConfirmationToken='" + userConfirmationToken + '\'' +
+                '}';
+    }
 
 }

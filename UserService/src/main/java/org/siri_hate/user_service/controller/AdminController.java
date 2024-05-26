@@ -1,6 +1,9 @@
 package org.siri_hate.user_service.controller;
 
 import jakarta.validation.constraints.Positive;
+import org.siri_hate.user_service.model.dto.request.admin.AdminFullRequest;
+import org.siri_hate.user_service.model.dto.response.admin.AdminFullResponse;
+import org.siri_hate.user_service.model.dto.response.admin.AdminSummaryResponse;
 import org.siri_hate.user_service.model.entity.Admin;
 import org.siri_hate.user_service.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,7 @@ import java.util.List;
 
 @RestController
 @Validated
-@RequestMapping("/api/v1/users/admin")
+@RequestMapping("/api/v1/user_service/admins")
 public class AdminController {
 
     final private AdminService adminService;
@@ -24,26 +27,29 @@ public class AdminController {
     }
 
     @PostMapping
-    public ResponseEntity<Admin> createAdmin(@Validated @RequestBody Admin admin) {
-        Admin createdAdmin = adminService.createAdmin(admin);
+    public ResponseEntity<AdminFullResponse> createAdmin(@Validated @RequestBody AdminFullRequest admin) {
+        AdminFullResponse createdAdmin = adminService.createAdmin(admin);
         return new ResponseEntity<>(createdAdmin, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<Admin>> getAllAdmins() {
-        List<Admin> admins = adminService.getAllAdmins();
+    public ResponseEntity<List<AdminSummaryResponse>> getAllAdmins() {
+        List<AdminSummaryResponse> admins = adminService.getAllAdmins();
         return new ResponseEntity<>(admins, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Admin> getAdminById(@Positive @PathVariable Long id) {
-        Admin admin = adminService.getAdminById(id);
+    public ResponseEntity<AdminFullResponse> getAdminById(@Positive @PathVariable Long id) {
+        AdminFullResponse admin = adminService.getAdminById(id);
         return new ResponseEntity<>(admin, HttpStatus.OK);
     }
 
-    @PutMapping ("/{id}")
-    ResponseEntity<Admin> updateAdminById(@PathVariable Long id, @Validated @RequestBody Admin admin) {
-        Admin updatedAdmin = adminService.updateAdminById(id, admin);
+    @PatchMapping("/{id}")
+    ResponseEntity<AdminFullResponse> updateAdminById(
+            @PathVariable Long id,
+            @Validated @RequestBody AdminFullRequest admin
+                                                     ) {
+        AdminFullResponse updatedAdmin = adminService.updateAdminById(id, admin);
         return new ResponseEntity<>(updatedAdmin, HttpStatus.OK);
     }
 

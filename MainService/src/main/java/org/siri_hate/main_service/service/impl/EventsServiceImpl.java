@@ -1,6 +1,10 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
+import org.siri_hate.main_service.model.dto.mapper.EventMapper;
+import org.siri_hate.main_service.model.dto.request.event.EventFullRequest;
+import org.siri_hate.main_service.model.dto.response.event.EventFullResponse;
+import org.siri_hate.main_service.model.dto.response.event.EventSummaryResponse;
 import org.siri_hate.main_service.model.entity.Event;
 import org.siri_hate.main_service.repository.EventRepository;
 import org.siri_hate.main_service.service.EventsService;
@@ -16,19 +20,23 @@ public class EventsServiceImpl implements EventsService {
 
     final private EventRepository eventRepository;
 
+    final private EventMapper eventMapper;
+
     @Autowired
-    public EventsServiceImpl(EventRepository eventRepository) {
+    public EventsServiceImpl(EventRepository eventRepository, EventMapper eventMapper) {
         this.eventRepository = eventRepository;
+        this.eventMapper = eventMapper;
     }
 
     @Override
     @Transactional
-    public Event createEvent(Event event) {
-        return eventRepository.save(event);
+    public void createEvent(EventFullRequest event) {
+        Event eventEntity = eventMapper.toEvent(event);
+        eventRepository.save(eventEntity);
     }
 
     @Override
-    public Event getEventById(Long id) {
+    public EventFullResponse getEventById(Long id) {
 
         Optional<Event> event = eventRepository.findById(id);
 
@@ -36,11 +44,11 @@ public class EventsServiceImpl implements EventsService {
             throw new NoSuchElementException("Event not found");
         }
 
-        return event.get();
+        return eventMapper.toEventFullResponse(event.get());
     }
 
     @Override
-    public List<Event> getEventsByUsername(String username) {
+    public List<EventSummaryResponse> getEventsByUsername(String username) {
 
         List<Event> eventList = eventRepository.findAll();
 
@@ -48,11 +56,11 @@ public class EventsServiceImpl implements EventsService {
             throw new NoSuchElementException("No events found for username " + username);
         }
 
-        return eventList;
+        return eventMapper.toEventSummaryResponseList(eventList);
     }
 
     @Override
-    public List<Event> getAllEvents() {
+    public List<EventSummaryResponse> getAllEvents() {
 
         List<Event> eventList = eventRepository.findAll();
 
@@ -60,7 +68,7 @@ public class EventsServiceImpl implements EventsService {
             throw new NoSuchElementException("No events found");
         }
 
-        return eventList;
+        return eventMapper.toEventSummaryResponseList(eventList);
     }
 
     @Override

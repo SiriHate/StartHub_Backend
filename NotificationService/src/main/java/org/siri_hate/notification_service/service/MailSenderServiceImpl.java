@@ -3,7 +3,6 @@ package org.siri_hate.notification_service.service;
 import com.google.gson.Gson;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.siri_hate.notification_service.exception.UnknownEmailTypeException;
 import org.siri_hate.notification_service.kafka.messages.ConfirmationMessage;
 import org.siri_hate.notification_service.kafka.messages.NotificationMessage;
 import org.siri_hate.notification_service.model.mails.confirmation.RecoveryPasswordMail;

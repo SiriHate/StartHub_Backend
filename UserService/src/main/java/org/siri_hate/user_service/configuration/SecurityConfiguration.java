@@ -1,16 +1,12 @@
 package org.siri_hate.user_service.configuration;
 
-import org.siri_hate.user_service.model.enums.UserRole;
-import org.siri_hate.user_service.security.CustomUserDetailsService;
 import org.siri_hate.user_service.security.JWTAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -57,6 +53,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/users/member/check_token").authenticated()
                         .requestMatchers("/api/v1/users/member/delete_my_account").authenticated()
                         .requestMatchers("/api/v1/users/member/change_personal_info").authenticated()
+                        .requestMatchers("/api/v1/users/member/change_password").authenticated()
+                        .requestMatchers("/api/v1/user_service/members/change_profile_visibility").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

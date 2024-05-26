@@ -1,22 +1,25 @@
 package org.siri_hate.main_service.service;
 
-import org.siri_hate.main_service.model.entity.Project;
+import org.siri_hate.main_service.model.dto.request.project.ProjectFullRequest;
+import org.siri_hate.main_service.model.dto.response.project.ProjectFullResponse;
+import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
 
 import java.util.List;
+
 public interface ProjectService {
 
-    void createProject(String username, Project project);
+    void createProject(String username, ProjectFullRequest project);
 
-    List<Project> getAllProjects();
+    List<ProjectSummaryResponse> getAllProjects();
 
-    List<Project> searchProjectsByName(String projectName);
+    List<ProjectSummaryResponse> searchProjectsByName(String projectName);
 
-    List<Project> searchProjectsByOwnerUsername(String username);
+    List<ProjectSummaryResponse> searchProjectsByOwnerUsername(String username);
 
-    Project getProjectById(Long id);
+    ProjectFullResponse getProjectById(Long id);
 
-    void updateProject(Project project);
+    ProjectFullResponse updateProject(ProjectFullRequest project, Long id);
 
-    void deleteProjectById(Long id);
+    void deleteProjectById(String username, Long id);
 
 }

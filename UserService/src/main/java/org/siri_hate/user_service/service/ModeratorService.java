@@ -1,24 +1,27 @@
 package org.siri_hate.user_service.service;
 
-import org.siri_hate.user_service.model.request.LoginForm;
-import org.siri_hate.user_service.model.entity.Moderator;
+import org.siri_hate.user_service.model.dto.request.LoginForm;
+import org.siri_hate.user_service.model.dto.request.moderator.ModeratorFullRequest;
+import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResponse;
+import org.siri_hate.user_service.model.dto.response.moderator.ModeratorSummaryResponse;
+
 import java.util.List;
 
 public interface ModeratorService {
 
-    void moderatorRegistration(Moderator moderator);
+    void moderatorRegistration(ModeratorFullRequest moderator);
 
     void moderatorLogin(LoginForm loginForm);
 
     void moderatorPasswordRecovery(String login);
 
-    List<Moderator> getAllModerators();
+    List<ModeratorSummaryResponse> getAllModerators();
 
-    List<Moderator> searchModeratorsByUsername(String username);
+    List<ModeratorSummaryResponse> searchModeratorsByUsername(String username);
 
-    Moderator getModeratorById(Long id);
+    ModeratorFullResponse getModeratorById(Long id);
 
-    Moderator moderatorUpdate(Long id, Moderator moderator);
+    ModeratorFullResponse moderatorUpdate(Long id, ModeratorFullRequest moderator);
 
     void deleteModeratorById(Long id);
 

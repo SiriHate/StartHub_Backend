@@ -25,6 +25,9 @@ public class KafkaProducerConfiguration {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        configProps.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, 10000);
+        configProps.put(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, 10000);
+        configProps.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

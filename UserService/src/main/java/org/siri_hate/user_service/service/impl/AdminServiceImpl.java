@@ -1,8 +1,13 @@
 package org.siri_hate.user_service.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.siri_hate.user_service.exception.NoSuchUserException;
 import org.siri_hate.user_service.exception.UserAlreadyExistsException;
+import org.siri_hate.user_service.model.dto.mapper.AdminMapper;
+import org.siri_hate.user_service.model.dto.request.admin.AdminFullRequest;
+import org.siri_hate.user_service.model.dto.response.admin.AdminFullResponse;
+import org.siri_hate.user_service.model.dto.response.admin.AdminSummaryResponse;
 import org.siri_hate.user_service.model.entity.Admin;
 import org.siri_hate.user_service.repository.AdminRepository;
 import org.siri_hate.user_service.service.AdminService;
@@ -16,29 +21,31 @@ public class AdminServiceImpl implements AdminService {
 
     final private AdminRepository adminRepository;
 
+    final private AdminMapper adminMapper;
+
     @Autowired
-    public AdminServiceImpl(AdminRepository adminRepository) {
+    public AdminServiceImpl(AdminRepository adminRepository, AdminMapper adminMapper) {
         this.adminRepository = adminRepository;
+        this.adminMapper = adminMapper;
     }
 
 
     @Override
     @Transactional
-    public Admin createAdmin(Admin admin) {
+    public AdminFullResponse createAdmin(AdminFullRequest admin) {
 
-        String username = admin.getUsername();
-        Optional<Admin> adminOptional = adminRepository.findAdminByUsername(username);
+        Admin adminEntity = adminMapper.toAdmin(admin);
 
-        if (adminOptional.isEmpty()) {
+        if (adminRepository.findAdminByUsername(adminEntity.getUsername()) != null) {
             throw new UserAlreadyExistsException("Admin with provided username already exists!");
         }
 
-        adminRepository.save(adminOptional.get());
-        return adminOptional.get();
+        adminRepository.save(adminEntity);
+        return adminMapper.toAdminFullResponse(adminEntity);
     }
 
     @Override
-    public List<Admin> getAllAdmins() {
+    public List<AdminSummaryResponse> getAllAdmins() {
 
         List<Admin> adminList = adminRepository.findAll();
 
@@ -46,34 +53,28 @@ public class AdminServiceImpl implements AdminService {
             throw new NoSuchUserException("No admins found!");
         }
 
-        return adminList;
+        return adminMapper.toAdminSummaryResponseList(adminList);
     }
 
     @Override
-    public Admin getAdminById(Long id) {
+    public AdminFullResponse getAdminById(Long id) {
 
-        Optional<Admin> adminOptional = adminRepository.findById(id);
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Member with id: " + id + " not found!"));
 
-        if (adminOptional.isEmpty()) {
-            throw new NoSuchUserException("No admin with provided id exists!");
-        }
-
-        return adminOptional.get();
+        return adminMapper.toAdminFullResponse(admin);
     }
 
     @Override
     @Transactional
-    public Admin updateAdminById(Long id, Admin admin) {
+    public AdminFullResponse updateAdminById(Long id, AdminFullRequest admin) {
 
-        Optional<Admin> adminOptional = adminRepository.findById(id);
+        Admin currentAdmin = adminRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Member with id: " + id + " not found!"));
 
-        if (adminOptional.isEmpty()) {
-            throw new NoSuchUserException("No admin with provided id exists!");
-        }
-
-        admin.setId(id);
-        adminRepository.save(admin);
-        return adminOptional.get();
+        Admin updatedAdmin = adminMapper.adminUpdate(admin, currentAdmin);
+        adminRepository.save(updatedAdmin);
+        return adminMapper.toAdminFullResponse(updatedAdmin);
     }
 
     @Override

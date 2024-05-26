@@ -1,17 +1,20 @@
 package org.siri_hate.user_service.service;
 
+import org.siri_hate.user_service.model.dto.request.admin.AdminFullRequest;
+import org.siri_hate.user_service.model.dto.response.admin.AdminFullResponse;
+import org.siri_hate.user_service.model.dto.response.admin.AdminSummaryResponse;
 import org.siri_hate.user_service.model.entity.Admin;
 import java.util.List;
 
 public interface AdminService {
 
-    Admin createAdmin(Admin admin);
+    AdminFullResponse createAdmin(AdminFullRequest admin);
 
-    List<Admin> getAllAdmins();
+    List<AdminSummaryResponse> getAllAdmins();
 
-    Admin getAdminById(Long id);
+    AdminFullResponse getAdminById(Long id);
 
-    Admin updateAdminById(Long id, Admin admin);
+    AdminFullResponse updateAdminById(Long id, AdminFullRequest admin);
 
     void deleteAdminById(Long id);
 

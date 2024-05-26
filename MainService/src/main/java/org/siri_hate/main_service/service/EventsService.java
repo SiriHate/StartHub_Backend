@@ -1,18 +1,21 @@
 package org.siri_hate.main_service.service;
 
+import org.siri_hate.main_service.model.dto.request.event.EventFullRequest;
+import org.siri_hate.main_service.model.dto.response.event.EventFullResponse;
+import org.siri_hate.main_service.model.dto.response.event.EventSummaryResponse;
 import org.siri_hate.main_service.model.entity.Event;
 
 import java.util.List;
 
 public interface EventsService {
 
-    Event createEvent(Event event);
+    void createEvent(EventFullRequest event);
 
-    Event getEventById(Long id);
+    EventFullResponse getEventById(Long id);
 
-    List<Event> getEventsByUsername(String username);
+    List<EventSummaryResponse> getEventsByUsername(String username);
 
-    List<Event> getAllEvents();
+    List<EventSummaryResponse> getAllEvents();
 
     void updateEvent(Long id, Event eventDetails);
 

@@ -1,13 +1,16 @@
 package org.siri_hate.user_service.service;
 
+import org.siri_hate.user_service.model.dto.request.*;
+import org.siri_hate.user_service.model.dto.request.member.*;
+import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
+import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;
 import org.siri_hate.user_service.model.entity.Member;
-import org.siri_hate.user_service.model.request.*;
 
 import java.util.List;
 
 public interface MemberService {
 
-    void memberRegistration(Member member);
+    void memberRegistration(MemberRegistrationRequest member);
 
     void activateMemberAccount(Long id);
 
@@ -17,24 +20,28 @@ public interface MemberService {
 
     void memberPasswordChange(String username, ChangePasswordForm changePasswordForm);
 
-    List<Member> getAllMembers();
+    List<MemberSummaryResponse> getAllMembers();
 
-    Member getMemberById(Long id);
+    List<MemberSummaryResponse> getAllVisibleMembers();
 
-    Member getMemberByUsername(String username);
+    MemberFullResponse getMemberById(Long id);
 
-    List<Member> searchMemberByUsername(String username);
+    MemberFullResponse getMemberByUsername(String username);
 
-    Member memberUpdate(Long id, Member member);
+    List<MemberSummaryResponse> searchMemberByUsername(String username);
+
+    MemberFullResponse memberUpdate(Long id, MemberFullRequest member);
 
     void deleteMemberById(Long id);
 
     void deleteMemberByUserName(String username);
 
-    void memberChangeAvatar(String username, AvatarRequest avatar);
+    void memberChangeAvatar(String username, MemberChangeAvatarRequest avatar);
 
-    void memberChangePersonalInfo(String username, PersonalData personalData);
+    MemberFullResponse memberChangePersonalInfo(String username, MemberProfileDataRequest profileDataRequest);
 
-    Member findMemberByUsername(String username);
+    MemberFullResponse findMemberByUsername(String username);
+
+    MemberFullResponse changeMemberProfileVisibility(MemberChangeProfileVisibilityRequest request, String username);
 
 }

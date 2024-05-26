@@ -1,17 +1,19 @@
 package org.siri_hate.user_service.aspect;
 
-import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 @Aspect
-@Log4j2
 public class LoggingAspect {
+
+    private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
 
     @Pointcut("execution(* org.siri_hate.user_service.controller..*(..))")
     private void controllerMethods() {}

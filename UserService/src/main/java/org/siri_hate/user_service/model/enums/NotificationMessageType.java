@@ -1,8 +1,5 @@
 package org.siri_hate.user_service.model.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum NotificationMessageType {
 
     SUCCESSFUL_REGISTRATION_NOTIFICATION,

@@ -4,8 +4,15 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.siri_hate.user_service.exception.MismatchedPasswordException;
 import org.siri_hate.user_service.exception.UserAlreadyExistsException;
+import org.siri_hate.user_service.model.dto.mapper.MemberMapper;
+import org.siri_hate.user_service.model.dto.request.ChangePasswordForm;
+import org.siri_hate.user_service.model.dto.request.ChangePasswordTokenRequest;
+import org.siri_hate.user_service.model.dto.request.RecoveryPasswordRequest;
+import org.siri_hate.user_service.model.dto.request.member.*;
+import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
+import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;
 import org.siri_hate.user_service.model.entity.Member;
-import org.siri_hate.user_service.model.request.*;
+import org.siri_hate.user_service.model.enums.UserRole;
 import org.siri_hate.user_service.repository.MemberRepository;
 import org.siri_hate.user_service.service.ConfirmationService;
 import org.siri_hate.user_service.service.MemberService;
@@ -14,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,30 +36,38 @@ public class MemberServiceImpl implements MemberService {
 
     final private NotificationService notificationService;
 
+    final private MemberMapper memberMapper;
+
     @Autowired
     private MemberServiceImpl(
             MemberRepository memberRepository,
             PasswordEncoder passwordEncoder,
             @Lazy ConfirmationService confirmationService,
-            NotificationService notificationService
-    ) {
+            NotificationService notificationService,
+            MemberMapper memberMapper
+                             ) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.confirmationService = confirmationService;
         this.notificationService = notificationService;
+        this.memberMapper = memberMapper;
     }
 
     @Override
     @Transactional
-    public void memberRegistration(Member member) {
+    public void memberRegistration(MemberRegistrationRequest member) {
 
-        if (memberRepository.findMemberByUsername(member.getUsername()).isPresent()) {
+        Member memberEntity = memberMapper.toMemberFromRegistration(member);
+
+        if (memberRepository.findMemberByUsername(memberEntity.getUsername()) != null) {
             throw new UserAlreadyExistsException("Member with provided email or phone already exists!");
         }
 
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
-        memberRepository.save(member);
-        //confirmationService.sendRegistrationConfirmation(member.getId(), member.getName(), member.getEmail());
+        memberEntity.setPassword(passwordEncoder.encode(memberEntity.getPassword()));
+        memberEntity.setRole(UserRole.MEMBER.name());
+        memberRepository.save(memberEntity);
+        // TODO Вернуть после дебага
+        //confirmationService.sendRegistrationConfirmation(memberEntity.getId(), memberEntity.getName(), memberEntity.getEmail());
     }
 
     @Override
@@ -77,13 +93,11 @@ public class MemberServiceImpl implements MemberService {
 
         String email = recoveryPasswordRequest.getEmail();
 
-        Optional<Member> memberOptional = memberRepository.findMemberByEmail(email);
+        Member member = memberRepository.findMemberByEmail(email);
 
-        if (memberOptional.isEmpty()) {
+        if (member == null) {
             throw new EntityNotFoundException("Member with email: " + email + " not found!");
         }
-
-        Member member = memberOptional.get();
 
         Long memberId = member.getId();
         String memberName = member.getName();
@@ -123,13 +137,11 @@ public class MemberServiceImpl implements MemberService {
         String currentPassword = changePasswordForm.getCurrentPassword();
         String newPassword = changePasswordForm.getNewPassword();
 
-        Optional<Member> memberOptional = memberRepository.findMemberByUsername(username);
+        Member member = memberRepository.findMemberByUsername(username);
 
-        if (memberOptional.isEmpty()) {
+        if (member == null) {
             throw new EntityNotFoundException("Member with id: " + username + " not found!");
         }
-
-        Member member = memberOptional.get();
 
         if (passwordEncoder.matches(currentPassword, member.getPassword())) {
             member.setPassword(passwordEncoder.encode(newPassword));
@@ -141,8 +153,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    @Transactional
-    public List<Member> getAllMembers() {
+    public List<MemberSummaryResponse> getAllMembers() {
 
         List<Member> memberList = memberRepository.findAll();
 
@@ -150,59 +161,67 @@ public class MemberServiceImpl implements MemberService {
             throw new EntityNotFoundException("No member was found!");
         }
 
-        return memberList;
+        return memberMapper.toMemberSummaryResponseList(memberList);
+    }
+
+    public List<MemberSummaryResponse> getAllVisibleMembers() {
+
+        List<Member> members = memberRepository.findMembersByProfileHiddenFlagIsFalse();
+
+        if (members.isEmpty()) {
+            throw new EntityNotFoundException("No member was found!");
+        }
+
+        return memberMapper.toMemberSummaryResponseList(members);
     }
 
     @Override
-    @Transactional
-    public Member getMemberById(Long id) {
+    public MemberFullResponse getMemberById(Long id) {
 
-        Optional<Member> memberOptional = memberRepository.findById(id);
+        Optional<Member> member = memberRepository.findById(id);
 
-        if (memberOptional.isEmpty()) {
+        if (member.isEmpty()) {
             throw new EntityNotFoundException("Member with id: " + id + " not found!");
         }
 
-        return memberOptional.get();
+        return memberMapper.toMemberFullResponse(member.get());
     }
 
     @Override
-    public Member getMemberByUsername(String username) {
+    public MemberFullResponse getMemberByUsername(String username) {
 
-        Optional<Member> memberOptional = memberRepository.findMemberByUsername(username);
+        Member member = memberRepository.findMemberByUsername(username);
 
-        if (memberOptional.isEmpty()) {
+        if (member == null) {
             throw new EntityNotFoundException("Member with username: " + username + " not found!");
         }
 
-        return memberOptional.get();
+        return memberMapper.toMemberFullResponse(member);
     }
 
     @Override
-    public List<Member> searchMemberByUsername(String username) {
+    public List<MemberSummaryResponse> searchMemberByUsername(String username) {
 
-        List<Member> memberList = memberRepository.findMemberByUsernameStartingWithIgnoreCase(username);
+        List<Member> members = memberRepository.findMemberByUsernameStartingWithIgnoreCase(username);
 
-        if (memberList.isEmpty()) {
+        if (members.isEmpty()) {
             throw new EntityNotFoundException("No member found with username: " + username + " not found!");
         }
 
-        return memberList;
+        return memberMapper.toMemberSummaryResponseList(members);
     }
 
     @Override
     @Transactional
-    public Member memberUpdate(Long id, Member member) {
+    public MemberFullResponse memberUpdate(Long id, MemberFullRequest member) {
 
-        Optional<Member> memberOptional = memberRepository.findById(id);
+        Member currentMember = memberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+                "Member with id: " + id + " not found!"));
 
-        if (memberOptional.isEmpty()) {
-            throw new EntityNotFoundException("Member with id: " + id + " not found!");
-        }
+        Member updatedMember = memberMapper.memberUpdateFullData(member, currentMember);
 
-        member.setId(id);
-
-        return memberRepository.save(member);
+        memberRepository.save(updatedMember);
+        return memberMapper.toMemberFullResponse(updatedMember);
     }
 
     @Override
@@ -228,10 +247,9 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void deleteMemberByUserName(String username) {
 
-        Optional<Member> memberOptional = memberRepository.findMemberByUsername(username);
+        Member member = memberRepository.findMemberByUsername(username);
 
-        if (memberOptional.isPresent()) {
-            Member member = memberOptional.get();
+        if (member != null) {
             memberRepository.delete(member);
             String name = member.getName();
             String email = member.getEmail();
@@ -244,38 +262,61 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void memberChangeAvatar(String username, AvatarRequest avatar) {
-        Member member = findMemberByUsername(username);
-        String avatarUrl = avatar.getAvatarUrl();
-        member.setAvatarUrl(avatarUrl);
-        memberRepository.save(member);
+    public void memberChangeAvatar(String username, MemberChangeAvatarRequest avatar) {
+
+        Member member = memberRepository.findMemberByUsername(username);
+
+        if (member == null) {
+            throw new EntityNotFoundException("Member with username: " + username + " not found!");
+        }
+
+        Member updatedMember = memberMapper.memberUpdateAvatar(avatar, member);
+        memberRepository.save(updatedMember);
     }
 
     @Override
     @Transactional
-    public void memberChangePersonalInfo(String username, PersonalData personalData) {
-        Member member = findMemberByUsername(username);
-        System.out.println("member = " + member);
-        System.out.println("personalData" + personalData);
-        member.setName(personalData.getName());
-        member.setPhone(personalData.getPhone());
-        member.setEmail(personalData.getEmail());
-        member.setBirthday(personalData.getBirthday());
-        member.setSpecialization(personalData.getSpecialization());
-        member.setAbout(personalData.getAbout());
-        memberRepository.save(member);
-    }
+    public MemberFullResponse memberChangePersonalInfo(String username, MemberProfileDataRequest profileDataRequest) {
 
-    @Override
-    public Member findMemberByUsername(String username) {
+        Member member = memberRepository.findMemberByUsername(username);
 
-        Optional<Member> userOptional = memberRepository.findMemberByUsername(username);
-
-        if (userOptional.isEmpty()) {
+        if (member == null) {
             throw new EntityNotFoundException("Member with username: " + username + " not found!");
         }
 
-        return userOptional.get();
+        Member updatedMember = memberMapper.memberUpdateProfileData(profileDataRequest, member);
+
+        memberRepository.save(updatedMember);
+        return memberMapper.toMemberFullResponse(updatedMember);
+    }
+
+    @Override
+    public MemberFullResponse findMemberByUsername(String username) {
+
+        Member member = memberRepository.findMemberByUsername(username);
+
+        if (member == null) {
+            throw new EntityNotFoundException("Member with username: " + username + " not found!");
+        }
+
+        return memberMapper.toMemberFullResponse(member);
+    }
+
+    @Override
+    @Transactional
+    public MemberFullResponse changeMemberProfileVisibility(
+            MemberChangeProfileVisibilityRequest request, String username
+                                                           ) {
+        Member member = memberRepository.findMemberByUsername(username);
+
+        if (member == null) {
+            throw new EntityNotFoundException("Member with username: " + username + " not found!");
+        }
+
+        member.setProfileHiddenFlag(request.getProfileHiddenFlag());
+        memberRepository.save(member);
+
+        return memberMapper.toMemberFullResponse(member);
     }
 
 }

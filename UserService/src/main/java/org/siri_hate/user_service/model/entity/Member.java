@@ -1,15 +1,6 @@
 package org.siri_hate.user_service.model.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.siri_hate.user_service.model.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -17,21 +8,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "members")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = true)
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Member extends User {
 
-    {
-        setRole(UserRole.MEMBER.getValue());
-        setEnabled(false);
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonDeserialize
     @Column(name = "id")
     private Long id;
 
@@ -39,27 +20,125 @@ public class Member extends User {
     private String avatarUrl;
 
     @Column(name = "name", nullable = false)
-    @NotBlank(message = "Name should not be null")
     private String name;
 
     @Column(name = "specialization")
-    String specialization;
+    private String specialization;
 
     @Column(name = "about")
     private String about;
 
     @Column(name = "email", nullable = false, unique = true)
-    @NotBlank(message = "Email should not be null")
-    @Email(message = "Must provide a valid email address")
     private String email;
 
     @Column(name = "phone", nullable = false, unique = true)
-    @NotBlank(message = "Phone should not be null")
     private String phone;
 
     @Column(name = "birthday", nullable = false)
-    @NotNull(message = "Birth day should not be null")
     private LocalDate birthday;
+
+    @Column(name = "is_hidden", nullable = false)
+    private boolean profileHiddenFlag;
+
+    public Member() {}
+
+    public Member(
+            Long id,
+            String username,
+            String password, String role,
+            boolean isEnabled,
+            String avatarUrl,
+            String name,
+            String specialization,
+            String about,
+            String email,
+            String phone,
+            LocalDate birthday,
+            boolean profileHiddenFlag
+    ) {
+        super(id, username, password, role, isEnabled);
+        this.id = id;
+        this.avatarUrl = avatarUrl;
+        this.name = name;
+        this.specialization = specialization;
+        this.about = about;
+        this.email = email;
+        this.phone = phone;
+        this.birthday = birthday;
+        this.profileHiddenFlag = profileHiddenFlag;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public boolean getProfileHiddenFlag() {
+        return profileHiddenFlag;
+    }
+
+    public void setProfileHiddenFlag(boolean profileHiddenFlag) {
+        this.profileHiddenFlag = profileHiddenFlag;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -68,22 +147,17 @@ public class Member extends User {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return super.isEnabled();
+        return false;
     }
 
 }

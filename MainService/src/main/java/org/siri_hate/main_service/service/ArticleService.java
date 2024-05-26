@@ -1,5 +1,8 @@
 package org.siri_hate.main_service.service;
 
+import org.siri_hate.main_service.model.dto.request.article.ArticleFullRequest;
+import org.siri_hate.main_service.model.dto.response.article.ArticleFullResponse;
+import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryResponse;
 import org.siri_hate.main_service.model.entity.Article;
 import org.siri_hate.main_service.model.entity.News;
 
@@ -7,15 +10,17 @@ import java.util.List;
 
 public interface ArticleService {
 
-    void createArticle(String username, Article article);
+    void createArticle(String username, ArticleFullRequest article);
 
-    Article getArticleById(Long id);
+    ArticleFullResponse getArticleById(Long id);
 
-    List<Article> getArticlesByUsername(String username);
+    List<ArticleSummaryResponse> getArticlesByUsername(String username);
 
-    List<Article> getAllArticles();
+    List<ArticleSummaryResponse> getArticlesByTitle(String title);
 
-    List<Article> searchArticlesByOwnerUsername(String username);
+    List<ArticleSummaryResponse> getAllArticles();
+
+    List<ArticleSummaryResponse> searchArticlesByOwnerUsername(String username);
 
     void updateArticle(Long id, Article articleDetails);
 

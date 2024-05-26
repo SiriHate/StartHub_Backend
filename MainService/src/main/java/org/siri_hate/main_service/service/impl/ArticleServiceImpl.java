@@ -1,12 +1,17 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
+import org.siri_hate.main_service.model.dto.mapper.ArticleMapper;
+import org.siri_hate.main_service.model.dto.request.article.ArticleFullRequest;
+import org.siri_hate.main_service.model.dto.response.article.ArticleFullResponse;
+import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryResponse;
 import org.siri_hate.main_service.model.entity.Article;
 import org.siri_hate.main_service.repository.ArticleRepository;
 import org.siri_hate.main_service.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -16,21 +21,26 @@ public class ArticleServiceImpl implements ArticleService {
 
     final private ArticleRepository articleRepository;
 
+    final private ArticleMapper articleMapper;
+
     @Autowired
-    public ArticleServiceImpl(ArticleRepository articleRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, ArticleMapper articleMapper) {
         this.articleRepository = articleRepository;
+        this.articleMapper = articleMapper;
     }
 
     @Override
     @Transactional
-    public void createArticle(String username, Article article) {
-        article.setOwner(username);
-        articleRepository.save(article);
+    public void createArticle(String username, ArticleFullRequest article) {
+        Article articleEntity = articleMapper.toArticle(article);
+        articleEntity.setOwner(username);
+        articleEntity.setPublicationDate(LocalDate.now());
+        articleRepository.save(articleEntity);
     }
 
     @Override
     @Transactional
-    public Article getArticleById(Long id) {
+    public ArticleFullResponse getArticleById(Long id) {
 
         Optional<Article> article = articleRepository.findById(id);
 
@@ -38,11 +48,11 @@ public class ArticleServiceImpl implements ArticleService {
             throw new NoSuchElementException("Article not found");
         }
 
-        return article.get();
+        return articleMapper.toArticleFullResponse(article.get());
     }
 
     @Override
-    public List<Article> getArticlesByUsername(String username) {
+    public List<ArticleSummaryResponse> getArticlesByUsername(String username) {
 
         List<Article> articleList = articleRepository.findAll();
 
@@ -50,11 +60,16 @@ public class ArticleServiceImpl implements ArticleService {
             throw new NoSuchElementException("No articles found for username " + username);
         }
 
-        return articleList;
+        return articleMapper.toArticleSummaryResponseList(articleList);
     }
 
     @Override
-    public List<Article> getAllArticles() {
+    public List<ArticleSummaryResponse> getArticlesByTitle(String title) {
+        return List.of();
+    }
+
+    @Override
+    public List<ArticleSummaryResponse> getAllArticles() {
 
         List<Article> articleList = articleRepository.findAll();
 
@@ -62,19 +77,19 @@ public class ArticleServiceImpl implements ArticleService {
             throw new NoSuchElementException("No articles found");
         }
 
-        return articleList;
+        return articleMapper.toArticleSummaryResponseList(articleList);
     }
 
     @Override
-    public List<Article> searchArticlesByOwnerUsername(String username) {
+    public List<ArticleSummaryResponse> searchArticlesByOwnerUsername(String username) {
 
-        List<Article> articles = articleRepository.findArticleByOwner(username);
+        List<Article> articleList = articleRepository.findArticleByOwner(username);
 
-        if (articles.isEmpty()) {
+        if (articleList.isEmpty()) {
             throw new NoSuchElementException("No articles found for username " + username);
         }
 
-        return articles;
+        return articleMapper.toArticleSummaryResponseList(articleList);
     }
 
     @Override
@@ -86,8 +101,6 @@ public class ArticleServiceImpl implements ArticleService {
         if (article.isEmpty()) {
             throw new NoSuchElementException("Article with id = " + id + "not found");
         }
-
-        article.get().setId(id);
 
         articleRepository.save(article.get());
     }

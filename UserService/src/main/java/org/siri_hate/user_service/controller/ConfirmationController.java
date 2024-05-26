@@ -1,6 +1,6 @@
 package org.siri_hate.user_service.controller;
 
-import org.siri_hate.user_service.model.request.RegistrationTokenRequest;
+import org.siri_hate.user_service.model.dto.request.RegistrationTokenRequest;
 import org.siri_hate.user_service.service.ConfirmationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
-@RequestMapping("/api/v1/users/confirmation")
+@RequestMapping("/api/v1/user_service/confirmations")
 public class ConfirmationController {
 
     private final ConfirmationService confirmationService;

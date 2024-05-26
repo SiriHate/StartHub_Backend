@@ -1,7 +1,7 @@
 package org.siri_hate.user_service.service;
 
 import org.siri_hate.user_service.model.entity.User;
-import org.siri_hate.user_service.model.request.LoginForm;
+import org.siri_hate.user_service.model.dto.request.LoginForm;
 
 public interface UserService {
 

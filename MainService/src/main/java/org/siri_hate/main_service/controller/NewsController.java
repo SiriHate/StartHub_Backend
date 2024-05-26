@@ -1,8 +1,10 @@
 package org.siri_hate.main_service.controller;
 
 import jakarta.validation.Valid;
+import org.siri_hate.main_service.model.dto.request.news.NewsFullRequest;
+import org.siri_hate.main_service.model.dto.response.news.NewsFullResponse;
+import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
 import org.siri_hate.main_service.model.entity.News;
-import org.siri_hate.main_service.model.entity.Project;
 import org.siri_hate.main_service.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,7 @@ import java.util.List;
 
 @RestController
 @Validated
-@RequestMapping("/api/v1/main/news")
+@RequestMapping("/api/v1/main_service/news")
 public class NewsController {
 
     final private NewsService newsService;
@@ -27,26 +29,36 @@ public class NewsController {
     }
 
     @PostMapping
-    public ResponseEntity<News> createNews(@Valid @RequestBody News news) {
-        News createdNews = newsService.createNews(news);
-        return new ResponseEntity<>(createdNews, HttpStatus.CREATED);
+    public ResponseEntity<String> createNews(@Valid @RequestBody NewsFullRequest news) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        newsService.createNews(username, news);
+        return new ResponseEntity<>("News was successfully created", HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<NewsSummaryResponse>> getAllNews() {
+        List<NewsSummaryResponse> news = newsService.getAllNews();
+        return new ResponseEntity<>(news, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<News> getNewsById(@PathVariable Long id) {
-        News news = newsService.getNewsById(id);
+    public ResponseEntity<NewsFullResponse> getNewsById(@PathVariable Long id) {
+        NewsFullResponse news = newsService.getNewsById(id);
+        return new ResponseEntity<>(news, HttpStatus.OK);
+    }
+
+    @GetMapping("/search-by-auth")
+    public ResponseEntity<List<NewsSummaryResponse>> findArticlesByUserAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        List<NewsSummaryResponse> news = newsService.searchNewsByOwnerUsername(username);
         return new ResponseEntity<>(news, HttpStatus.OK);
     }
 
     @GetMapping("/by-category/{category}")
-    public ResponseEntity<List<News>> getNewsByCategory(@PathVariable String category) {
-        List<News> newsList = newsService.getNewsByCategory(category);
-        return new ResponseEntity<>(newsList, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<News>> getAllNews() {
-        List<News> newsList = newsService.getAllNews();
+    public ResponseEntity<List<NewsSummaryResponse>> getNewsByCategory(@PathVariable String category) {
+        List<NewsSummaryResponse> newsList = newsService.getNewsByCategory(category);
         return new ResponseEntity<>(newsList, HttpStatus.OK);
     }
 
@@ -60,14 +72,6 @@ public class NewsController {
     public ResponseEntity<String> deleteNews(@PathVariable Long id) {
         newsService.deleteNews(id);
         return new ResponseEntity<>("News has been successfully deleted", HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/find-my-news")
-    public ResponseEntity<List<News>> findArticlesByUserAuth() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        List<News> projects = newsService.searchNewsByOwnerUsername(username);
-        return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
 }

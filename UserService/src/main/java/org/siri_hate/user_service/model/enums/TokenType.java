@@ -1,8 +1,5 @@
 package org.siri_hate.user_service.model.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum TokenType {
 
     CONFIRM_REGISTRATION("CONFIRM_REGISTRATION"),
@@ -10,8 +7,12 @@ public enum TokenType {
 
     private final String value;
 
-    TokenType(String value) {
+    private TokenType(String value) {
         this.value = value;
+    }
+
+    public String getValue() {
+        return value;
     }
 
 }

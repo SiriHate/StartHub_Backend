@@ -2,7 +2,7 @@ package org.siri_hate.user_service.controller;
 
 
 import jakarta.validation.Valid;
-import org.siri_hate.user_service.model.request.LoginForm;
+import org.siri_hate.user_service.model.dto.request.LoginForm;
 import org.siri_hate.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
-@RequestMapping("/api/v1/users/user")
+@RequestMapping("/api/v1/user_service/users")
 public class UserController {
 
     final private UserService userService;

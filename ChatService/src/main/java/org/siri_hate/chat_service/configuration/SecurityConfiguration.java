@@ -1,6 +1,6 @@
-package org.siri_hate.main_service.configuration;
+package org.siri_hate.chat_service.configuration;
 
-import org.siri_hate.main_service.security.JWTAuthFilter;
+import org.siri_hate.chat_service.security.JWTAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +29,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 )
