@@ -1,16 +1,19 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
+import org.siri_hate.main_service.exception.NoSuchProjectFoundException;
 import org.siri_hate.main_service.model.dto.mapper.ProjectMapper;
 import org.siri_hate.main_service.model.dto.request.project.ProjectFullRequest;
 import org.siri_hate.main_service.model.dto.response.project.ProjectFullResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
 import org.siri_hate.main_service.model.entity.Project;
 import org.siri_hate.main_service.repository.ProjectRepository;
+import org.siri_hate.main_service.repository.adapters.ProjectSpecification;
 import org.siri_hate.main_service.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -48,19 +51,21 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.toProjectSummaryResponsePage(projectsPage);
     }
 
-    @Override
-    public Page<ProjectSummaryResponse> searchProjectsByName(String projectName, Pageable pageable) {
+    public Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
+            String category,
+            String query,
+            Pageable pageable
+                                                                           ) {
+        Specification<Project> spec = Specification.where(ProjectSpecification.projectNameStartsWith(query))
+                .and(ProjectSpecification.hasCategory(category));
 
-        Page<Project> projectsPage = projectRepository.findProjectsByProjectNameContainingIgnoreCase(
-                projectName,
-                pageable
-                                                                                                    );
+        Page<Project> projects = projectRepository.findAll(spec, pageable);
 
-        if (projectsPage.isEmpty()) {
-            throw new RuntimeException("No projects found");
+        if (projects.isEmpty()) {
+            throw new NoSuchProjectFoundException("No projects found");
         }
 
-        return projectMapper.toProjectSummaryResponsePage(projectsPage);
+        return projectMapper.toProjectSummaryResponsePage(projects);
     }
 
     @Override

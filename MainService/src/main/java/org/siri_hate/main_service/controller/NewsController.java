@@ -49,7 +49,7 @@ public class NewsController {
         return new ResponseEntity<>(news, HttpStatus.OK);
     }
 
-    @GetMapping("/search-by-auth")
+    @GetMapping("/user/auth")
     public ResponseEntity<Page<NewsSummaryResponse>> findArticlesByUserAuth(
             @PageableDefault(size = 1) Pageable pageable
                                                                            ) {
@@ -59,12 +59,13 @@ public class NewsController {
         return new ResponseEntity<>(news, HttpStatus.OK);
     }
 
-    @GetMapping("/by-category/{category}")
-    public ResponseEntity<Page<NewsSummaryResponse>> getNewsByCategory(
-            @PathVariable String category,
-            @PageableDefault(size = 1) Pageable pageable
-                                                                      ) {
-        Page<NewsSummaryResponse> newsList = newsService.getNewsByCategory(category, pageable);
+    @GetMapping("/search")
+    public ResponseEntity<Page<NewsSummaryResponse>> getNewsByCategoryAndSearchQuery(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10) Pageable pageable
+                                                                                    ) {
+        Page<NewsSummaryResponse> newsList = newsService.getNewsByCategoryAndSearchQuery(category, query, pageable);
         return new ResponseEntity<>(newsList, HttpStatus.OK);
     }
 

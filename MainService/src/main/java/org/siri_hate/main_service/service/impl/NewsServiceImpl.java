@@ -1,20 +1,22 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
+import org.siri_hate.main_service.exception.NoSuchNewsFoundException;
 import org.siri_hate.main_service.model.dto.mapper.NewsMapper;
 import org.siri_hate.main_service.model.dto.request.news.NewsFullRequest;
 import org.siri_hate.main_service.model.dto.response.news.NewsFullResponse;
 import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
 import org.siri_hate.main_service.model.entity.News;
 import org.siri_hate.main_service.repository.NewsRepository;
+import org.siri_hate.main_service.repository.adapters.NewsSpecification;
 import org.siri_hate.main_service.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -52,16 +54,18 @@ public class NewsServiceImpl implements NewsService {
         return newsMapper.toNewsFullResponse(news.get());
     }
 
-    @Override
-    public Page<NewsSummaryResponse> getNewsByCategory(String category, Pageable pageable) {
+    public Page<NewsSummaryResponse> getNewsByCategoryAndSearchQuery(String category, String query, Pageable pageable) {
 
-        Page<News> news = null;
+        Specification<News> spec = Specification.where(NewsSpecification.titleStartsWith(query))
+                .and(NewsSpecification.hasCategory(category));
+
+        Page<News> news = newsRepository.findAll(spec, pageable);
 
         if (news.isEmpty()) {
-            throw new NoSuchElementException("No news found for category " + category);
+            throw new NoSuchNewsFoundException("No news found");
         }
 
-        return null;
+        return newsMapper.toNewsSummaryResponsePage(news);
     }
 
     @Override

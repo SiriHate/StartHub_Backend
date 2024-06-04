@@ -15,7 +15,7 @@ public interface NewsService {
 
     NewsFullResponse getNewsById(Long id);
 
-    Page<NewsSummaryResponse> getNewsByCategory(String category, Pageable pageable);
+    Page<NewsSummaryResponse> getNewsByCategoryAndSearchQuery(String category, String query, Pageable pageable);
 
     Page<NewsSummaryResponse> getAllNews(Pageable pageable);
 

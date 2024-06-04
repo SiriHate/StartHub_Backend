@@ -3,6 +3,7 @@ package org.siri_hate.main_service.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.siri_hate.main_service.model.dto.request.project.ProjectFullRequest;
+import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectFullResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
 import org.siri_hate.main_service.service.ProjectService;
@@ -65,12 +66,17 @@ public class ProjectController {
         return new ResponseEntity<>("Project was successfully deleted", HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/search/by-project-name/{projectName}")
-    public ResponseEntity<Page<ProjectSummaryResponse>> searchProjectsByName(
-            @PathVariable("projectName") String projectName,
-            @PageableDefault(size = 1) Pageable pageable
-                                                                            ) {
-        Page<ProjectSummaryResponse> projects = projectService.searchProjectsByName(projectName, pageable);
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProjectSummaryResponse>> searchProjects(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10) Pageable pageable
+                                                                      ) {
+        Page<ProjectSummaryResponse> projects = projectService.getProjectsByCategoryAndSearchQuery(
+                category,
+                query,
+                pageable
+                                                                                                  );
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 

@@ -14,7 +14,7 @@ public interface ProjectService {
 
     Page<ProjectSummaryResponse> getAllProjects(Pageable pageable);
 
-    Page<ProjectSummaryResponse> searchProjectsByName(String projectName, Pageable pageable);
+    Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(String category, String query, Pageable pageable);
 
     Page<ProjectSummaryResponse> searchProjectsByOwnerUsername(String username, Pageable pageable);
 

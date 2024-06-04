@@ -76,6 +76,16 @@ public class MemberController {
         return new ResponseEntity<>(members, HttpStatus.OK);
     }
 
+    @GetMapping("/visible/search")
+    public ResponseEntity<Page<MemberSummaryResponse>> searchMembers(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String specialization,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<MemberSummaryResponse> membersPage = memberService.getMembersByUsernameAndSpecialization(
+                username, specialization, pageable);
+        return new ResponseEntity<>(membersPage, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MemberFullResponse> getMemberById(
             @Positive(message = "ID should be greater than zero") @PathVariable("id") Long id

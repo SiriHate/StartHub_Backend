@@ -1,20 +1,22 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
+import org.siri_hate.main_service.exception.NoSuchArticleFoundException;
 import org.siri_hate.main_service.model.dto.mapper.ArticleMapper;
 import org.siri_hate.main_service.model.dto.request.article.ArticleFullRequest;
 import org.siri_hate.main_service.model.dto.response.article.ArticleFullResponse;
 import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryResponse;
 import org.siri_hate.main_service.model.entity.Article;
 import org.siri_hate.main_service.repository.ArticleRepository;
+import org.siri_hate.main_service.repository.adapters.ArticleSpecification;
 import org.siri_hate.main_service.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -68,6 +70,25 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Page<ArticleSummaryResponse> getArticlesByTitle(String title, Pageable pageable) {
         return null;
+    }
+
+    @Override
+    public Page<ArticleSummaryResponse> getArticlesByCategoryAndSearchQuery(
+            String category,
+            String query,
+            Pageable pageable
+                                                                           ) {
+
+        Specification<Article> spec = Specification.where(ArticleSpecification.titleStartsWith(query))
+                .and(ArticleSpecification.hasCategory(category));
+
+        Page<Article> articles = articleRepository.findAll(spec, pageable);
+
+        if (articles.isEmpty()) {
+            throw new NoSuchArticleFoundException("No articles found");
+        }
+
+        return articleMapper.toArticleSummaryResponsePage(articles);
     }
 
     @Override

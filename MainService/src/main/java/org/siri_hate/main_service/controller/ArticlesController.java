@@ -77,6 +77,22 @@ public class ArticlesController {
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<ArticleSummaryResponse>> getArticlesByCategoryAndSearchQuery(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10) Pageable pageable
+                                                                                           ) {
+
+        Page<ArticleSummaryResponse> newsList = articleService.getArticlesByCategoryAndSearchQuery(
+                category,
+                query,
+                pageable
+                                                                                                  );
+
+        return new ResponseEntity<>(newsList, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<String> updateArticle(@PathVariable Long id, @Valid @RequestBody Article articleDetails) {
         articleService.updateArticle(id, articleDetails);
@@ -88,5 +104,5 @@ public class ArticlesController {
         articleService.deleteArticle(id);
         return new ResponseEntity<>("Article has been successfully deleted", HttpStatus.NO_CONTENT);
     }
-    
+
 }

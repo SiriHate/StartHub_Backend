@@ -3,6 +3,7 @@ package org.siri_hate.user_service.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.siri_hate.user_service.exception.MismatchedPasswordException;
+import org.siri_hate.user_service.exception.NoSuchUserException;
 import org.siri_hate.user_service.exception.UserAlreadyExistsException;
 import org.siri_hate.user_service.model.dto.mapper.MemberMapper;
 import org.siri_hate.user_service.model.dto.request.ChangePasswordForm;
@@ -14,6 +15,7 @@ import org.siri_hate.user_service.model.dto.response.member.MemberSummaryRespons
 import org.siri_hate.user_service.model.entity.Member;
 import org.siri_hate.user_service.model.enums.UserRole;
 import org.siri_hate.user_service.repository.MemberRepository;
+import org.siri_hate.user_service.repository.adapters.MemberSpecification;
 import org.siri_hate.user_service.service.ConfirmationService;
 import org.siri_hate.user_service.service.MemberService;
 import org.siri_hate.user_service.service.NotificationService;
@@ -21,10 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -208,6 +210,25 @@ public class MemberServiceImpl implements MemberService {
 
         if (members.isEmpty()) {
             throw new EntityNotFoundException("No member found with username: " + username + " not found!");
+        }
+
+        return memberMapper.toMemberSummaryResponsePage(members);
+    }
+
+    public Page<MemberSummaryResponse> getMembersByUsernameAndSpecialization(
+            String username,
+            String specialization,
+            Pageable pageable
+                                                                            ) {
+
+        Specification<Member> spec = Specification.where(MemberSpecification.usernameStartsWith(username))
+                .and(MemberSpecification.hasSpecialization(specialization))
+                .and(MemberSpecification.profileIsNotHidden());
+
+        Page<Member> members = memberRepository.findAll(spec, pageable);
+
+        if (members.isEmpty()) {
+            throw new NoSuchUserException("No members found");
         }
 
         return memberMapper.toMemberSummaryResponsePage(members);
