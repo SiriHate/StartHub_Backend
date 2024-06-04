@@ -9,6 +9,8 @@ import org.siri_hate.main_service.model.entity.News;
 import org.siri_hate.main_service.repository.NewsRepository;
 import org.siri_hate.main_service.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -51,39 +53,39 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public List<NewsSummaryResponse> getNewsByCategory(String category) {
+    public Page<NewsSummaryResponse> getNewsByCategory(String category, Pageable pageable) {
 
-        List<News> newsList = null;
+        Page<News> news = null;
 
-        if (newsList.isEmpty()) {
+        if (news.isEmpty()) {
             throw new NoSuchElementException("No news found for category " + category);
         }
 
-        return newsMapper.toNewsSummaryResponseList(newsList);
+        return null;
     }
 
     @Override
-    public List<NewsSummaryResponse> getAllNews() {
+    public Page<NewsSummaryResponse> getAllNews(Pageable pageable) {
 
-        List<News> newsList = newsRepository.findAll();
+        Page<News> news = newsRepository.findAll(pageable);
 
-        if (newsList.isEmpty()) {
+        if (news.isEmpty()) {
             throw new NoSuchElementException("No news found");
         }
 
-        return newsMapper.toNewsSummaryResponseList(newsList);
+        return newsMapper.toNewsSummaryResponsePage(news);
     }
 
     @Override
-    public List<NewsSummaryResponse> searchNewsByOwnerUsername(String username) {
+    public Page<NewsSummaryResponse> searchNewsByOwnerUsername(String username, Pageable pageable) {
 
-        List<News> newsList = newsRepository.findNewsByOwner(username);
+        Page<News> news = newsRepository.findNewsByOwner(username, pageable);
 
-        if (newsList.isEmpty()) {
+        if (news.isEmpty()) {
             throw new NoSuchElementException("No news found for username " + username);
         }
 
-        return newsMapper.toNewsSummaryResponseList(newsList);
+        return newsMapper.toNewsSummaryResponsePage(news);
     }
 
     @Override

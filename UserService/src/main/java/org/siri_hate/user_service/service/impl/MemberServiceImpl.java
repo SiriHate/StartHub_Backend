@@ -19,6 +19,8 @@ import org.siri_hate.user_service.service.MemberService;
 import org.siri_hate.user_service.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -153,26 +155,26 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberSummaryResponse> getAllMembers() {
+    public Page<MemberSummaryResponse> getAllMembers(Pageable pageable) {
 
-        List<Member> memberList = memberRepository.findAll();
+        Page<Member> memberList = memberRepository.findAll(pageable);
 
         if (memberList.isEmpty()) {
             throw new EntityNotFoundException("No member was found!");
         }
 
-        return memberMapper.toMemberSummaryResponseList(memberList);
+        return memberMapper.toMemberSummaryResponsePage(memberList);
     }
 
-    public List<MemberSummaryResponse> getAllVisibleMembers() {
+    public Page<MemberSummaryResponse> getAllVisibleMembers(Pageable pageable) {
 
-        List<Member> members = memberRepository.findMembersByProfileHiddenFlagIsFalse();
+        Page<Member> members = memberRepository.findMembersByProfileHiddenFlagIsFalse(pageable);
 
         if (members.isEmpty()) {
             throw new EntityNotFoundException("No member was found!");
         }
 
-        return memberMapper.toMemberSummaryResponseList(members);
+        return memberMapper.toMemberSummaryResponsePage(members);
     }
 
     @Override
@@ -200,15 +202,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberSummaryResponse> searchMemberByUsername(String username) {
+    public Page<MemberSummaryResponse> searchMemberByUsername(String username, Pageable pageable) {
 
-        List<Member> members = memberRepository.findMemberByUsernameStartingWithIgnoreCase(username);
+        Page<Member> members = memberRepository.findMemberByUsernameStartingWithIgnoreCase(username, pageable);
 
         if (members.isEmpty()) {
             throw new EntityNotFoundException("No member found with username: " + username + " not found!");
         }
 
-        return memberMapper.toMemberSummaryResponseList(members);
+        return memberMapper.toMemberSummaryResponsePage(members);
     }
 
     @Override

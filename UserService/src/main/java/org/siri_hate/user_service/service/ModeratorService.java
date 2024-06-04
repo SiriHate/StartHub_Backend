@@ -4,6 +4,8 @@ import org.siri_hate.user_service.model.dto.request.LoginForm;
 import org.siri_hate.user_service.model.dto.request.moderator.ModeratorFullRequest;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResponse;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorSummaryResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -15,9 +17,9 @@ public interface ModeratorService {
 
     void moderatorPasswordRecovery(String login);
 
-    List<ModeratorSummaryResponse> getAllModerators();
+    Page<ModeratorSummaryResponse> getAllModerators(Pageable pageable);
 
-    List<ModeratorSummaryResponse> searchModeratorsByUsername(String username);
+    Page<ModeratorSummaryResponse> searchModeratorsByUsername(String username, Pageable pageable);
 
     ModeratorFullResponse getModeratorById(Long id);
 

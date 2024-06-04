@@ -1,49 +1,69 @@
 package org.siri_hate.chat_service.controller;
 
-import org.siri_hate.chat_service.model.Message;
 import org.siri_hate.chat_service.model.Chat;
+import org.siri_hate.chat_service.model.dto.request.CreateGroupChatRequest;
 import org.siri_hate.chat_service.model.dto.request.CreatePersonalChatRequest;
+import org.siri_hate.chat_service.model.dto.response.group_chat.GroupChatFullResponse;
+import org.siri_hate.chat_service.model.dto.response.personal_chat.PersonalChatFullResponse;
 import org.siri_hate.chat_service.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
-@Controller
+@RestController
+@Validated
+@RequestMapping("/api/v1/chat_service/chats")
 public class ChatController {
-
-    private final SimpMessagingTemplate messagingTemplate;
 
     final private ChatService chatService;
 
     @Autowired
-    public ChatController(SimpMessagingTemplate simpMessagingTemplate, ChatService chatService) {
-        this.messagingTemplate = simpMessagingTemplate;
+    public ChatController(ChatService chatService) {
         this.chatService = chatService;
     }
 
-    @GetMapping("/api/v1/chats/user/{userId}")
-    public List<Chat> getChatsForUser(@PathVariable Long userId) {
-        return null;
+    @PostMapping("/personal")
+    public ResponseEntity<String> createPersonalChat(@RequestBody @Validated CreatePersonalChatRequest request) {
+        chatService.createPersonalChat(request);
+        return ResponseEntity.ok("Successfully created a personal chat");
     }
 
-    @MessageMapping("")
-    public void createChatRoom(CreatePersonalChatRequest request, Principal principal) {
-        String senderUsername = principal.getName();
-        String recipientUsername = request.getRecipient();
-        chatService.createChatRoom(senderUsername, recipientUsername);
+    @GetMapping("/personal/{id}")
+    public ResponseEntity<PersonalChatFullResponse> getPersonalChatById(@PathVariable String id) {
+        PersonalChatFullResponse chat = chatService.getPersonalChatById(id);
+        return new ResponseEntity<>(chat, HttpStatus.OK);
     }
 
-    @MessageMapping("/chat/{roomId}")
-    public void sendMessage(@DestinationVariable String roomId, @Payload Message chatMessage, Principal principal) {
-        chatService.sendMessage(chatMessage, principal);
+    @PostMapping("/group")
+    public ResponseEntity<String> createGroupChat(@RequestBody @Validated CreateGroupChatRequest request) {
+        chatService.createGroupChat(request);
+        return ResponseEntity.ok("Successfully created a group chat");
+    }
+
+    @GetMapping("/group/{id}")
+    public ResponseEntity<GroupChatFullResponse> getGroupChatById(@PathVariable String id) {
+        GroupChatFullResponse chat = chatService.getGroupChatById(id);
+        return new ResponseEntity<>(chat, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/auth")
+    public ResponseEntity<List<Chat>> getAllMyChats() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        List<Chat> chats = chatService.getAllMyChats(username);
+        return new ResponseEntity<>(chats, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePersonalChat(@PathVariable String id) {
+        chatService.deleteChatById(id);
+        return ResponseEntity.ok("Chat was successfully deleted!");
     }
 
 }

@@ -35,7 +35,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
             ConfirmationTokenRepository confirmationTokenRepository,
             MemberService memberService,
             KafkaProducerService kafkaProducerService
-    ) {
+                                   ) {
         this.confirmationTokenRepository = confirmationTokenRepository;
         this.memberService = memberService;
         this.kafkaProducerService = kafkaProducerService;
@@ -56,8 +56,13 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, userId, name, email, tokenValue);
         confirmationTokenRepository.save(confirmationToken);
         String confirmationTokenValue = confirmationToken.getTokenValue();
-        ConfirmationMessage confirmationMessage = new ConfirmationMessage(messageType, name, email, confirmationTokenValue);
-       kafkaProducerService.sendConfirmationToken(confirmationMessage);
+        ConfirmationMessage confirmationMessage = new ConfirmationMessage(
+                messageType,
+                name,
+                email,
+                confirmationTokenValue
+        );
+        kafkaProducerService.sendConfirmationToken(confirmationMessage);
     }
 
     @Override
@@ -68,7 +73,12 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, userId, name, email, tokenValue);
         confirmationTokenRepository.save(confirmationToken);
         String confirmationTokenValue = confirmationToken.getTokenValue();
-        ConfirmationMessage confirmationMessage = new ConfirmationMessage(messageType, name, email, confirmationTokenValue);
+        ConfirmationMessage confirmationMessage = new ConfirmationMessage(
+                messageType,
+                name,
+                email,
+                confirmationTokenValue
+        );
         kafkaProducerService.sendConfirmationToken(confirmationMessage);
     }
 
@@ -86,7 +96,8 @@ public class ConfirmationServiceImpl implements ConfirmationService {
                 throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
             }
         } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
-            throw new ConcurrentModificationException("The confirmation token was modified or deleted by another transaction.");
+            throw new ConcurrentModificationException(
+                    "The confirmation token was modified or deleted by another transaction.");
         }
 
     }

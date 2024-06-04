@@ -1,29 +1,36 @@
 package org.siri_hate.chat_service.model;
 
 import jakarta.persistence.*;
-import java.util.List;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "users")
+@Document(collection = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    private String id;
 
-    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_personal_chats",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "personal_chat_id")
-    )
-    private List<PersonalChat> personalChats;
+    public User() { }
 
-    @ManyToMany(mappedBy = "users")
-    private List<GroupChat> groupChats;
+    public User(String username) {
+        this.username = username;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
 }

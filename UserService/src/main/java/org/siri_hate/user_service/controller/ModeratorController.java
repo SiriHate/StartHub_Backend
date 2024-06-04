@@ -7,12 +7,14 @@ import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResp
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorSummaryResponse;
 import org.siri_hate.user_service.service.ModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
-import java.util.List;
 
 @RestController
 @Validated
@@ -29,12 +31,14 @@ public class ModeratorController {
     @PostMapping
     public ResponseEntity<String> moderatorRegistration(@RequestBody @Valid ModeratorFullRequest moderator) {
         moderatorService.moderatorRegistration(moderator);
-        return new ResponseEntity<>("Successful registration", HttpStatus.OK);
+        return new ResponseEntity<>("Successful registration", HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<ModeratorSummaryResponse>> getAllModerators() {
-        List<ModeratorSummaryResponse> moderators = moderatorService.getAllModerators();
+    public ResponseEntity<Page<ModeratorSummaryResponse>> getAllModerators(
+            @PageableDefault(size = 1) Pageable pageable
+                                                                          ) {
+        Page<ModeratorSummaryResponse> moderators = moderatorService.getAllModerators(pageable);
         return new ResponseEntity<>(moderators, HttpStatus.OK);
     }
 
@@ -47,9 +51,12 @@ public class ModeratorController {
     }
 
     @GetMapping("/search-by-username")
-    public ResponseEntity<List<ModeratorSummaryResponse>> searchModeratorsByUsername(@RequestParam("username") String username) {
-        List<ModeratorSummaryResponse> moderatorList = moderatorService.searchModeratorsByUsername(username);
-        return new ResponseEntity<>(moderatorList, HttpStatus.OK);
+    public ResponseEntity<Page<ModeratorSummaryResponse>> searchModeratorsByUsername(
+            @RequestParam("username") String username,
+            @PageableDefault(size = 1) Pageable pageable
+                                                                                    ) {
+        Page<ModeratorSummaryResponse> moderators = moderatorService.searchModeratorsByUsername(username, pageable);
+        return new ResponseEntity<>(moderators, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")

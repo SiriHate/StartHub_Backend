@@ -5,6 +5,8 @@ import org.siri_hate.main_service.model.dto.response.article.ArticleFullResponse
 import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryResponse;
 import org.siri_hate.main_service.model.entity.Article;
 import org.siri_hate.main_service.model.entity.News;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,13 +16,13 @@ public interface ArticleService {
 
     ArticleFullResponse getArticleById(Long id);
 
-    List<ArticleSummaryResponse> getArticlesByUsername(String username);
+    Page<ArticleSummaryResponse> getArticlesByUsername(String username, Pageable pageable);
 
-    List<ArticleSummaryResponse> getArticlesByTitle(String title);
+    Page<ArticleSummaryResponse> getArticlesByTitle(String title, Pageable pageable);
 
-    List<ArticleSummaryResponse> getAllArticles();
+    Page<ArticleSummaryResponse> getAllArticles(Pageable pageable);
 
-    List<ArticleSummaryResponse> searchArticlesByOwnerUsername(String username);
+    Page<ArticleSummaryResponse> searchArticlesByOwnerUsername(String username, Pageable pageable);
 
     void updateArticle(Long id, Article articleDetails);
 

@@ -1,17 +1,25 @@
 package org.siri_hate.chat_service.service;
 
-import org.siri_hate.chat_service.model.Message;
 import org.siri_hate.chat_service.model.Chat;
+import org.siri_hate.chat_service.model.dto.request.CreateGroupChatRequest;
+import org.siri_hate.chat_service.model.dto.request.CreatePersonalChatRequest;
+import org.siri_hate.chat_service.model.dto.response.group_chat.GroupChatFullResponse;
+import org.siri_hate.chat_service.model.dto.response.personal_chat.PersonalChatFullResponse;
 
-import java.security.Principal;
 import java.util.List;
 
 public interface ChatService {
 
-    List<Chat> getChatsForUser(Long id);
+    void createPersonalChat(CreatePersonalChatRequest request);
 
-    void createChatRoom(String senderUsername, String recipientUsername);
+    void createGroupChat(CreateGroupChatRequest request);
 
-    void sendMessage(Message message, Principal principal);
+    List<Chat> getAllMyChats(String username);
+
+    PersonalChatFullResponse getPersonalChatById(String id);
+
+    GroupChatFullResponse getGroupChatById(String id);
+
+    void deleteChatById(String chatId);
 
 }

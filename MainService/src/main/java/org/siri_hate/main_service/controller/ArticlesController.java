@@ -7,14 +7,15 @@ import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryRespo
 import org.siri_hate.main_service.model.entity.Article;
 import org.siri_hate.main_service.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Validated
@@ -43,28 +44,36 @@ public class ArticlesController {
     }
 
     @GetMapping("/search-by-username/{username}")
-    public ResponseEntity<List<ArticleSummaryResponse>> getArticlesByUsername(@PathVariable String username) {
-        List<ArticleSummaryResponse> articles = articleService.getArticlesByUsername(username);
+    public ResponseEntity<Page<ArticleSummaryResponse>> getArticlesByUsername(
+            @PathVariable String username,
+            @PageableDefault(size = 1) Pageable pageable
+                                                                             ) {
+        Page<ArticleSummaryResponse> articles = articleService.getArticlesByUsername(username, pageable);
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
     @GetMapping("/search-by-title/{title}")
-    public ResponseEntity<List<ArticleSummaryResponse>> getArticlesByTitle(@PathVariable String title) {
-        List<ArticleSummaryResponse> articles = articleService.getArticlesByTitle(title);
+    public ResponseEntity<Page<ArticleSummaryResponse>> getArticlesByTitle(
+            @PathVariable String title,
+            @PageableDefault(size = 1) Pageable pageable
+                                                                          ) {
+        Page<ArticleSummaryResponse> articles = articleService.getArticlesByTitle(title, pageable);
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
     @GetMapping("/search-by-auth")
-    public ResponseEntity<List<ArticleSummaryResponse>> findArticlesByUserAuth() {
+    public ResponseEntity<Page<ArticleSummaryResponse>> findArticlesByUserAuth(
+            @PageableDefault(size = 1) Pageable pageable
+                                                                              ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        List<ArticleSummaryResponse> articles = articleService.searchArticlesByOwnerUsername(username);
+        Page<ArticleSummaryResponse> articles = articleService.searchArticlesByOwnerUsername(username, pageable);
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<ArticleSummaryResponse>> getAllArticles() {
-        List<ArticleSummaryResponse> articles = articleService.getAllArticles();
+    public ResponseEntity<Page<ArticleSummaryResponse>> getAllArticles(@PageableDefault(size = 1) Pageable pageable) {
+        Page<ArticleSummaryResponse> articles = articleService.getAllArticles(pageable);
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
@@ -79,6 +88,5 @@ public class ArticlesController {
         articleService.deleteArticle(id);
         return new ResponseEntity<>("Article has been successfully deleted", HttpStatus.NO_CONTENT);
     }
-
-
+    
 }

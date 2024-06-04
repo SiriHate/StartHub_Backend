@@ -7,14 +7,15 @@ import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
 import org.siri_hate.main_service.model.entity.News;
 import org.siri_hate.main_service.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Validated
@@ -37,8 +38,8 @@ public class NewsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<NewsSummaryResponse>> getAllNews() {
-        List<NewsSummaryResponse> news = newsService.getAllNews();
+    public ResponseEntity<Page<NewsSummaryResponse>> getAllNews(@PageableDefault(size = 1) Pageable pageable) {
+        Page<NewsSummaryResponse> news = newsService.getAllNews(pageable);
         return new ResponseEntity<>(news, HttpStatus.OK);
     }
 
@@ -49,16 +50,21 @@ public class NewsController {
     }
 
     @GetMapping("/search-by-auth")
-    public ResponseEntity<List<NewsSummaryResponse>> findArticlesByUserAuth() {
+    public ResponseEntity<Page<NewsSummaryResponse>> findArticlesByUserAuth(
+            @PageableDefault(size = 1) Pageable pageable
+                                                                           ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        List<NewsSummaryResponse> news = newsService.searchNewsByOwnerUsername(username);
+        Page<NewsSummaryResponse> news = newsService.searchNewsByOwnerUsername(username, pageable);
         return new ResponseEntity<>(news, HttpStatus.OK);
     }
 
     @GetMapping("/by-category/{category}")
-    public ResponseEntity<List<NewsSummaryResponse>> getNewsByCategory(@PathVariable String category) {
-        List<NewsSummaryResponse> newsList = newsService.getNewsByCategory(category);
+    public ResponseEntity<Page<NewsSummaryResponse>> getNewsByCategory(
+            @PathVariable String category,
+            @PageableDefault(size = 1) Pageable pageable
+                                                                      ) {
+        Page<NewsSummaryResponse> newsList = newsService.getNewsByCategory(category, pageable);
         return new ResponseEntity<>(newsList, HttpStatus.OK);
     }
 

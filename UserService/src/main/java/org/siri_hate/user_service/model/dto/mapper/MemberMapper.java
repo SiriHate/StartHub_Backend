@@ -9,9 +9,13 @@ import org.siri_hate.user_service.model.dto.request.member.MemberChangeAvatarReq
 import org.siri_hate.user_service.model.dto.request.member.MemberFullRequest;
 import org.siri_hate.user_service.model.dto.request.member.MemberProfileDataRequest;
 import org.siri_hate.user_service.model.dto.request.member.MemberRegistrationRequest;
+import org.siri_hate.user_service.model.dto.response.admin.AdminSummaryResponse;
 import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
 import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;
+import org.siri_hate.user_service.model.entity.Admin;
 import org.siri_hate.user_service.model.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -37,5 +41,10 @@ public interface MemberMapper {
     Member memberUpdateFullData(MemberFullRequest memberFullRequest, @MappingTarget Member member);
 
     Member memberUpdateAvatar(MemberChangeAvatarRequest newAvatar, @MappingTarget Member member);
+
+    default Page<MemberSummaryResponse> toMemberSummaryResponsePage(Page<Member> members) {
+        List<MemberSummaryResponse> summaryResponses = toMemberSummaryResponseList(members.getContent());
+        return new PageImpl<>(summaryResponses, members.getPageable(), members.getTotalElements());
+    }
 
 }

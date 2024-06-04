@@ -7,14 +7,15 @@ import org.siri_hate.main_service.model.dto.response.project.ProjectFullResponse
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
 import org.siri_hate.main_service.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Validated
@@ -37,8 +38,8 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectSummaryResponse>> getAllProjects() {
-        List<ProjectSummaryResponse> projects = projectService.getAllProjects();
+    public ResponseEntity<Page<ProjectSummaryResponse>> getAllProjects(@PageableDefault(size = 1) Pageable pageable) {
+        Page<ProjectSummaryResponse> projects = projectService.getAllProjects(pageable);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
@@ -50,8 +51,7 @@ public class ProjectController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<ProjectFullResponse> updateProject(
-            @PathVariable @Positive Long id,
-            @RequestBody @Valid ProjectFullRequest project
+            @PathVariable @Positive Long id, @RequestBody @Valid ProjectFullRequest project
                                                             ) {
         ProjectFullResponse updatedProject = projectService.updateProject(project, id);
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
@@ -66,16 +66,21 @@ public class ProjectController {
     }
 
     @GetMapping("/search/by-project-name/{projectName}")
-    public ResponseEntity<List<ProjectSummaryResponse>> searchProjectsByName(@PathVariable("projectName") String projectName) {
-        List<ProjectSummaryResponse> projects = projectService.searchProjectsByName(projectName);
+    public ResponseEntity<Page<ProjectSummaryResponse>> searchProjectsByName(
+            @PathVariable("projectName") String projectName,
+            @PageableDefault(size = 1) Pageable pageable
+                                                                            ) {
+        Page<ProjectSummaryResponse> projects = projectService.searchProjectsByName(projectName, pageable);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @GetMapping("/find-my-projects")
-    public ResponseEntity<List<ProjectSummaryResponse>> getAllProjectsByOwnerUsername() {
+    public ResponseEntity<Page<ProjectSummaryResponse>> getAllProjectsByOwnerUsername(
+            @PageableDefault(size = 1) Pageable pageable
+                                                                                     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        List<ProjectSummaryResponse> projects = projectService.searchProjectsByOwnerUsername(username);
+        Page<ProjectSummaryResponse> projects = projectService.searchProjectsByOwnerUsername(username, pageable);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 

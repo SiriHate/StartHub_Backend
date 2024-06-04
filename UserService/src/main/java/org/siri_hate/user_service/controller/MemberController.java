@@ -10,13 +10,16 @@ import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
 import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;
 import org.siri_hate.user_service.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
 
 @RestController
 @Validated
@@ -38,7 +41,7 @@ public class MemberController {
     @PostMapping
     public ResponseEntity<String> memberRegistration(@RequestBody @Valid MemberRegistrationRequest member) {
         memberService.memberRegistration(member);
-        return new ResponseEntity<>("Successful registration", HttpStatus.OK);
+        return new ResponseEntity<>("Successful registration", HttpStatus.CREATED);
     }
 
     @PostMapping("/password_recovery/request")
@@ -58,14 +61,18 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MemberSummaryResponse>> getAllMembers() {
-        List<MemberSummaryResponse> members = memberService.getAllMembers();
+    public ResponseEntity<Page<MemberSummaryResponse>> getAllMembers(
+            @PageableDefault(size = 1) Pageable pageable
+                                                                    ) {
+        Page<MemberSummaryResponse> members = memberService.getAllMembers(pageable);
         return new ResponseEntity<>(members, HttpStatus.OK);
     }
 
     @GetMapping("/visible")
-    public ResponseEntity<List<MemberSummaryResponse>> getAllVisibleMembers() {
-        List<MemberSummaryResponse> members = memberService.getAllVisibleMembers();
+    public ResponseEntity<Page<MemberSummaryResponse>> getAllVisibleMembers(
+            @PageableDefault(size = 1) Pageable pageable
+                                                                           ) {
+        Page<MemberSummaryResponse> members = memberService.getAllVisibleMembers(pageable);
         return new ResponseEntity<>(members, HttpStatus.OK);
     }
 
@@ -84,8 +91,11 @@ public class MemberController {
     }
 
     @GetMapping("/search-by-username/{username}")
-    public ResponseEntity<List<MemberSummaryResponse>> searchMemberByUsername(@PathVariable String username) {
-        List<MemberSummaryResponse> members = memberService.searchMemberByUsername(username);
+    public ResponseEntity<Page<MemberSummaryResponse>> searchMemberByUsername(
+            @PathVariable String username,
+            @PageableDefault(size = 1) Pageable pageable
+                                                                             ) {
+        Page<MemberSummaryResponse> members = memberService.searchMemberByUsername(username, pageable);
         return new ResponseEntity<>(members, HttpStatus.OK);
     }
 
@@ -93,7 +103,7 @@ public class MemberController {
     public ResponseEntity<MemberFullResponse> memberUpdate(
             @Positive(message = "ID should be greater than zero") @RequestParam("id") Long id,
             @Valid MemberFullRequest memberFullRequest
-            ) {
+                                                          ) {
         MemberFullResponse updatedMember = memberService.memberUpdate(id, memberFullRequest);
         return new ResponseEntity<>(updatedMember, HttpStatus.OK);
     }

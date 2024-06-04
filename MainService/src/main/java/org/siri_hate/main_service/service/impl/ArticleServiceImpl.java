@@ -9,6 +9,8 @@ import org.siri_hate.main_service.model.entity.Article;
 import org.siri_hate.main_service.repository.ArticleRepository;
 import org.siri_hate.main_service.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -52,44 +54,44 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleSummaryResponse> getArticlesByUsername(String username) {
+    public Page<ArticleSummaryResponse> getArticlesByUsername(String username, Pageable pageable) {
 
-        List<Article> articleList = articleRepository.findAll();
+        Page<Article> articlePage = articleRepository.findArticleByOwner(username, pageable);
 
-        if (articleList.isEmpty()) {
+        if (articlePage.isEmpty()) {
             throw new NoSuchElementException("No articles found for username " + username);
         }
 
-        return articleMapper.toArticleSummaryResponseList(articleList);
+        return articleMapper.toArticleSummaryResponsePage(articlePage);
     }
 
     @Override
-    public List<ArticleSummaryResponse> getArticlesByTitle(String title) {
-        return List.of();
+    public Page<ArticleSummaryResponse> getArticlesByTitle(String title, Pageable pageable) {
+        return null;
     }
 
     @Override
-    public List<ArticleSummaryResponse> getAllArticles() {
+    public Page<ArticleSummaryResponse> getAllArticles(Pageable pageable) {
 
-        List<Article> articleList = articleRepository.findAll();
+        Page<Article> articlePage = articleRepository.findAll(pageable);
 
-        if (articleList.isEmpty()) {
+        if (articlePage.isEmpty()) {
             throw new NoSuchElementException("No articles found");
         }
 
-        return articleMapper.toArticleSummaryResponseList(articleList);
+        return articleMapper.toArticleSummaryResponsePage(articlePage);
     }
 
     @Override
-    public List<ArticleSummaryResponse> searchArticlesByOwnerUsername(String username) {
+    public Page<ArticleSummaryResponse> searchArticlesByOwnerUsername(String username, Pageable pageable) {
 
-        List<Article> articleList = articleRepository.findArticleByOwner(username);
+        Page<Article> articlePage = articleRepository.findArticleByOwner(username, pageable);
 
-        if (articleList.isEmpty()) {
+        if (articlePage.isEmpty()) {
             throw new NoSuchElementException("No articles found for username " + username);
         }
 
-        return articleMapper.toArticleSummaryResponseList(articleList);
+        return articleMapper.toArticleSummaryResponsePage(articlePage);
     }
 
     @Override

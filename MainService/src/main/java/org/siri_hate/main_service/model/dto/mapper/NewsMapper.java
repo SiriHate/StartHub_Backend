@@ -7,8 +7,11 @@ import org.siri_hate.main_service.model.dto.request.news.NewsFullRequest;
 import org.siri_hate.main_service.model.dto.response.news.NewsFullResponse;
 import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
 import org.siri_hate.main_service.model.entity.News;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface NewsMapper {
@@ -24,5 +27,12 @@ public interface NewsMapper {
     List<NewsSummaryResponse> toNewsSummaryResponseList(List<News> news);
 
     News newsUpdate(NewsFullRequest newsFullRequest, @MappingTarget News news);
+
+    default Page<NewsSummaryResponse> toNewsSummaryResponsePage(Page<News> newsPage) {
+        List<NewsSummaryResponse> summaryResponses = newsPage.stream()
+                .map(this::toNewsSummaryResponse)
+                .collect(Collectors.toList());
+        return new PageImpl<>(summaryResponses, newsPage.getPageable(), newsPage.getTotalElements());
+    }
 
 }

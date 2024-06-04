@@ -4,13 +4,16 @@ import org.siri_hate.user_service.model.dto.request.admin.AdminFullRequest;
 import org.siri_hate.user_service.model.dto.response.admin.AdminFullResponse;
 import org.siri_hate.user_service.model.dto.response.admin.AdminSummaryResponse;
 import org.siri_hate.user_service.model.entity.Admin;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 public interface AdminService {
 
     AdminFullResponse createAdmin(AdminFullRequest admin);
 
-    List<AdminSummaryResponse> getAllAdmins();
+    Page<AdminSummaryResponse> getAllAdmins(Pageable pageable);
 
     AdminFullResponse getAdminById(Long id);
 

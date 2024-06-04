@@ -12,6 +12,8 @@ import org.siri_hate.user_service.model.dto.mapper.ModeratorMapper;
 import org.siri_hate.user_service.repository.ModeratorRepository;
 import org.siri_hate.user_service.service.ModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -62,27 +64,30 @@ public class ModeratorServiceImpl implements ModeratorService {
 
     @Override
     @Transactional
-    public List<ModeratorSummaryResponse> getAllModerators() {
+    public Page<ModeratorSummaryResponse> getAllModerators(Pageable pageable) {
 
-        List<Moderator> moderatorList = moderatorRepository.findAll();
+        Page<Moderator> moderators = moderatorRepository.findAll(pageable);
 
-        if (moderatorList.isEmpty()) {
+        if (moderators.isEmpty()) {
             throw new NoSuchUserException("No moderator was found!");
         }
 
-        return moderatorMapper.toModeratorSummaryResponseList(moderatorList);
+        return moderatorMapper.toModeratorSummaryResponsePage(moderators);
     }
 
     @Override
-    public List<ModeratorSummaryResponse> searchModeratorsByUsername(String username) {
+    public Page<ModeratorSummaryResponse> searchModeratorsByUsername(String username, Pageable pageable) {
 
-        List<Moderator> moderatorList = moderatorRepository.findModeratorByUsernameStartingWithIgnoreCase(username);
+        Page<Moderator> moderators = moderatorRepository.findModeratorByUsernameStartingWithIgnoreCase(
+                username,
+                pageable
+                                                                                                      );
 
-        if (moderatorList.isEmpty()) {
+        if (moderators.isEmpty()) {
             throw new NoSuchUserException("No moderator was found!");
         }
 
-        return moderatorMapper.toModeratorSummaryResponseList(moderatorList);
+        return moderatorMapper.toModeratorSummaryResponsePage(moderators);
     }
 
     @Override

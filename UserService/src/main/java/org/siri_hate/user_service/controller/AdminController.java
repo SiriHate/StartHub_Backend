@@ -4,15 +4,16 @@ import jakarta.validation.constraints.Positive;
 import org.siri_hate.user_service.model.dto.request.admin.AdminFullRequest;
 import org.siri_hate.user_service.model.dto.response.admin.AdminFullResponse;
 import org.siri_hate.user_service.model.dto.response.admin.AdminSummaryResponse;
-import org.siri_hate.user_service.model.entity.Admin;
 import org.siri_hate.user_service.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @Validated
@@ -33,8 +34,10 @@ public class AdminController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AdminSummaryResponse>> getAllAdmins() {
-        List<AdminSummaryResponse> admins = adminService.getAllAdmins();
+    public ResponseEntity<Page<AdminSummaryResponse>> getAllAdmins(
+            @PageableDefault(size = 1) Pageable pageable
+                                                                  ) {
+        Page<AdminSummaryResponse> admins = adminService.getAllAdmins(pageable);
         return new ResponseEntity<>(admins, HttpStatus.OK);
     }
 

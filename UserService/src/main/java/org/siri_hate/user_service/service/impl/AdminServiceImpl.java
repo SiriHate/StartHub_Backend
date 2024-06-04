@@ -12,8 +12,9 @@ import org.siri_hate.user_service.model.entity.Admin;
 import org.siri_hate.user_service.repository.AdminRepository;
 import org.siri_hate.user_service.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,15 +46,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<AdminSummaryResponse> getAllAdmins() {
+    public Page<AdminSummaryResponse> getAllAdmins(Pageable pageable) {
 
-        List<Admin> adminList = adminRepository.findAll();
+        Page<Admin> admins = adminRepository.findAll(pageable);
 
-        if (adminList.isEmpty()) {
+        if (admins.isEmpty()) {
             throw new NoSuchUserException("No admins found!");
         }
 
-        return adminMapper.toAdminSummaryResponseList(adminList);
+        return adminMapper.toAdminSummaryResponsePage(admins);
     }
 
     @Override

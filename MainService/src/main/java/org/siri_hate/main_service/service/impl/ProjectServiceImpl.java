@@ -9,9 +9,10 @@ import org.siri_hate.main_service.model.entity.Project;
 import org.siri_hate.main_service.repository.ProjectRepository;
 import org.siri_hate.main_service.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,39 +37,42 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectSummaryResponse> getAllProjects() {
+    public Page<ProjectSummaryResponse> getAllProjects(Pageable pageable) {
 
-        List<Project> projectList = projectRepository.findAll();
+        Page<Project> projectsPage = projectRepository.findAll(pageable);
 
-        if (projectList.isEmpty()) {
+        if (projectsPage.isEmpty()) {
             throw new RuntimeException("No projects found");
         }
 
-        return projectMapper.toProjectSummaryResponseList(projectList);
+        return projectMapper.toProjectSummaryResponsePage(projectsPage);
     }
 
     @Override
-    public List<ProjectSummaryResponse> searchProjectsByName(String projectName) {
+    public Page<ProjectSummaryResponse> searchProjectsByName(String projectName, Pageable pageable) {
 
-        List<Project> projectList = projectRepository.findProjectsByProjectNameContainingIgnoreCase(projectName);
+        Page<Project> projectsPage = projectRepository.findProjectsByProjectNameContainingIgnoreCase(
+                projectName,
+                pageable
+                                                                                                    );
 
-        if (projectList.isEmpty()) {
+        if (projectsPage.isEmpty()) {
             throw new RuntimeException("No projects found");
         }
 
-        return projectMapper.toProjectSummaryResponseList(projectList);
+        return projectMapper.toProjectSummaryResponsePage(projectsPage);
     }
 
     @Override
-    public List<ProjectSummaryResponse> searchProjectsByOwnerUsername(String username) {
+    public Page<ProjectSummaryResponse> searchProjectsByOwnerUsername(String username, Pageable pageable) {
 
-        List<Project> projectList = projectRepository.findProjectsByProjectOwner(username);
+        Page<Project> projectsPage = projectRepository.findProjectsByProjectOwner(username, pageable);
 
-        if (projectList.isEmpty()) {
+        if (projectsPage.isEmpty()) {
             throw new RuntimeException("No projects have been found for user with" + username + " username");
         }
 
-        return projectMapper.toProjectSummaryResponseList(projectList);
+        return projectMapper.toProjectSummaryResponsePage(projectsPage);
     }
 
     @Override

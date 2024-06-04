@@ -1,62 +1,66 @@
 package org.siri_hate.chat_service.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "messages")
+@Document(collection = "messages")
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    private String id;
 
-    @Column(name = "sender", nullable = false)
-    private String sender;
+    @Indexed
+    private String chatId;
 
-    @Column(name = "content", nullable = false)
-    private String content;
+    private String senderUsername;
 
-    @Column(name = "timestamp", nullable = false)
+    private String messageContent;
+
+    @Indexed
     private LocalDateTime timestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "chat_id")
-    private Chat chat;
+    public Message() { }
 
-    public Message() {}
-
-    public Message(Long id, String sender, String content, LocalDateTime timestamp, Chat chat) {
+    public Message(String id, String chatId, String senderUsername, String messageContent, LocalDateTime timestamp) {
         this.id = id;
-        this.sender = sender;
-        this.content = content;
+        this.chatId = chatId;
+        this.senderUsername = senderUsername;
+        this.messageContent = messageContent;
         this.timestamp = timestamp;
-        this.chat = chat;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getSender() {
-        return sender;
+    public String getChatId() {
+        return chatId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
     }
 
-    public String getContent() {
-        return content;
+    public String getSenderUsername() {
+        return senderUsername;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setSenderUsername(String senderUsername) {
+        this.senderUsername = senderUsername;
+    }
+
+    public String getMessageContent() {
+        return messageContent;
+    }
+
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
     }
 
     public LocalDateTime getTimestamp() {
@@ -65,14 +69,6 @@ public class Message {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
     }
 
 }

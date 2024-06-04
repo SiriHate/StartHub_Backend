@@ -6,7 +6,7 @@ public interface ConfirmationService {
 
     void sendChangePasswordConfirmation(Long userId, String name, String email);
 
-    public String generateConfirmationToken();
+    String generateConfirmationToken();
 
     void checkConfirmationToken(String token);
 

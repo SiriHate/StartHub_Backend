@@ -7,6 +7,8 @@ import org.siri_hate.main_service.model.dto.request.project.ProjectFullRequest;
 import org.siri_hate.main_service.model.dto.response.project.ProjectFullResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
 import org.siri_hate.main_service.model.entity.Project;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -24,5 +26,10 @@ public interface ProjectMapper {
     List<ProjectSummaryResponse> toProjectSummaryResponseList(List<Project> projects);
 
     Project projectUpdate(ProjectFullRequest projectFullRequest, @MappingTarget Project project);
+
+    default Page<ProjectSummaryResponse> toProjectSummaryResponsePage(Page<Project> projects) {
+        List<ProjectSummaryResponse> summaryResponses = toProjectSummaryResponseList(projects.getContent());
+        return new PageImpl<>(summaryResponses, projects.getPageable(), projects.getTotalElements());
+    }
 
 }
