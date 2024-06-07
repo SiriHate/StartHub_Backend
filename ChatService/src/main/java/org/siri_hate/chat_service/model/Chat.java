@@ -18,8 +18,6 @@ public class Chat {
 
     private Long participantsNumber;
 
-    private List<String> messages;
-
     private String chatOwner;
 
     public Chat() { }

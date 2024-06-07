@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ChatService {
 
-    void createPersonalChat(CreatePersonalChatRequest request);
+    void createPersonalChat(String creatorUsername, CreatePersonalChatRequest request);
 
     void createGroupChat(CreateGroupChatRequest request);
 

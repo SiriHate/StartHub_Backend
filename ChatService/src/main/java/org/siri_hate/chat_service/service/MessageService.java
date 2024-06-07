@@ -15,4 +15,6 @@ public interface MessageService {
 
     List<MessageFullResponse> getMessagesByChatIdWithPagination(String chatId, int page, int size);
 
+    Message findLatestMessageByChatId(String chatId);
+
 }

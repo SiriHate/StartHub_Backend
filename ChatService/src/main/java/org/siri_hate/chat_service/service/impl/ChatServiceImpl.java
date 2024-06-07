@@ -17,6 +17,8 @@ import org.siri_hate.chat_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,9 +48,11 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public void createPersonalChat(CreatePersonalChatRequest request) {
+    public void createPersonalChat(String creatorUsername, CreatePersonalChatRequest request) {
 
-        List<User> users = userService.findOrCreateUsers(request.getParticipants());
+        List<String> participants = Arrays.asList(creatorUsername, request.getRecipient());
+
+        List<User> users = userService.findOrCreateUsers(participants);
         List<String> userIds = users.stream().map(User::getId).collect(Collectors.toList());
 
         Chat chat = chatMapper.toPersonalChat(request);

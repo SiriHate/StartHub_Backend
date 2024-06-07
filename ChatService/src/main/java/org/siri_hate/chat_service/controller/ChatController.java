@@ -30,8 +30,10 @@ public class ChatController {
 
     @PostMapping("/personal")
     public ResponseEntity<String> createPersonalChat(@RequestBody @Validated CreatePersonalChatRequest request) {
-        chatService.createPersonalChat(request);
-        return ResponseEntity.ok("Successfully created a personal chat");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        chatService.createPersonalChat(username, request);
+        return new ResponseEntity<>("Successfully created a personal chat", HttpStatus.CREATED);
     }
 
     @GetMapping("/personal/{id}")
@@ -43,7 +45,7 @@ public class ChatController {
     @PostMapping("/group")
     public ResponseEntity<String> createGroupChat(@RequestBody @Validated CreateGroupChatRequest request) {
         chatService.createGroupChat(request);
-        return ResponseEntity.ok("Successfully created a group chat");
+        return new ResponseEntity<>("Successfully created a group chat", HttpStatus.CREATED);
     }
 
     @GetMapping("/group/{id}")

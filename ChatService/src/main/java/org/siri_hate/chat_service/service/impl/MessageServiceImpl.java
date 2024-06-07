@@ -62,4 +62,9 @@ public class MessageServiceImpl implements MessageService {
         return messageMapper.toMessageFullResponseList(messages);
     }
 
+    @Override
+    public Message findLatestMessageByChatId(String chatId) {
+        return messageRepository.findLatestMessageByChatId(chatId);
+    }
+
 }

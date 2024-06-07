@@ -82,7 +82,10 @@ public class MemberController {
             @RequestParam(required = false) String specialization,
             @PageableDefault(size = 10) Pageable pageable) {
         Page<MemberSummaryResponse> membersPage = memberService.getMembersByUsernameAndSpecialization(
-                username, specialization, pageable);
+                username,
+                specialization,
+                pageable
+                                                                                                     );
         return new ResponseEntity<>(membersPage, HttpStatus.OK);
     }
 

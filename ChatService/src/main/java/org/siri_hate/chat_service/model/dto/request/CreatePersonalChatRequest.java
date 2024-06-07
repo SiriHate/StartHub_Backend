@@ -1,25 +1,24 @@
 package org.siri_hate.chat_service.model.dto.request;
 
-import jakarta.validation.constraints.Size;
-import java.util.List;
+import jakarta.validation.constraints.NotBlank;
 
 public class CreatePersonalChatRequest {
 
-    @Size(min = 2, max = 2, message = "Personal chat can contain only 2 participants!")
-    private List<String> participants;
+    @NotBlank(message = "You must specify the interlocutor to create the chat")
+    private String recipient;
 
     public CreatePersonalChatRequest() { }
 
-    public CreatePersonalChatRequest(List<String> participants) {
-        this.participants = participants;
+    public CreatePersonalChatRequest(String recipient) {
+        this.recipient = recipient;
     }
 
-    public List<String> getParticipants() {
-        return participants;
+    public String getRecipient() {
+        return recipient;
     }
 
-    public void setParticipants(List<String> participants) {
-        this.participants = participants;
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
     }
 
 }
