@@ -17,15 +17,9 @@ public interface ArticleService {
 
     ArticleFullResponse getArticleById(Long id);
 
-    Page<ArticleSummaryResponse> getArticlesByUsername(String username, Pageable pageable);
-
-    Page<ArticleSummaryResponse> getArticlesByTitle(String title, Pageable pageable);
-
     Page<ArticleSummaryResponse> getArticlesByCategoryAndSearchQuery(String category, String query, Pageable pageable);
 
     Page<ArticleSummaryResponse> getAllArticles(Pageable pageable);
-
-    Page<ArticleSummaryResponse> searchArticlesByOwnerUsername(String username, Pageable pageable);
 
     void updateArticle(Long id, Article articleDetails);
 

@@ -53,35 +53,10 @@ public class ModeratorServiceImpl implements ModeratorService {
     }
 
     @Override
-    public void moderatorLogin(LoginForm loginForm) {
-
-    }
-
-    @Override
-    public void moderatorPasswordRecovery(String login) {
-
-    }
-
-    @Override
     @Transactional
     public Page<ModeratorSummaryResponse> getAllModerators(Pageable pageable) {
 
         Page<Moderator> moderators = moderatorRepository.findAll(pageable);
-
-        if (moderators.isEmpty()) {
-            throw new NoSuchUserException("No moderator was found!");
-        }
-
-        return moderatorMapper.toModeratorSummaryResponsePage(moderators);
-    }
-
-    @Override
-    public Page<ModeratorSummaryResponse> searchModeratorsByUsername(String username, Pageable pageable) {
-
-        Page<Moderator> moderators = moderatorRepository.findModeratorByUsernameStartingWithIgnoreCase(
-                username,
-                pageable
-                                                                                                      );
 
         if (moderators.isEmpty()) {
             throw new NoSuchUserException("No moderator was found!");

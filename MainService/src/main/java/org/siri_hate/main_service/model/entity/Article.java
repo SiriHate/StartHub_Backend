@@ -1,7 +1,7 @@
 package org.siri_hate.main_service.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.siri_hate.main_service.model.entity.category.ArticleCategory;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -16,34 +16,47 @@ public class Article {
     private Long id;
 
     @Column(name = "title")
-    String title;
+    private String title;
 
-    @Column(name = "owner")
-    String owner;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "preview_url")
-    String previewUrl;
+    private String previewUrl;
 
-    @Column(name = "category")
-    String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private ArticleCategory category;
 
     @Lob
     @Column(name = "content")
-    String content;
+    private String content;
 
     @Column(name = "publication_date")
-    LocalDate publicationDate;
+    private LocalDate publicationDate;
 
-    public Article() {}
+    @Column(name = "moderation_passed")
+    private Boolean moderationPassed;
 
-    public Article(Long id, String title, String owner, String previewUrl, String category, String content, LocalDate publicationDate) {
-        this.id = id;
+    public Article() { }
+
+    public Article(
+            String title,
+            User user,
+            String previewUrl,
+            ArticleCategory category,
+            String content,
+            LocalDate publicationDate,
+            Boolean moderationPassed
+                  ) {
         this.title = title;
-        this.owner = owner;
+        this.user = user;
         this.previewUrl = previewUrl;
         this.category = category;
         this.content = content;
         this.publicationDate = publicationDate;
+        this.moderationPassed = moderationPassed;
     }
 
     public Long getId() {
@@ -62,12 +75,12 @@ public class Article {
         this.title = title;
     }
 
-    public String getOwner() {
-        return owner;
+    public User getUser() {
+        return user;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getPreviewUrl() {
@@ -78,11 +91,11 @@ public class Article {
         this.previewUrl = previewUrl;
     }
 
-    public String getCategory() {
+    public ArticleCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(ArticleCategory category) {
         this.category = category;
     }
 
@@ -102,30 +115,12 @@ public class Article {
         this.publicationDate = publicationDate;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Article article = (Article) o;
-        return Objects.equals(id, article.id) && Objects.equals(title, article.title) && Objects.equals(owner, article.owner) && Objects.equals(previewUrl, article.previewUrl) && Objects.equals(category, article.category) && Objects.equals(content, article.content) && Objects.equals(publicationDate, article.publicationDate);
+    public Boolean getModerationPassed() {
+        return moderationPassed;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, owner, previewUrl, category, content, publicationDate);
-    }
-
-    @Override
-    public String toString() {
-        return "Article{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", owner='" + owner + '\'' +
-                ", previewUrl='" + previewUrl + '\'' +
-                ", category='" + category + '\'' +
-                ", content='" + content + '\'' +
-                ", publicationDate=" + publicationDate +
-                '}';
+    public void setModerationPassed(Boolean moderationPassed) {
+        this.moderationPassed = moderationPassed;
     }
 
 }

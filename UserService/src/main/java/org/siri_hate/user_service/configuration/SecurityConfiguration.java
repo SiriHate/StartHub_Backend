@@ -32,21 +32,6 @@ public class SecurityConfiguration {
         this.userDetailsService = userDetailsService;
     }
 
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        return http.csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth -> auth.requestMatchers(
-//                        "/api/v1/users/member/login",
-//                        "/api/v1/users/member/registration",
-//                        "/api/v1/users/member/password_recovery",
-//                        "/api/v1/users/member/generateToken",
-//                        "/api/v1/users/member/logout",
-//                        "/api/v1/users/member/get"
-//                ).permitAll()).build();
-//    }
-
-    // TODO: Удалить после дебага!
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthFilter jwtAuthFilter) throws Exception {
         return http

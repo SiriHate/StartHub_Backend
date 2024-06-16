@@ -1,6 +1,5 @@
 package org.siri_hate.user_service.service;
 
-import org.siri_hate.user_service.model.dto.request.LoginForm;
 import org.siri_hate.user_service.model.dto.request.moderator.ModeratorFullRequest;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResponse;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorSummaryResponse;
@@ -11,13 +10,7 @@ public interface ModeratorService {
 
     void moderatorRegistration(ModeratorFullRequest moderator);
 
-    void moderatorLogin(LoginForm loginForm);
-
-    void moderatorPasswordRecovery(String login);
-
     Page<ModeratorSummaryResponse> getAllModerators(Pageable pageable);
-
-    Page<ModeratorSummaryResponse> searchModeratorsByUsername(String username, Pageable pageable);
 
     ModeratorFullResponse getModeratorById(Long id);
 

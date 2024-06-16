@@ -49,16 +49,6 @@ public class NewsController {
         return new ResponseEntity<>(news, HttpStatus.OK);
     }
 
-    @GetMapping("/user/auth")
-    public ResponseEntity<Page<NewsSummaryResponse>> findArticlesByUserAuth(
-            @PageableDefault(size = 1) Pageable pageable
-                                                                           ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Page<NewsSummaryResponse> news = newsService.searchNewsByOwnerUsername(username, pageable);
-        return new ResponseEntity<>(news, HttpStatus.OK);
-    }
-
     @GetMapping("/search")
     public ResponseEntity<Page<NewsSummaryResponse>> getNewsByCategoryAndSearchQuery(
             @RequestParam(required = false) String category,

@@ -16,6 +16,9 @@ public class Admin extends User {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     public Admin() {}
 
     public Admin(Long id) {

@@ -46,19 +46,7 @@ public class EventsServiceImpl implements EventsService {
 
         return eventMapper.toEventFullResponse(event.get());
     }
-
-    @Override
-    public List<EventSummaryResponse> getEventsByUsername(String username) {
-
-        List<Event> eventList = eventRepository.findAll();
-
-        if (eventList.isEmpty()) {
-            throw new NoSuchElementException("No events found for username " + username);
-        }
-
-        return eventMapper.toEventSummaryResponseList(eventList);
-    }
-
+    
     @Override
     public List<EventSummaryResponse> getAllEvents() {
 

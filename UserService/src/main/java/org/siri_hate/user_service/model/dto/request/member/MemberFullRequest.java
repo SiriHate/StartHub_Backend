@@ -16,7 +16,7 @@ public class MemberFullRequest {
 
     private String name;
 
-    private String specialization;
+    private Long specializationId;
 
     private String about;
 
@@ -38,7 +38,7 @@ public class MemberFullRequest {
             boolean isEnabled,
             String avatarUrl,
             String name,
-            String specialization,
+            Long specializationId,
             String about,
             String email,
             String phone,
@@ -51,7 +51,7 @@ public class MemberFullRequest {
         this.isEnabled = isEnabled;
         this.avatarUrl = avatarUrl;
         this.name = name;
-        this.specialization = specialization;
+        this.specializationId = specializationId;
         this.about = about;
         this.email = email;
         this.phone = phone;
@@ -107,12 +107,12 @@ public class MemberFullRequest {
         this.name = name;
     }
 
-    public String getSpecialization() {
-        return specialization;
+    public Long getSpecializationId() {
+        return specializationId;
     }
 
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    public void setSpecialization(Long specializationId) {
+        this.specializationId = specializationId;
     }
 
     public String getAbout() {

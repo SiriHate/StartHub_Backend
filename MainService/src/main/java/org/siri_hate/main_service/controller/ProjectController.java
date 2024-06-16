@@ -51,11 +51,11 @@ public class ProjectController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProjectFullResponse> updateProject(
+    public ResponseEntity<String> updateProject(
             @PathVariable @Positive Long id, @RequestBody @Valid ProjectFullRequest project
-                                                            ) {
-        ProjectFullResponse updatedProject = projectService.updateProject(project, id);
-        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+                                               ) {
+        projectService.updateProject(project, id);
+        return new ResponseEntity<>("Project has been successfully updated", HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -77,16 +77,6 @@ public class ProjectController {
                 query,
                 pageable
                                                                                                   );
-        return new ResponseEntity<>(projects, HttpStatus.OK);
-    }
-
-    @GetMapping("/find-my-projects")
-    public ResponseEntity<Page<ProjectSummaryResponse>> getAllProjectsByOwnerUsername(
-            @PageableDefault(size = 1) Pageable pageable
-                                                                                     ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Page<ProjectSummaryResponse> projects = projectService.searchProjectsByOwnerUsername(username, pageable);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 

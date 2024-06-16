@@ -32,9 +32,7 @@ public class JWTService {
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                // TODO Вернуть время жизни токена поосле отладки
-                .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365))
-                // .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
@@ -54,10 +52,6 @@ public class JWTService {
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
-    }
-
-    public List<String> extractRoles(String token) {
-        return Arrays.asList(extractClaim(token, claims -> claims.get("roles", String.class)).split(","));
     }
 
     private Claims extractAllClaims(String token) {

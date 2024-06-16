@@ -50,15 +50,6 @@ public class ModeratorController {
         return new ResponseEntity<>(moderator, HttpStatus.OK);
     }
 
-    @GetMapping("/search-by-username")
-    public ResponseEntity<Page<ModeratorSummaryResponse>> searchModeratorsByUsername(
-            @RequestParam("username") String username,
-            @PageableDefault(size = 1) Pageable pageable
-                                                                                    ) {
-        Page<ModeratorSummaryResponse> moderators = moderatorService.searchModeratorsByUsername(username, pageable);
-        return new ResponseEntity<>(moderators, HttpStatus.OK);
-    }
-
     @PatchMapping("/{id}")
     public ResponseEntity<ModeratorFullResponse> moderatorUpdate(
             @PathVariable @Positive(message = "ID should be greater than zero") Long id,

@@ -1,8 +1,6 @@
 package org.siri_hate.user_service.model.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Objects;
 

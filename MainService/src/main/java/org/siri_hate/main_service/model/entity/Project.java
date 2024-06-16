@@ -1,10 +1,9 @@
 package org.siri_hate.main_service.model.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import org.siri_hate.main_service.model.entity.category.ProjectCategory;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -16,11 +15,12 @@ public class Project {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "project_owner")
-    private String projectOwner;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-    @JoinTable(name = "project_members", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
+    @JoinTable(name = "project_membership", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
     private Set<ProjectMember> members = new HashSet<>();
 
     @Column(name = "project_name")
@@ -32,8 +32,9 @@ public class Project {
     @Column(name = "project_logo_url")
     private String projectLogoUrl;
 
-    @Column(name = "category")
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private ProjectCategory category;
 
     @Column(name = "stage")
     private String stage;
@@ -41,29 +42,14 @@ public class Project {
     @Column(name = "likes")
     private Long likes;
 
-    public Project() {}
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "event_id", referencedColumnName = "id")
+    private Event event;
 
-    public Project(
-            Long id,
-            String projectOwner,
-            Set<ProjectMember> members,
-            String projectName,
-            String projectDescription,
-            String projectLogoUrl,
-            String category,
-            String stage,
-            Long likes
-                  ) {
-        this.id = id;
-        this.projectOwner = projectOwner;
-        this.members = members;
-        this.projectName = projectName;
-        this.projectDescription = projectDescription;
-        this.projectLogoUrl = projectLogoUrl;
-        this.category = category;
-        this.stage = stage;
-        this.likes = likes;
-    }
+    @Column(name = "moderation_passed")
+    private Boolean moderationPassed;
+
+    public Project() { }
 
     public Long getId() {
         return id;
@@ -73,12 +59,12 @@ public class Project {
         this.id = id;
     }
 
-    public String getProjectOwner() {
-        return projectOwner;
+    public User getUser() {
+        return user;
     }
 
-    public void setProjectOwner(String projectOwner) {
-        this.projectOwner = projectOwner;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Set<ProjectMember> getMembers() {
@@ -113,11 +99,11 @@ public class Project {
         this.projectLogoUrl = projectLogoUrl;
     }
 
-    public String getCategory() {
+    public ProjectCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(ProjectCategory category) {
         this.category = category;
     }
 
@@ -137,63 +123,20 @@ public class Project {
         this.likes = likes;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Project project = (Project) o;
-        return Objects.equals(id, project.id) && Objects.equals(projectOwner, project.projectOwner) && Objects.equals(
-                members,
-                project.members
-                                                                                                                     ) && Objects.equals(
-                projectName,
-                project.projectName
-                                                                                                                                        ) && Objects.equals(
-                projectDescription,
-                project.projectDescription
-                                                                                                                                                           ) && Objects.equals(
-                projectLogoUrl,
-                project.projectLogoUrl
-                                                                                                                                                                              ) && Objects.equals(
-                category,
-                project.category
-                                                                                                                                                                                                 ) && Objects.equals(
-                stage,
-                project.stage
-                                                                                                                                                                                                                    ) && Objects.equals(
-                likes,
-                project.likes
-                                                                                                                                                                                                                                       );
+    public Event getEvent() {
+        return event;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(
-                id,
-                projectOwner,
-                members,
-                projectName,
-                projectDescription,
-                projectLogoUrl,
-                category,
-                stage,
-                likes
-                           );
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
-    @Override
-    public String toString() {
-        return "Project{" +
-                "id=" + id +
-                ", projectOwner='" + projectOwner + '\'' +
-                ", members=" + members +
-                ", projectName='" + projectName + '\'' +
-                ", projectDescription='" + projectDescription + '\'' +
-                ", projectLogoUrl='" + projectLogoUrl + '\'' +
-                ", category='" + category + '\'' +
-                ", stage='" + stage + '\'' +
-                ", likes=" + likes +
-                '}';
+    public Boolean getModerationPassed() {
+        return moderationPassed;
+    }
+
+    public void setModerationPassed(Boolean moderationPassed) {
+        this.moderationPassed = moderationPassed;
     }
 
 }

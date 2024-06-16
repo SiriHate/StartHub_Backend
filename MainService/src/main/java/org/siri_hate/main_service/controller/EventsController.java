@@ -28,7 +28,7 @@ public class EventsController {
         this.eventsService = eventsService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<String> createEvent(@Valid @RequestBody EventFullRequest event) {
         eventsService.createEvent(event);
         return new ResponseEntity<>("Event was successfully created", HttpStatus.CREATED);
@@ -40,13 +40,7 @@ public class EventsController {
         return new ResponseEntity<>(event, HttpStatus.OK);
     }
 
-    @GetMapping("/by-username/{username}")
-    public ResponseEntity<List<EventSummaryResponse>> getEventsByUsername(@PathVariable String username) {
-        List<EventSummaryResponse> events = eventsService.getEventsByUsername(username);
-        return new ResponseEntity<>(events, HttpStatus.OK);
-    }
-
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<EventSummaryResponse>> getAllEvents() {
         List<EventSummaryResponse> events = eventsService.getAllEvents();
         return new ResponseEntity<>(events, HttpStatus.OK);

@@ -6,6 +6,7 @@ import org.siri_hate.user_service.exception.NoSuchConfirmationTokenException;
 import org.siri_hate.user_service.kafka.KafkaProducerService;
 import org.siri_hate.user_service.kafka.messages.ConfirmationMessage;
 import org.siri_hate.user_service.model.entity.ConfirmationToken;
+import org.siri_hate.user_service.model.entity.Member;
 import org.siri_hate.user_service.model.enums.ConfirmationMessageType;
 import org.siri_hate.user_service.model.enums.TokenType;
 import org.siri_hate.user_service.repository.ConfirmationTokenRepository;
@@ -49,34 +50,34 @@ public class ConfirmationServiceImpl implements ConfirmationService {
     }
 
     @Override
-    public void sendRegistrationConfirmation(Long userId, String name, String email) {
+    public void sendRegistrationConfirmation(Member member) {
         ConfirmationMessageType messageType = ConfirmationMessageType.REGISTRATION_CONFIRMATION;
         String tokenValue = generateConfirmationToken();
         String tokenType = TokenType.CONFIRM_REGISTRATION.getValue();
-        ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, userId, name, email, tokenValue);
+        ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, tokenValue, member);
         confirmationTokenRepository.save(confirmationToken);
         String confirmationTokenValue = confirmationToken.getTokenValue();
         ConfirmationMessage confirmationMessage = new ConfirmationMessage(
                 messageType,
-                name,
-                email,
+                member.getName(),
+                member.getEmail(),
                 confirmationTokenValue
         );
         kafkaProducerService.sendConfirmationToken(confirmationMessage);
     }
 
     @Override
-    public void sendChangePasswordConfirmation(Long userId, String name, String email) {
+    public void sendChangePasswordConfirmation(Member member) {
         ConfirmationMessageType messageType = ConfirmationMessageType.CHANGE_PASSWORD_CONFIRMATION;
         String tokenValue = generateConfirmationToken();
         String tokenType = TokenType.CONFIRM_CHANGE_PASSWORD.getValue();
-        ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, userId, name, email, tokenValue);
+        ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, tokenValue, member);
         confirmationTokenRepository.save(confirmationToken);
         String confirmationTokenValue = confirmationToken.getTokenValue();
         ConfirmationMessage confirmationMessage = new ConfirmationMessage(
                 messageType,
-                name,
-                email,
+                member.getName(),
+                member.getEmail(),
                 confirmationTokenValue
         );
         kafkaProducerService.sendConfirmationToken(confirmationMessage);
@@ -89,7 +90,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         try {
             Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
             if (foundToken.isPresent()) {
-                Long userId = foundToken.get().getUserId();
+                Long userId = foundToken.get().getMember().getId();
                 memberService.activateMemberAccount(userId);
                 confirmationTokenRepository.delete(foundToken.get());
             } else {
@@ -111,7 +112,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
             throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
         }
 
-        return foundToken.get().getUserId();
+        return foundToken.get().getMember().getId();
     }
 
     @Override

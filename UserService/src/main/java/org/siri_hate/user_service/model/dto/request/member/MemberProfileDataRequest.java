@@ -8,20 +8,38 @@ import java.time.LocalDate;
 public class MemberProfileDataRequest {
 
     @NotBlank(message = "Name must not be null")
-    String name;
+    private String name;
 
     @NotBlank(message = "Phone must not be null")
-    String phone;
+    private String phone;
 
     @NotBlank(message = "Email must not be null")
-    String email;
+    private String email;
 
     @NotNull(message = "Birthday must not be null")
-    LocalDate birthday;
+    private LocalDate birthday;
 
-    String about;
+    private String about;
 
-    String specialization;
+    private Long specializationId;
+
+    public MemberProfileDataRequest() { }
+
+    public MemberProfileDataRequest(
+            String name,
+            String phone,
+            String email,
+            LocalDate birthday,
+            String about,
+            Long specializationId
+    ) {
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.birthday = birthday;
+        this.about = about;
+        this.specializationId = specializationId;
+    }
 
     public String getName() {
         return name;
@@ -63,12 +81,12 @@ public class MemberProfileDataRequest {
         this.about = about;
     }
 
-    public String getSpecialization() {
-        return specialization;
+    public Long getSpecializationId() {
+        return specializationId;
     }
 
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    public void setSpecializationId(Long specializationId) {
+        this.specializationId = specializationId;
     }
 
 }

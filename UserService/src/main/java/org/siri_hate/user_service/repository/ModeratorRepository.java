@@ -9,8 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository("moderatorRepository")
+@Repository
 public interface ModeratorRepository extends JpaRepository<Moderator, Long> {
+
     Optional<Moderator> findModeratorByUsername(String username);
+
     Page<Moderator> findModeratorByUsernameStartingWithIgnoreCase(String username, Pageable pageable);
+
 }

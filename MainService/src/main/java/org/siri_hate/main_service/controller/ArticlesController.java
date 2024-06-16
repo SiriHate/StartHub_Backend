@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
-@RequestMapping("/api/v1/main_service/article")
+@RequestMapping("/api/v1/main_service/articles")
 public class ArticlesController {
 
     final private ArticleService articleService;
@@ -41,34 +41,6 @@ public class ArticlesController {
     public ResponseEntity<ArticleFullResponse> getArticleById(@PathVariable Long id) {
         ArticleFullResponse article = articleService.getArticleById(id);
         return new ResponseEntity<>(article, HttpStatus.OK);
-    }
-
-    @GetMapping("/search-by-username/{username}")
-    public ResponseEntity<Page<ArticleSummaryResponse>> getArticlesByUsername(
-            @PathVariable String username,
-            @PageableDefault(size = 1) Pageable pageable
-                                                                             ) {
-        Page<ArticleSummaryResponse> articles = articleService.getArticlesByUsername(username, pageable);
-        return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
-
-    @GetMapping("/search-by-title/{title}")
-    public ResponseEntity<Page<ArticleSummaryResponse>> getArticlesByTitle(
-            @PathVariable String title,
-            @PageableDefault(size = 1) Pageable pageable
-                                                                          ) {
-        Page<ArticleSummaryResponse> articles = articleService.getArticlesByTitle(title, pageable);
-        return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
-
-    @GetMapping("/search-by-auth")
-    public ResponseEntity<Page<ArticleSummaryResponse>> findArticlesByUserAuth(
-            @PageableDefault(size = 1) Pageable pageable
-                                                                              ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Page<ArticleSummaryResponse> articles = articleService.searchArticlesByOwnerUsername(username, pageable);
-        return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
     @GetMapping

@@ -30,16 +30,20 @@ public interface MemberMapper {
     })
     Member toMemberFromRegistration(MemberRegistrationRequest member);
 
+    @Mapping(source = "specialization.name", target = "specialization")
     MemberFullResponse toMemberFullResponse(Member member);
 
+    @Mapping(source = "specialization.name", target = "specialization")
     MemberSummaryResponse toMemberSummaryResponse(Member member);
 
     List<MemberSummaryResponse> toMemberSummaryResponseList(List<Member> members);
 
+    @Mapping(target = "specialization", ignore = true)
     Member memberUpdateProfileData(MemberProfileDataRequest profileDataRequest, @MappingTarget Member member);
 
+    @Mapping(target = "specialization", ignore = true)
     Member memberUpdateFullData(MemberFullRequest memberFullRequest, @MappingTarget Member member);
-
+    
     Member memberUpdateAvatar(MemberChangeAvatarRequest newAvatar, @MappingTarget Member member);
 
     default Page<MemberSummaryResponse> toMemberSummaryResponsePage(Page<Member> members) {

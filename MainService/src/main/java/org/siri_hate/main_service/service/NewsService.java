@@ -19,8 +19,6 @@ public interface NewsService {
 
     Page<NewsSummaryResponse> getAllNews(Pageable pageable);
 
-    Page<NewsSummaryResponse> searchNewsByOwnerUsername(String username, Pageable pageable);
-
     void updateNews(Long id, News newsDetails);
 
     void deleteNews(Long id);

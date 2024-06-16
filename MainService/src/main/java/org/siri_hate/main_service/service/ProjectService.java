@@ -16,11 +16,9 @@ public interface ProjectService {
 
     Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(String category, String query, Pageable pageable);
 
-    Page<ProjectSummaryResponse> searchProjectsByOwnerUsername(String username, Pageable pageable);
-
     ProjectFullResponse getProjectById(Long id);
 
-    ProjectFullResponse updateProject(ProjectFullRequest project, Long id);
+    void updateProject(ProjectFullRequest project, Long id);
 
     void deleteProjectById(String username, Long id);
 

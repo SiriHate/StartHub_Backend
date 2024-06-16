@@ -22,8 +22,9 @@ public class Member extends User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "specialization")
-    private String specialization;
+    @ManyToOne
+    @JoinColumn(name = "specialization_id")
+    private SpecialistSpecialization specialization;
 
     @Column(name = "about")
     private String about;
@@ -38,7 +39,7 @@ public class Member extends User {
     private LocalDate birthday;
 
     @Column(name = "is_hidden", nullable = false)
-    private boolean profileHiddenFlag;
+    private Boolean profileHiddenFlag;
 
     public Member() {}
 
@@ -46,15 +47,15 @@ public class Member extends User {
             Long id,
             String username,
             String password, String role,
-            boolean isEnabled,
+            Boolean isEnabled,
             String avatarUrl,
             String name,
-            String specialization,
+            SpecialistSpecialization specialization,
             String about,
             String email,
             String phone,
             LocalDate birthday,
-            boolean profileHiddenFlag
+            Boolean profileHiddenFlag
     ) {
         super(id, username, password, role, isEnabled);
         this.id = id;
@@ -92,11 +93,11 @@ public class Member extends User {
         this.name = name;
     }
 
-    public String getSpecialization() {
+    public SpecialistSpecialization getSpecialization() {
         return specialization;
     }
 
-    public void setSpecialization(String specialization) {
+    public void setSpecialization(SpecialistSpecialization specialization) {
         this.specialization = specialization;
     }
 
@@ -132,11 +133,11 @@ public class Member extends User {
         this.birthday = birthday;
     }
 
-    public boolean getProfileHiddenFlag() {
+    public Boolean getProfileHiddenFlag() {
         return profileHiddenFlag;
     }
 
-    public void setProfileHiddenFlag(boolean profileHiddenFlag) {
+    public void setProfileHiddenFlag(Boolean profileHiddenFlag) {
         this.profileHiddenFlag = profileHiddenFlag;
     }
 

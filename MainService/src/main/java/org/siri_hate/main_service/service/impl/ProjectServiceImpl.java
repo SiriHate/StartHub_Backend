@@ -9,7 +9,9 @@ import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryRespo
 import org.siri_hate.main_service.model.entity.Project;
 import org.siri_hate.main_service.repository.ProjectRepository;
 import org.siri_hate.main_service.repository.adapters.ProjectSpecification;
+import org.siri_hate.main_service.service.ProjectCategoryService;
 import org.siri_hate.main_service.service.ProjectService;
+import org.siri_hate.main_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,17 +27,30 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectMapper projectMapper;
 
+    private final ProjectCategoryService projectCategoryService;
+
+    final private UserService userService;
+
     @Autowired
-    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper) {
+    public ProjectServiceImpl(
+            ProjectRepository projectRepository,
+            ProjectMapper projectMapper,
+            ProjectCategoryService projectCategoryService,
+            UserService userService
+                             ) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
+        this.projectCategoryService = projectCategoryService;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
     public void createProject(String username, ProjectFullRequest project) {
         Project projectEntity = projectMapper.toProject(project);
-        projectEntity.setProjectOwner(username);
+        projectEntity.setUser(userService.findOrCreateUser(username));
+        projectEntity.setCategory(projectCategoryService.getProjectCategoryEntityById(project.getCategoryId()));
+        projectEntity.setModerationPassed(false);
         projectRepository.save(projectEntity);
     }
 
@@ -69,18 +84,6 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<ProjectSummaryResponse> searchProjectsByOwnerUsername(String username, Pageable pageable) {
-
-        Page<Project> projectsPage = projectRepository.findProjectsByProjectOwner(username, pageable);
-
-        if (projectsPage.isEmpty()) {
-            throw new RuntimeException("No projects have been found for user with" + username + " username");
-        }
-
-        return projectMapper.toProjectSummaryResponsePage(projectsPage);
-    }
-
-    @Override
     @Transactional
     public ProjectFullResponse getProjectById(Long id) {
 
@@ -95,17 +98,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public ProjectFullResponse updateProject(ProjectFullRequest project, Long id) {
-//
-//        Optional<Project> projectOptional = projectRepository.findById(id);
-//
-//        if (projectOptional.isEmpty()) {
-//            throw new RuntimeException("No project with id " + id + " found");
-//        }
-//
-//        projectRepository.save(projectMapper.toProject(project));
-//        return projectMapper.toProjectFullResponse(project);
-        return null;
+    public void updateProject(ProjectFullRequest project, Long id) {
+
+        Optional<Project> projectOptional = projectRepository.findById(id);
+
+        if (projectOptional.isEmpty()) {
+            throw new RuntimeException("No project with id " + id + " found");
+        }
+
+        projectRepository.save(projectMapper.toProject(project));
     }
 
     @Override
@@ -118,7 +119,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new RuntimeException("No project with id " + id + " found");
         }
 
-        if (!(projectOptional.get().getProjectOwner().equals(username))) {
+        if (!(projectOptional.get().getUser().getUsername().equals(username))) {
             throw new RuntimeException("User is not owner of project with id " + id);
         }
 

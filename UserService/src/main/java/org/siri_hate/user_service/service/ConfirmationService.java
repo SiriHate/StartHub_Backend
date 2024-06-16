@@ -1,10 +1,12 @@
 package org.siri_hate.user_service.service;
 
+import org.siri_hate.user_service.model.entity.Member;
+
 public interface ConfirmationService {
 
-    void sendRegistrationConfirmation(Long userId, String name, String email);
+    void sendRegistrationConfirmation(Member member);
 
-    void sendChangePasswordConfirmation(Long userId, String name, String email);
+    void sendChangePasswordConfirmation(Member member);
 
     String generateConfirmationToken();
 

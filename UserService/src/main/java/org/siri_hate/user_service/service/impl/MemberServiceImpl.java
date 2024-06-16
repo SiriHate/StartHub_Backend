@@ -13,12 +13,14 @@ import org.siri_hate.user_service.model.dto.request.member.*;
 import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
 import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;
 import org.siri_hate.user_service.model.entity.Member;
+import org.siri_hate.user_service.model.entity.SpecialistSpecialization;
 import org.siri_hate.user_service.model.enums.UserRole;
 import org.siri_hate.user_service.repository.MemberRepository;
 import org.siri_hate.user_service.repository.adapters.MemberSpecification;
 import org.siri_hate.user_service.service.ConfirmationService;
 import org.siri_hate.user_service.service.MemberService;
 import org.siri_hate.user_service.service.NotificationService;
+import org.siri_hate.user_service.service.SpecialistSpecializationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -42,19 +44,23 @@ public class MemberServiceImpl implements MemberService {
 
     final private MemberMapper memberMapper;
 
+    final private SpecialistSpecializationService specialistSpecializationService;
+
     @Autowired
     private MemberServiceImpl(
             MemberRepository memberRepository,
             PasswordEncoder passwordEncoder,
             @Lazy ConfirmationService confirmationService,
             NotificationService notificationService,
-            MemberMapper memberMapper
+            MemberMapper memberMapper,
+            SpecialistSpecializationService specialistSpecializationService
                              ) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.confirmationService = confirmationService;
         this.notificationService = notificationService;
         this.memberMapper = memberMapper;
+        this.specialistSpecializationService = specialistSpecializationService;
     }
 
     @Override
@@ -70,8 +76,8 @@ public class MemberServiceImpl implements MemberService {
         memberEntity.setPassword(passwordEncoder.encode(memberEntity.getPassword()));
         memberEntity.setRole(UserRole.MEMBER.name());
         memberRepository.save(memberEntity);
-        // TODO Вернуть после дебага
-        //confirmationService.sendRegistrationConfirmation(memberEntity.getId(), memberEntity.getName(), memberEntity.getEmail());
+
+        confirmationService.sendRegistrationConfirmation(memberEntity);
     }
 
     @Override
@@ -89,7 +95,8 @@ public class MemberServiceImpl implements MemberService {
 
         String memberName = member.getName();
         String memberEmail = member.getEmail();
-        //notificationService.sendSuccessfulRegistrationNotification(memberName, memberEmail);
+
+        notificationService.sendSuccessfulRegistrationNotification(memberName, memberEmail);
     }
 
     @Override
@@ -103,10 +110,7 @@ public class MemberServiceImpl implements MemberService {
             throw new EntityNotFoundException("Member with email: " + email + " not found!");
         }
 
-        Long memberId = member.getId();
-        String memberName = member.getName();
-        String memberEmail = member.getEmail();
-        confirmationService.sendChangePasswordConfirmation(memberId, memberName, memberEmail);
+        confirmationService.sendChangePasswordConfirmation(member);
     }
 
     @Override
@@ -131,7 +135,7 @@ public class MemberServiceImpl implements MemberService {
         String memberName = member.getName();
         String memberEmail = member.getEmail();
 
-        //notificationService.sendChangedPasswordNotification(memberName, memberEmail);
+        notificationService.sendChangedPasswordNotification(memberName, memberEmail);
     }
 
     @Override
@@ -203,18 +207,6 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.toMemberFullResponse(member);
     }
 
-    @Override
-    public Page<MemberSummaryResponse> searchMemberByUsername(String username, Pageable pageable) {
-
-        Page<Member> members = memberRepository.findMemberByUsernameStartingWithIgnoreCase(username, pageable);
-
-        if (members.isEmpty()) {
-            throw new EntityNotFoundException("No member found with username: " + username + " not found!");
-        }
-
-        return memberMapper.toMemberSummaryResponsePage(members);
-    }
-
     public Page<MemberSummaryResponse> getMembersByUsernameAndSpecialization(
             String username,
             String specialization,
@@ -268,7 +260,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void deleteMemberByUserName(String username) {
+    public void deleteMemberByUsername(String username) {
 
         Member member = memberRepository.findMemberByUsername(username);
 
@@ -276,7 +268,7 @@ public class MemberServiceImpl implements MemberService {
             memberRepository.delete(member);
             String name = member.getName();
             String email = member.getEmail();
-            //notificationService.sendDeletedAccountNotification(name, email);
+            notificationService.sendDeletedAccountNotification(name, email);
         } else {
             throw new EntityNotFoundException("Member with username: " + username + " not found!");
         }
@@ -309,20 +301,12 @@ public class MemberServiceImpl implements MemberService {
 
         Member updatedMember = memberMapper.memberUpdateProfileData(profileDataRequest, member);
 
+        SpecialistSpecialization specialization = specialistSpecializationService
+                .getSpecialistSpecializationEntityById(profileDataRequest.getSpecializationId());
+        updatedMember.setSpecialization(specialization);
+
         memberRepository.save(updatedMember);
         return memberMapper.toMemberFullResponse(updatedMember);
-    }
-
-    @Override
-    public MemberFullResponse findMemberByUsername(String username) {
-
-        Member member = memberRepository.findMemberByUsername(username);
-
-        if (member == null) {
-            throw new EntityNotFoundException("Member with username: " + username + " not found!");
-        }
-
-        return memberMapper.toMemberFullResponse(member);
     }
 
     @Override

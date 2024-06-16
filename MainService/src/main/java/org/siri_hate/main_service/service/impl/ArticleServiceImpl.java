@@ -7,9 +7,13 @@ import org.siri_hate.main_service.model.dto.request.article.ArticleFullRequest;
 import org.siri_hate.main_service.model.dto.response.article.ArticleFullResponse;
 import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryResponse;
 import org.siri_hate.main_service.model.entity.Article;
+import org.siri_hate.main_service.model.entity.category.ArticleCategory;
+import org.siri_hate.main_service.repository.ArticleCategoryRepository;
 import org.siri_hate.main_service.repository.ArticleRepository;
 import org.siri_hate.main_service.repository.adapters.ArticleSpecification;
+import org.siri_hate.main_service.service.ArticleCategoryService;
 import org.siri_hate.main_service.service.ArticleService;
+import org.siri_hate.main_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,20 +29,33 @@ public class ArticleServiceImpl implements ArticleService {
 
     final private ArticleRepository articleRepository;
 
+    final private ArticleCategoryService articleCategoryService;
+
     final private ArticleMapper articleMapper;
 
+    final private UserService userService;
+
     @Autowired
-    public ArticleServiceImpl(ArticleRepository articleRepository, ArticleMapper articleMapper) {
+    public ArticleServiceImpl(
+            ArticleRepository articleRepository,
+            ArticleMapper articleMapper,
+            ArticleCategoryService articleCategoryService,
+            UserService userService
+                             ) {
         this.articleRepository = articleRepository;
         this.articleMapper = articleMapper;
+        this.articleCategoryService = articleCategoryService;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
     public void createArticle(String username, ArticleFullRequest article) {
         Article articleEntity = articleMapper.toArticle(article);
-        articleEntity.setOwner(username);
+        articleEntity.setUser(userService.findOrCreateUser(username));
         articleEntity.setPublicationDate(LocalDate.now());
+        articleEntity.setCategory(articleCategoryService.getArticleCategoryEntityById(article.getCategoryId()));
+        articleEntity.setModerationPassed(false);
         articleRepository.save(articleEntity);
     }
 
@@ -53,23 +70,6 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return articleMapper.toArticleFullResponse(article.get());
-    }
-
-    @Override
-    public Page<ArticleSummaryResponse> getArticlesByUsername(String username, Pageable pageable) {
-
-        Page<Article> articlePage = articleRepository.findArticleByOwner(username, pageable);
-
-        if (articlePage.isEmpty()) {
-            throw new NoSuchElementException("No articles found for username " + username);
-        }
-
-        return articleMapper.toArticleSummaryResponsePage(articlePage);
-    }
-
-    @Override
-    public Page<ArticleSummaryResponse> getArticlesByTitle(String title, Pageable pageable) {
-        return null;
     }
 
     @Override
@@ -102,19 +102,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         return articleMapper.toArticleSummaryResponsePage(articlePage);
     }
-
-    @Override
-    public Page<ArticleSummaryResponse> searchArticlesByOwnerUsername(String username, Pageable pageable) {
-
-        Page<Article> articlePage = articleRepository.findArticleByOwner(username, pageable);
-
-        if (articlePage.isEmpty()) {
-            throw new NoSuchElementException("No articles found for username " + username);
-        }
-
-        return articleMapper.toArticleSummaryResponsePage(articlePage);
-    }
-
+    
     @Override
     @Transactional
     public void updateArticle(Long id, Article articleDetails) {

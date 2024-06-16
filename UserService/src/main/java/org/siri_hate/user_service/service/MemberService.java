@@ -36,19 +36,15 @@ public interface MemberService {
 
     MemberFullResponse getMemberByUsername(String username);
 
-    Page<MemberSummaryResponse> searchMemberByUsername(String username, Pageable pageable);
-
     MemberFullResponse memberUpdate(Long id, MemberFullRequest member);
 
     void deleteMemberById(Long id);
 
-    void deleteMemberByUserName(String username);
+    void deleteMemberByUsername(String username);
 
     void memberChangeAvatar(String username, MemberChangeAvatarRequest avatar);
 
     MemberFullResponse memberChangePersonalInfo(String username, MemberProfileDataRequest profileDataRequest);
-
-    MemberFullResponse findMemberByUsername(String username);
 
     MemberFullResponse changeMemberProfileVisibility(MemberChangeProfileVisibilityRequest request, String username);
 

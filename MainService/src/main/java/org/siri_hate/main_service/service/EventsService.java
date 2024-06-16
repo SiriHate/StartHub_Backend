@@ -13,8 +13,6 @@ public interface EventsService {
 
     EventFullResponse getEventById(Long id);
 
-    List<EventSummaryResponse> getEventsByUsername(String username);
-
     List<EventSummaryResponse> getAllEvents();
 
     void updateEvent(Long id, Event eventDetails);

@@ -1,6 +1,7 @@
 package org.siri_hate.main_service.model.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -11,31 +12,35 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
-
-    @Column(name = "owner")
-    String username;
+    private Long id;
 
     @Column(name = "name")
-    String eventName;
+    private String eventName;
 
     @Column(name = "category")
-    String category;
+    private String category;
 
     @Column(name = "description")
-    String eventDescription;
+    private String eventDescription;
 
     @Column(name = "date")
-    LocalDateTime EventDate;
+    private LocalDateTime EventDate;
 
     @Column(name = "online_conference_link")
-    String onlineConferenceLink;
+    private String onlineConferenceLink;
 
-    public Event() {}
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
+    private Project project;
 
-    public Event(Long id, String username, String eventName, String category, String eventDescription, LocalDateTime eventDate, String onlineConferenceLink) {
-        this.id = id;
-        this.username = username;
+    public Event() { }
+
+    public Event(
+            String eventName,
+            String category,
+            String eventDescription,
+            LocalDateTime eventDate,
+            String onlineConferenceLink
+                ) {
         this.eventName = eventName;
         this.category = category;
         this.eventDescription = eventDescription;
@@ -49,14 +54,6 @@ public class Event {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEventName() {
@@ -99,30 +96,12 @@ public class Event {
         this.onlineConferenceLink = onlineConferenceLink;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Event event = (Event) o;
-        return Objects.equals(id, event.id) && Objects.equals(username, event.username) && Objects.equals(eventName, event.eventName) && Objects.equals(category, event.category) && Objects.equals(eventDescription, event.eventDescription) && Objects.equals(EventDate, event.EventDate) && Objects.equals(onlineConferenceLink, event.onlineConferenceLink);
+    public Project getProject() {
+        return project;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, eventName, category, eventDescription, EventDate, onlineConferenceLink);
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", eventName='" + eventName + '\'' +
-                ", category='" + category + '\'' +
-                ", eventDescription='" + eventDescription + '\'' +
-                ", EventDate=" + EventDate +
-                ", onlineConferenceLink='" + onlineConferenceLink + '\'' +
-                '}';
+    public void setProject(Project project) {
+        this.project = project;
     }
 
 }

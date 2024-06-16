@@ -1,10 +1,9 @@
 package org.siri_hate.main_service.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.siri_hate.main_service.model.entity.category.NewsCategory;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name = "news")
@@ -16,34 +15,47 @@ public class News {
     private Long id;
 
     @Column(name = "title")
-    String title;
+    private String title;
 
-    @Column(name = "owner")
-    String owner;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "preview_url")
-    String previewUrl;
+    private String previewUrl;
 
-    @Column(name = "category")
-    String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private NewsCategory category;
 
     @Lob
     @Column(name = "content")
-    String content;
+    private String content;
 
     @Column(name = "publication_date")
-    LocalDate publicationDate;
+    private LocalDate publicationDate;
 
-    public News() {}
+    @Column(name = "moderation_passed")
+    private Boolean moderationPassed;
 
-    public News(Long id, String title, String owner, String previewUrl, String category, String content, LocalDate publicationDate) {
-        this.id = id;
+    public News() { }
+
+    public News(
+            String title,
+            User user,
+            String previewUrl,
+            NewsCategory category,
+            String content,
+            LocalDate publicationDate,
+            Boolean moderationPassed
+               ) {
         this.title = title;
-        this.owner = owner;
+        this.user = user;
         this.previewUrl = previewUrl;
         this.category = category;
         this.content = content;
         this.publicationDate = publicationDate;
+        this.moderationPassed = moderationPassed;
     }
 
     public Long getId() {
@@ -62,12 +74,12 @@ public class News {
         this.title = title;
     }
 
-    public String getOwner() {
-        return owner;
+    public User getUser() {
+        return user;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getPreviewUrl() {
@@ -78,11 +90,11 @@ public class News {
         this.previewUrl = previewUrl;
     }
 
-    public String getCategory() {
+    public NewsCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(NewsCategory category) {
         this.category = category;
     }
 
@@ -102,30 +114,12 @@ public class News {
         this.publicationDate = publicationDate;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        News news = (News) o;
-        return Objects.equals(id, news.id) && Objects.equals(title, news.title) && Objects.equals(owner, news.owner) && Objects.equals(previewUrl, news.previewUrl) && Objects.equals(category, news.category) && Objects.equals(content, news.content) && Objects.equals(publicationDate, news.publicationDate);
+    public Boolean getModerationPassed() {
+        return moderationPassed;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, owner, previewUrl, category, content, publicationDate);
-    }
-
-    @Override
-    public String toString() {
-        return "News{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", owner='" + owner + '\'' +
-                ", previewUrl='" + previewUrl + '\'' +
-                ", category='" + category + '\'' +
-                ", content='" + content + '\'' +
-                ", publicationDate=" + publicationDate +
-                '}';
+    public void setModerationPassed(Boolean moderationPassed) {
+        this.moderationPassed = moderationPassed;
     }
 
 }

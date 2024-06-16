@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @Validated
 @RequestMapping("/api/v1/user_service/members")
@@ -33,18 +32,13 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @GetMapping("/check_token")
-    public ResponseEntity<?> checkToken() {
-        return new ResponseEntity<>("Token is valid", HttpStatus.OK);
-    }
-
     @PostMapping
     public ResponseEntity<String> memberRegistration(@RequestBody @Valid MemberRegistrationRequest member) {
         memberService.memberRegistration(member);
         return new ResponseEntity<>("Successful registration", HttpStatus.CREATED);
     }
 
-    @PostMapping("/password_recovery/request")
+    @PostMapping("/password_recovery_requests")
     public ResponseEntity<String> memberPasswordRecoveryRequest(
             @RequestBody RecoveryPasswordRequest recoveryPasswordRequest
                                                                ) {
@@ -52,7 +46,7 @@ public class MemberController {
         return new ResponseEntity<>("Request to change the password has been successfully sent", HttpStatus.OK);
     }
 
-    @PostMapping("/password_recovery/confirm")
+    @PatchMapping("/password_recovery_confirmations")
     public ResponseEntity<String> memberPasswordRecoveryConfirm(
             @RequestBody ChangePasswordTokenRequest changePasswordTokenRequest
                                                                ) {
@@ -97,22 +91,7 @@ public class MemberController {
         return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
-    @GetMapping("/by-username/{username}")
-    public ResponseEntity<MemberFullResponse> getMemberByUsername(@PathVariable String username) {
-        MemberFullResponse member = memberService.getMemberByUsername(username);
-        return new ResponseEntity<>(member, HttpStatus.OK);
-    }
-
-    @GetMapping("/search-by-username/{username}")
-    public ResponseEntity<Page<MemberSummaryResponse>> searchMemberByUsername(
-            @PathVariable String username,
-            @PageableDefault(size = 1) Pageable pageable
-                                                                             ) {
-        Page<MemberSummaryResponse> members = memberService.searchMemberByUsername(username, pageable);
-        return new ResponseEntity<>(members, HttpStatus.OK);
-    }
-
-    @PatchMapping("/update")
+    @PatchMapping("/{id}")
     public ResponseEntity<MemberFullResponse> memberUpdate(
             @Positive(message = "ID should be greater than zero") @RequestParam("id") Long id,
             @Valid MemberFullRequest memberFullRequest
@@ -121,7 +100,7 @@ public class MemberController {
         return new ResponseEntity<>(updatedMember, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteById")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMemberById(
             @Positive(message = "ID should be greater than zero") @RequestParam("id") Long id
                                                   ) {
@@ -129,13 +108,13 @@ public class MemberController {
         return new ResponseEntity<>("Successful delete", HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/deleteByUsername")
-    public ResponseEntity<String> deleteMemberById(@RequestParam("username") String username) {
-        memberService.deleteMemberByUserName(username);
+    @DeleteMapping("/{username}")
+    public ResponseEntity<String> deleteMemberById(@PathVariable("username") String username) {
+        memberService.deleteMemberByUsername(username);
         return new ResponseEntity<>("Successful delete", HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/auth/personInfo")
+    @GetMapping("/me/personal_info")
     public ResponseEntity<MemberFullResponse> getMyPersonInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -143,15 +122,15 @@ public class MemberController {
         return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
-    @DeleteMapping("/auth/delete_my_account")
+    @DeleteMapping("/me/")
     public ResponseEntity<String> deleteMemberByAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        memberService.deleteMemberByUserName(username);
+        memberService.deleteMemberByUsername(username);
         return new ResponseEntity<>("Successful delete", HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/auth/change_password")
+    @PatchMapping("/me/password")
     public ResponseEntity<String> changeMemberPasswordByAuth(
             @RequestBody @Valid ChangePasswordForm changePasswordForm
                                                             ) {
@@ -161,7 +140,7 @@ public class MemberController {
         return new ResponseEntity<>("Password has been successfully changed", HttpStatus.OK);
     }
 
-    @PatchMapping("/auth/avatar")
+    @PatchMapping("/me/avatar")
     public ResponseEntity<String> changeMemberAvatar(@RequestBody @Valid MemberChangeAvatarRequest avatar) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -169,7 +148,7 @@ public class MemberController {
         return new ResponseEntity<>("Avatar has been successfully changed", HttpStatus.OK);
     }
 
-    @PatchMapping("/auth/personal_info")
+    @PatchMapping("/me/personal_info")
     public ResponseEntity<MemberFullResponse> changePersonalInfoByAuth(
             @RequestBody @Valid MemberProfileDataRequest profileData
                                                                       ) {
@@ -179,14 +158,14 @@ public class MemberController {
         return new ResponseEntity<>(updatedMember, HttpStatus.OK);
     }
 
-    @PatchMapping("/auth/profile_visibility")
-    public void changeMemberProfileVisibility(
+    @PatchMapping("/me/profile_hidden_flag")
+    public ResponseEntity<String> changeMemberProfileVisibility(
             @Valid @RequestBody MemberChangeProfileVisibilityRequest request
                                              ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        MemberFullResponse updatedMember = memberService.changeMemberProfileVisibility(request, username);
-        //return new ResponseEntity<>(updatedMember, HttpStatus.OK);
+        memberService.changeMemberProfileVisibility(request, username);
+        return new ResponseEntity<>("Profile visibility has been successfully changed", HttpStatus.OK);
     }
 
 }
