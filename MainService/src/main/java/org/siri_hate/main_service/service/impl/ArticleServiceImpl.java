@@ -24,6 +24,11 @@ import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * This class implements the ArticleService interface.
+ * It provides methods for creating, retrieving, updating, and deleting Article entities.
+ * It is annotated with @Service, indicating that it's a bean and Spring will create an instance of it at runtime.
+ */
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
@@ -35,6 +40,14 @@ public class ArticleServiceImpl implements ArticleService {
 
     final private UserService userService;
 
+    /**
+     * Constructor for ArticleServiceImpl.
+     *
+     * @param articleRepository      the ArticleRepository to use for database operations.
+     * @param articleMapper          the ArticleMapper to use for converting between DTOs and entities.
+     * @param articleCategoryService the ArticleCategoryService to use for handling ArticleCategory entities.
+     * @param userService            the UserService to use for handling User entities.
+     */
     @Autowired
     public ArticleServiceImpl(
             ArticleRepository articleRepository,
@@ -48,6 +61,12 @@ public class ArticleServiceImpl implements ArticleService {
         this.userService = userService;
     }
 
+    /**
+     * This method creates a new Article entity from a request DTO and saves it in the database.
+     *
+     * @param username the username of the User who is creating the Article.
+     * @param article  the ArticleFullRequest DTO containing the data for the new Article.
+     */
     @Override
     @Transactional
     public void createArticle(String username, ArticleFullRequest article) {
@@ -59,6 +78,12 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.save(articleEntity);
     }
 
+    /**
+     * This method retrieves an Article entity by its ID and converts it to a full response DTO.
+     *
+     * @param id the ID of the Article to retrieve.
+     * @return an ArticleFullResponse DTO.
+     */
     @Override
     @Transactional
     public ArticleFullResponse getArticleById(Long id) {
@@ -72,6 +97,14 @@ public class ArticleServiceImpl implements ArticleService {
         return articleMapper.toArticleFullResponse(article.get());
     }
 
+    /**
+     * This method retrieves all Article entities that match a given category and search query, and converts them to summary response DTOs.
+     *
+     * @param category the category to match.
+     * @param query    the search query to match.
+     * @param pageable the Pageable to use for pagination.
+     * @return a Page of ArticleSummaryResponse DTOs.
+     */
     @Override
     public Page<ArticleSummaryResponse> getArticlesByCategoryAndSearchQuery(
             String category,
@@ -91,6 +124,12 @@ public class ArticleServiceImpl implements ArticleService {
         return articleMapper.toArticleSummaryResponsePage(articles);
     }
 
+    /**
+     * This method retrieves all Article entities and converts them to summary response DTOs.
+     *
+     * @param pageable the Pageable to use for pagination.
+     * @return a Page of ArticleSummaryResponse DTOs.
+     */
     @Override
     public Page<ArticleSummaryResponse> getAllArticles(Pageable pageable) {
 
@@ -103,6 +142,12 @@ public class ArticleServiceImpl implements ArticleService {
         return articleMapper.toArticleSummaryResponsePage(articlePage);
     }
 
+    /**
+     * This method updates an existing Article entity with data from a provided Article entity and saves it in the database.
+     *
+     * @param id             the ID of the Article to update.
+     * @param articleDetails the Article containing the new data for the Article.
+     */
     @Override
     @Transactional
     public void updateArticle(Long id, Article articleDetails) {
@@ -116,6 +161,11 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.save(article.get());
     }
 
+    /**
+     * This method deletes an Article entity by its ID from the database.
+     *
+     * @param id the ID of the Article to delete.
+     */
     @Override
     @Transactional
     public void deleteArticle(Long id) {

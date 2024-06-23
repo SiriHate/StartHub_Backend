@@ -20,6 +20,12 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+/**
+ * This class provides the implementation for the MailSenderService interface.
+ * It includes methods for sending confirmation mails, notification mails, and generic emails.
+ *
+ * @author SiriHate
+ */
 @Service
 public class MailSenderServiceImpl implements MailSenderService {
 
@@ -29,6 +35,13 @@ public class MailSenderServiceImpl implements MailSenderService {
 
     final private Gson gson;
 
+    /**
+     * Constructor for the MailSenderServiceImpl class.
+     *
+     * @param mailSender The JavaMailSender instance to be used for sending mails.
+     * @param templateEngine The SpringTemplateEngine instance to be used for processing templates.
+     * @param gson The Gson instance to be used for JSON processing.
+     */
     @Autowired
     private MailSenderServiceImpl(JavaMailSender mailSender, SpringTemplateEngine templateEngine, Gson gson) {
         this.mailSender = mailSender;
@@ -39,6 +52,12 @@ public class MailSenderServiceImpl implements MailSenderService {
     @Value("${spring.mail.username}")
     private String fromEmailAddress;
 
+    /**
+     * Sends a confirmation mail with the provided message.
+     *
+     * @param message The message to be included in the confirmation mail.
+     * @throws MessagingException If there is an error while sending the mail.
+     */
     public void sendConfirmationMail(String message) throws MessagingException {
 
         ConfirmationMessage confirmationMessage = gson.fromJson(message, ConfirmationMessage.class);
@@ -59,6 +78,12 @@ public class MailSenderServiceImpl implements MailSenderService {
         sendEmail(mailTemplate);
     }
 
+    /**
+     * Sends a notification mail with the provided message.
+     *
+     * @param message The message to be included in the notification mail.
+     * @throws MessagingException If there is an error while sending the mail.
+     */
     public void sendNotificationMail(String message) throws MessagingException {
 
         NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
@@ -81,6 +106,12 @@ public class MailSenderServiceImpl implements MailSenderService {
         sendEmail(mailTemplate);
     }
 
+    /**
+     * Sends a generic email based on the provided mail template.
+     *
+     * @param mailTemplate The template to be used for the email.
+     * @throws MessagingException If there is an error while sending the mail.
+     */
     public void sendEmail(MailTemplate mailTemplate) throws MessagingException {
 
         Context context = new Context();
@@ -99,6 +130,3 @@ public class MailSenderServiceImpl implements MailSenderService {
     }
 
 }
-
-
-

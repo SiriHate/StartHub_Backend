@@ -17,16 +17,38 @@ import io.jsonwebtoken.Jwts;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * This class represents a channel interceptor for JWT authentication.
+ * It implements the ChannelInterceptor interface provided by Spring Messaging.
+ * It contains methods to intercept messages before they are sent to the channel.
+ */
 @Component
 public class JwtChannelInterceptor implements ChannelInterceptor {
 
+    /**
+     * The JWT service.
+     */
     final private JWTService jwtService;
 
+    /**
+     * Constructor for the JwtChannelInterceptor class.
+     * It initializes the JWT service.
+     *
+     * @param jwtService the JWT service
+     */
     @Autowired
     public JwtChannelInterceptor(final JWTService jwtService) {
         this.jwtService = jwtService;
     }
 
+    /**
+     * This method is used to intercept messages before they are sent to the channel.
+     * It extracts the JWT token from the Authorization header, validates it, and sets the user in the message accessor.
+     *
+     * @param message the message
+     * @param channel the message channel
+     * @return the message
+     */
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
 

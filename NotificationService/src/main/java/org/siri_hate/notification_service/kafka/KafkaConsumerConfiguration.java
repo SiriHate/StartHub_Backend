@@ -13,17 +13,33 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * This class is responsible for the configuration of Kafka consumers in the application.
+ * It uses the @EnableKafka and @Configuration annotations to indicate that it is a configuration class and that it enables Kafka.
+ */
 @EnableKafka
 @Configuration
 public class KafkaConsumerConfiguration {
 
+    /**
+     * The address of the Kafka bootstrap server.
+     */
     @Value("${bootstrap.address}")
     private String bootstrapAddress;
 
+    /**
+     * The group ID for the Kafka consumer.
+     */
     @Value("${group.id}")
     private String groupId;
 
+    /**
+     * This method creates a ConsumerFactory that is used to create Kafka consumers.
+     * It configures the consumers with the bootstrap server address, group ID, and deserializer classes.
+     * It also configures the consumers to reconnect in case of a connection loss.
+     *
+     * @return a ConsumerFactory for creating Kafka consumers
+     */
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
@@ -37,6 +53,12 @@ public class KafkaConsumerConfiguration {
         return new DefaultKafkaConsumerFactory<>(configProps);
     }
 
+    /**
+     * This method creates a ConcurrentKafkaListenerContainerFactory that is used to create Kafka listeners.
+     * It sets the ConsumerFactory for the listeners to the one created by the consumerFactory() method.
+     *
+     * @return a ConcurrentKafkaListenerContainerFactory for creating Kafka listeners
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String>
     kafkaListenerContainerFactory() {
@@ -48,4 +70,3 @@ public class KafkaConsumerConfiguration {
     }
 
 }
-

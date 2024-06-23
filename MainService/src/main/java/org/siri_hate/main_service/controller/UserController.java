@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class is a controller for handling requests related to Users.
+ * It provides endpoints for retrieving Projects, Articles, and News related to the authenticated User.
+ */
 @RestController
 @Validated
 @RequestMapping("/api/v1/main_service/users")
@@ -24,11 +28,23 @@ public class UserController {
 
     final private UserService userService;
 
+    /**
+     * Constructor for the UserController class.
+     * It initializes the UserService.
+     *
+     * @param userService the service for handling business logic related to Users
+     */
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * This method retrieves Projects where the authenticated User is the owner.
+     *
+     * @param pageable the pagination information
+     * @return a response entity with a list of Projects and HTTP status code
+     */
     @GetMapping("/my/projects/owned")
     public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsOwner(
             @PageableDefault(size = 10) Pageable pageable
@@ -39,6 +55,12 @@ public class UserController {
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
+    /**
+     * This method retrieves Projects where the authenticated User is a member.
+     *
+     * @param pageable the pagination information
+     * @return a response entity with a list of Projects and HTTP status code
+     */
     @GetMapping("/my/projects/member")
     public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsMember(
             @PageableDefault(size = 10) Pageable pageable
@@ -49,6 +71,12 @@ public class UserController {
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
+    /**
+     * This method retrieves Articles created by the authenticated User.
+     *
+     * @param pageable the pagination information
+     * @return a response entity with a list of Articles and HTTP status code
+     */
     @GetMapping("/my/articles")
     public ResponseEntity<Page<ArticleSummaryResponse>> getMyArticles(@PageableDefault(size = 10) Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -57,6 +85,12 @@ public class UserController {
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
+    /**
+     * This method retrieves News created by the authenticated User.
+     *
+     * @param pageable the pagination information
+     * @return a response entity with a list of News and HTTP status code
+     */
     @GetMapping("/my/news")
     public ResponseEntity<Page<NewsSummaryResponse>> getMyNews(@PageableDefault(size = 10) Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

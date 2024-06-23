@@ -25,6 +25,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * This class implements the ProjectService interface.
+ * It provides methods for creating, retrieving, updating, and deleting Project entities.
+ * It is annotated with @Service, indicating that it's a bean and Spring will create an instance of it at runtime.
+ */
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
@@ -36,6 +41,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     final private UserService userService;
 
+    /**
+     * Constructor for ProjectServiceImpl.
+     *
+     * @param projectRepository      the ProjectRepository to use for database operations.
+     * @param projectMapper          the ProjectMapper to use for converting between DTOs and entities.
+     * @param projectCategoryService the ProjectCategoryService to use for handling ProjectCategory entities.
+     * @param userService            the UserService to use for handling User entities.
+     */
     @Autowired
     public ProjectServiceImpl(
             ProjectRepository projectRepository,
@@ -49,6 +62,12 @@ public class ProjectServiceImpl implements ProjectService {
         this.userService = userService;
     }
 
+    /**
+     * This method creates a new Project entity from a request DTO and saves it in the database.
+     *
+     * @param username the username of the User who is creating the Project.
+     * @param project  the ProjectFullRequest DTO containing the data for the new Project.
+     */
     @Override
     @Transactional
     public void createProject(String username, ProjectFullRequest project) {
@@ -73,6 +92,12 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.save(projectEntity);
     }
 
+    /**
+     * This method retrieves all Project entities and converts them to summary response DTOs.
+     *
+     * @param pageable the Pageable to use for pagination.
+     * @return a Page of ProjectSummaryResponse DTOs.
+     */
     @Override
     public Page<ProjectSummaryResponse> getAllProjects(Pageable pageable) {
 
@@ -85,6 +110,14 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.toProjectSummaryResponsePage(projectsPage);
     }
 
+    /**
+     * This method retrieves all Project entities that match a given category and search query, and converts them to summary response DTOs.
+     *
+     * @param category the category to match.
+     * @param query    the search query to match.
+     * @param pageable the Pageable to use for pagination.
+     * @return a Page of ProjectSummaryResponse DTOs.
+     */
     public Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
             String category,
             String query,
@@ -103,6 +136,12 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.toProjectSummaryResponsePage(projects);
     }
 
+    /**
+     * This method retrieves a Project entity by its ID and converts it to a full response DTO.
+     *
+     * @param id the ID of the Project to retrieve.
+     * @return a ProjectFullResponse DTO.
+     */
     @Override
     @Transactional
     public ProjectFullResponse getProjectById(Long id) {
@@ -116,6 +155,12 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.toProjectFullResponse(project.get());
     }
 
+    /**
+     * This method updates an existing Project entity with data from a request DTO and saves it in the database.
+     *
+     * @param project the ProjectFullRequest DTO containing the new data for the Project.
+     * @param id      the ID of the Project to update.
+     */
     @Override
     @Transactional
     public void updateProject(ProjectFullRequest project, Long id) {
@@ -129,6 +174,12 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.save(projectMapper.toProject(project));
     }
 
+    /**
+     * This method deletes a Project entity by its ID from the database.
+     *
+     * @param username the username of the User who is deleting the Project.
+     * @param id       the ID of the Project to delete.
+     */
     @Override
     @Transactional
     public void deleteProjectById(String username, Long id) {

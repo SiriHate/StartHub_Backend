@@ -18,15 +18,30 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Moderator service implementation class.
+ * This class implements the ModeratorService interface and provides the business logic for moderator operations.
+ * It uses the ModeratorRepository, PasswordEncoder, and ModeratorMapper to interact with the database, manage moderators, and map between DTOs and entities.
+ */
 @Service
 public class ModeratorServiceImpl implements ModeratorService {
 
+    // Moderator repository instance
     final private ModeratorRepository moderatorRepository;
 
+    // Password encoder instance
     final private PasswordEncoder passwordEncoder;
 
+    // Moderator mapper instance
     final private ModeratorMapper moderatorMapper;
 
+    /**
+     * Constructor for the ModeratorServiceImpl class.
+     *
+     * @param moderatorRepository The ModeratorRepository to be used by this service.
+     * @param passwordEncoder The PasswordEncoder to be used by this service.
+     * @param moderatorMapper The ModeratorMapper to be used by this service.
+     */
     @Autowired
     private ModeratorServiceImpl(
             ModeratorRepository moderatorRepository,
@@ -38,6 +53,12 @@ public class ModeratorServiceImpl implements ModeratorService {
         this.moderatorMapper = moderatorMapper;
     }
 
+    /**
+     * Handles moderator registration.
+     * This method maps the ModeratorFullRequest DTO to a Moderator entity, encodes the password, and saves the new moderator to the database.
+     *
+     * @param moderator the moderator full request DTO
+     */
     @Override
     @Transactional
     public void moderatorRegistration(ModeratorFullRequest moderator) {
@@ -51,6 +72,13 @@ public class ModeratorServiceImpl implements ModeratorService {
         moderatorRepository.save(moderator1);
     }
 
+    /**
+     * Handles getting all moderators.
+     * This method retrieves all moderators from the database and maps them to a page of ModeratorSummaryResponse DTOs.
+     *
+     * @param pageable The pagination information.
+     * @return A page of ModeratorSummaryResponse DTOs containing the moderators.
+     */
     @Override
     @Transactional
     public Page<ModeratorSummaryResponse> getAllModerators(Pageable pageable) {
@@ -64,6 +92,13 @@ public class ModeratorServiceImpl implements ModeratorService {
         return moderatorMapper.toModeratorSummaryResponsePage(moderators);
     }
 
+    /**
+     * Handles getting a moderator by ID.
+     * This method retrieves a moderator by ID from the database and maps it to a ModeratorFullResponse DTO.
+     *
+     * @param id The ID of the moderator to be retrieved.
+     * @return The ModeratorFullResponse DTO containing the moderator.
+     */
     @Override
     @Transactional
     public ModeratorFullResponse getModeratorById(Long id) {
@@ -76,6 +111,14 @@ public class ModeratorServiceImpl implements ModeratorService {
         return moderatorMapper.toModeratorFullResponse(moderatorOptional.get());
     }
 
+    /**
+     * Handles updating a moderator.
+     * This method updates a moderator in the database by ID, using the data from the ModeratorFullRequest DTO.
+     *
+     * @param id The ID of the moderator to be updated.
+     * @param moderator The ModeratorFullRequest DTO containing the updated moderator data.
+     * @return The ModeratorFullResponse DTO containing the updated moderator.
+     */
     @Override
     @Transactional
     public ModeratorFullResponse moderatorUpdate(Long id, ModeratorFullRequest moderator) {
@@ -93,6 +136,12 @@ public class ModeratorServiceImpl implements ModeratorService {
         return moderatorMapper.toModeratorFullResponse(updatedModerator);
     }
 
+    /**
+     * Handles deleting a moderator by ID.
+     * This method deletes a moderator by ID from the database.
+     *
+     * @param id The ID of the moderator to be deleted.
+     */
     @Override
     @Transactional
     public void deleteModeratorById(Long id) {

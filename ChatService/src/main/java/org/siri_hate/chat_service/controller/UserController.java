@@ -8,6 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class is a controller for user-related operations.
+ * It handles HTTP requests related to users.
+ */
 @RestController
 @Validated
 @RequestMapping("/api/v1/chat_service/users")
@@ -17,6 +21,12 @@ public class UserController {
 
     final private Authentication authentication;
 
+    /**
+     * Constructor for the UserController class.
+     * It initializes the UserService and retrieves the Authentication object from the SecurityContextHolder.
+     *
+     * @param userService the user service
+     */
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;

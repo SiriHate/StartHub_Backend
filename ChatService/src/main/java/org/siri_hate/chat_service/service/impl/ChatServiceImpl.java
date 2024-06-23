@@ -22,17 +22,42 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This class represents the implementation of the ChatService interface.
+ * It contains methods to create personal and group chats, get all chats for a user, get a personal or group chat by id, and delete a chat by id.
+ */
 @Service
 public class ChatServiceImpl implements ChatService {
 
+    /**
+     * The chat repository.
+     */
     final private ChatRepository chatRepository;
 
+    /**
+     * The chat mapper.
+     */
     final private ChatMapper chatMapper;
 
+    /**
+     * The user service.
+     */
     final private UserService userService;
 
+    /**
+     * The message service.
+     */
     final private MessageService messageService;
 
+    /**
+     * Constructor for the ChatServiceImpl class.
+     * It initializes the chat repository, chat mapper, user service, and message service.
+     *
+     * @param chatRepository the chat repository
+     * @param chatMapper the chat mapper
+     * @param userService the user service
+     * @param messageService the message service
+     */
     @Autowired
     public ChatServiceImpl(
             ChatRepository chatRepository,
@@ -46,6 +71,13 @@ public class ChatServiceImpl implements ChatService {
         this.messageService = messageService;
     }
 
+    /**
+     * This method is used to create a personal chat.
+     * It finds or creates users for the participants, maps the request to a chat, sets the participants in the chat, and saves the chat.
+     *
+     * @param creatorUsername the username of the chat creator
+     * @param request the request to create a personal chat
+     */
     @Override
     @Transactional
     public void createPersonalChat(String creatorUsername, CreatePersonalChatRequest request) {
@@ -61,6 +93,12 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.save(chat);
     }
 
+    /**
+     * This method is used to create a group chat.
+     * It finds or creates users for the participants, maps the request to a chat, sets the participants and participants number in the chat, and saves the chat.
+     *
+     * @param request the request to create a group chat
+     */
     @Override
     @Transactional
     public void createGroupChat(CreateGroupChatRequest request) {
@@ -75,11 +113,25 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.save(chat);
     }
 
+    /**
+     * This method is used to get all chats for a user.
+     * It returns all chats from the chat repository.
+     *
+     * @param username the username of the user
+     * @return a list of all chats
+     */
     @Override
     public List<Chat> getAllMyChats(String username) {
         return chatRepository.findAll();
     }
 
+    /**
+     * This method is used to get a personal chat by id.
+     * It finds the chat by id, gets the users and messages for the chat, and returns a personal chat full response.
+     *
+     * @param id the id of the chat
+     * @return a personal chat full response
+     */
     @Override
     public PersonalChatFullResponse getPersonalChatById(String id) {
 
@@ -97,6 +149,13 @@ public class ChatServiceImpl implements ChatService {
 
     }
 
+    /**
+     * This method is used to get a group chat by id.
+     * It finds the chat by id, gets the users and messages for the chat, and returns a group chat full response.
+     *
+     * @param id the id of the chat
+     * @return a group chat full response
+     */
     @Override
     public GroupChatFullResponse getGroupChatById(String id) {
 
@@ -117,6 +176,12 @@ public class ChatServiceImpl implements ChatService {
 
     }
 
+    /**
+     * This method is used to delete a chat by id.
+     * It finds the chat by id and deletes it.
+     *
+     * @param chatId the id of the chat
+     */
     @Override
     public void deleteChatById(String chatId) {
         chatRepository.findById(chatId).orElseThrow(() -> new NoSuchChatException("Chat with id: " + chatId + " not found!"));
