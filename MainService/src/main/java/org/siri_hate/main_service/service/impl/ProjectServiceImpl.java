@@ -4,9 +4,12 @@ import jakarta.transaction.Transactional;
 import org.siri_hate.main_service.exception.NoSuchProjectFoundException;
 import org.siri_hate.main_service.model.dto.mapper.ProjectMapper;
 import org.siri_hate.main_service.model.dto.request.project.ProjectFullRequest;
+import org.siri_hate.main_service.model.dto.request.project_members.ProjectMemberRequest;
 import org.siri_hate.main_service.model.dto.response.project.ProjectFullResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
 import org.siri_hate.main_service.model.entity.Project;
+import org.siri_hate.main_service.model.entity.ProjectMember;
+import org.siri_hate.main_service.model.entity.User;
 import org.siri_hate.main_service.repository.ProjectRepository;
 import org.siri_hate.main_service.repository.adapters.ProjectSpecification;
 import org.siri_hate.main_service.service.ProjectCategoryService;
@@ -18,7 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -51,6 +56,20 @@ public class ProjectServiceImpl implements ProjectService {
         projectEntity.setUser(userService.findOrCreateUser(username));
         projectEntity.setCategory(projectCategoryService.getProjectCategoryEntityById(project.getCategoryId()));
         projectEntity.setModerationPassed(false);
+
+        Set<ProjectMember> projectMembers = new HashSet<>();
+        for (ProjectMemberRequest memberRequest : project.getMembers()) {
+            User memberUser = userService.findOrCreateUser(memberRequest.getUsername());
+            ProjectMember projectMember = new ProjectMember();
+            projectMember.setUser(memberUser);
+            projectMember.setRole(memberRequest.getRole());
+            projectMembers.add(projectMember);
+        }
+
+        projectEntity.setMembers(projectMembers);
+
+        projectEntity.setMembers(projectMembers);
+
         projectRepository.save(projectEntity);
     }
 
@@ -71,6 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
             String query,
             Pageable pageable
                                                                            ) {
+
         Specification<Project> spec = Specification.where(ProjectSpecification.projectNameStartsWith(query))
                 .and(ProjectSpecification.hasCategory(category));
 

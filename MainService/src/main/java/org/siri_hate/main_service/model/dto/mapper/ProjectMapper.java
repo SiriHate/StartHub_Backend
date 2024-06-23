@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserMapper.class, ProjectMemberMapper.class})
 public interface ProjectMapper {
 
     ProjectMapper INSTANCE = Mappers.getMapper(ProjectMapper.class);
@@ -24,6 +24,8 @@ public interface ProjectMapper {
     Project toProject(ProjectFullRequest project);
 
     @Mapping(source = "category.name", target = "category")
+    @Mapping(source = "user", target = "projectOwner")
+    @Mapping(source = "members", target = "members")
     ProjectFullResponse toProjectFullResponse(Project project);
 
     @Mapping(source = "category.name", target = "category")

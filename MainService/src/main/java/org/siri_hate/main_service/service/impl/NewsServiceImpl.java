@@ -70,7 +70,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     public Page<NewsSummaryResponse> getNewsByCategoryAndSearchQuery(String category, String query, Pageable pageable) {
-
+        
         Specification<News> spec = Specification.where(NewsSpecification.titleStartsWith(query))
                 .and(NewsSpecification.hasCategory(category));
 

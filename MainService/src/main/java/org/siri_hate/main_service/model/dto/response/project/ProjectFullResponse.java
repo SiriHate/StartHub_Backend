@@ -1,5 +1,8 @@
 package org.siri_hate.main_service.model.dto.response.project;
 
+import org.siri_hate.main_service.model.dto.response.project_members.ProjectMembersFullResponse;
+import org.siri_hate.main_service.model.dto.response.project_members.ProjectMembersSummaryResponse;
+import org.siri_hate.main_service.model.dto.response.user.UserFullResponse;
 import org.siri_hate.main_service.model.entity.ProjectMember;
 
 import java.util.Set;
@@ -8,9 +11,9 @@ public class ProjectFullResponse {
 
     private Long id;
 
-    private String projectOwner;
+    private UserFullResponse projectOwner;
 
-    private Set<ProjectMember> members;
+    private Set<ProjectMembersSummaryResponse> members;
 
     private String projectName;
 
@@ -24,12 +27,12 @@ public class ProjectFullResponse {
 
     private Long likes;
 
-    public ProjectFullResponse() {}
+    public ProjectFullResponse() { }
 
     public ProjectFullResponse(
             Long id,
-            String projectOwner,
-            Set<ProjectMember> members,
+            UserFullResponse projectOwner,
+            Set<ProjectMembersSummaryResponse> members,
             String projectName,
             String projectDescription,
             String projectLogoUrl,
@@ -56,19 +59,19 @@ public class ProjectFullResponse {
         this.id = id;
     }
 
-    public String getProjectOwner() {
+    public UserFullResponse getProjectOwner() {
         return projectOwner;
     }
 
-    public void setProjectOwner(String projectOwner) {
+    public void setProjectOwner(UserFullResponse projectOwner) {
         this.projectOwner = projectOwner;
     }
 
-    public Set<ProjectMember> getMembers() {
+    public Set<ProjectMembersSummaryResponse> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<ProjectMember> members) {
+    public void setMembers(Set<ProjectMembersSummaryResponse> members) {
         this.members = members;
     }
 

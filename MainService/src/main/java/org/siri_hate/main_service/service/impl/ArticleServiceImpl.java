@@ -102,7 +102,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         return articleMapper.toArticleSummaryResponsePage(articlePage);
     }
-    
+
     @Override
     @Transactional
     public void updateArticle(Long id, Article articleDetails) {

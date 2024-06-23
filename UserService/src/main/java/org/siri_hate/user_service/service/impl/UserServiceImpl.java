@@ -2,7 +2,7 @@ package org.siri_hate.user_service.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.siri_hate.user_service.model.entity.User;
-import org.siri_hate.user_service.model.dto.request.LoginForm;
+import org.siri_hate.user_service.model.dto.request.auth.LoginForm;
 import org.siri_hate.user_service.repository.UserRepository;
 import org.siri_hate.user_service.security.JWTService;
 import org.siri_hate.user_service.service.UserService;

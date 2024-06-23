@@ -13,12 +13,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * Configuration class for setting up a Kafka producer in the application.
+ * Provides beans for configuring the producer factory and Kafka template.
+ */
 @Configuration
 public class KafkaProducerConfiguration {
 
     @Value("${bootstrap.address}")
     private String bootstrapAddress;
 
+    /**
+     * Creates a producer factory with the configured Kafka properties.
+     *
+     * @return The configured {@link ProducerFactory}.
+     */
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
@@ -31,6 +40,11 @@ public class KafkaProducerConfiguration {
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
+    /**
+     * Creates a Kafka template for sending messages to Kafka topics.
+     *
+     * @return The configured {@link KafkaTemplate}.
+     */
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());

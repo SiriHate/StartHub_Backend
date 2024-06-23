@@ -1,6 +1,10 @@
 package org.siri_hate.main_service.repository.adapters;
 
+import jakarta.persistence.criteria.Join;
 import org.siri_hate.main_service.model.entity.Article;
+import org.siri_hate.main_service.model.entity.category.ArticleCategory;
+import org.springframework.data.jpa.domain.Specification;
+
 import org.springframework.data.jpa.domain.Specification;
 
 public class ArticleSpecification {
@@ -19,7 +23,10 @@ public class ArticleSpecification {
             if (category == null || category.isEmpty()) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("category"), category);
+            Join<Article, ArticleCategory> categoryJoin = root.join("category");
+            return criteriaBuilder.equal(categoryJoin.get("name"), category);
         };
     }
 }
+
+

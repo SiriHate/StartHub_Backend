@@ -1,5 +1,7 @@
 package org.siri_hate.main_service.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -23,6 +25,7 @@ public class ProjectMember {
     private String role;
 
     @ManyToMany(mappedBy = "members")
+    @JsonIgnoreProperties("members")
     private Set<Project> projects = new HashSet<>();
 
     public ProjectMember() { }

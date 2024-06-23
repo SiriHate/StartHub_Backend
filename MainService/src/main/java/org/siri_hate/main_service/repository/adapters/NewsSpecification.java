@@ -1,6 +1,8 @@
 package org.siri_hate.main_service.repository.adapters;
 
+import jakarta.persistence.criteria.Join;
 import org.siri_hate.main_service.model.entity.News;
+import org.siri_hate.main_service.model.entity.category.NewsCategory;
 import org.springframework.data.jpa.domain.Specification;
 
 public class NewsSpecification {
@@ -19,7 +21,8 @@ public class NewsSpecification {
             if (category == null || category.isEmpty()) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("category"), category);
+            Join<News, NewsCategory> categoryJoin = root.join("category");
+            return criteriaBuilder.equal(categoryJoin.get("name"), category);
         };
     }
 

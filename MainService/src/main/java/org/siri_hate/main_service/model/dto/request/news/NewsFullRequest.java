@@ -5,15 +5,15 @@ import jakarta.validation.constraints.Positive;
 
 public class NewsFullRequest {
 
-    @NotBlank
+    @NotBlank(message = "Title should not be blank")
     String title;
 
     String previewUrl;
 
-    @Positive
+    @Positive(message = "Category id should be positive")
     Long categoryId;
 
-    @NotBlank
+    @NotBlank(message = "Content should not be blank")
     String content;
 
     public NewsFullRequest() { }

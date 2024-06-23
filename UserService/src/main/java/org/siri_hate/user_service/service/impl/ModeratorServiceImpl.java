@@ -3,7 +3,6 @@ package org.siri_hate.user_service.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.siri_hate.user_service.exception.NoSuchUserException;
-import org.siri_hate.user_service.model.dto.request.LoginForm;
 import org.siri_hate.user_service.model.entity.Moderator;
 import org.siri_hate.user_service.model.dto.request.moderator.ModeratorFullRequest;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResponse;
@@ -16,7 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 import java.util.Optional;
 
 @Service

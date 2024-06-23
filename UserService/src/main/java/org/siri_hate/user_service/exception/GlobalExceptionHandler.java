@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleBadRequestBodyException(BadRequestBody e) {
+    public ResponseEntity<ErrorResponse> handleBadRequestBodyException(BadRequestBodyException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
         log.error(e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

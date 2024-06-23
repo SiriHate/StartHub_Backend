@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import org.siri_hate.main_service.model.entity.category.ArticleCategory;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Table(name = "articles")

@@ -51,6 +51,30 @@ public class Project {
 
     public Project() { }
 
+    public Project(
+            User user,
+            Set<ProjectMember> members,
+            String projectName,
+            String projectDescription,
+            String projectLogoUrl,
+            ProjectCategory category,
+            String stage,
+            Long likes,
+            Event event,
+            Boolean moderationPassed
+                  ) {
+        this.user = user;
+        this.members = members;
+        this.projectName = projectName;
+        this.projectDescription = projectDescription;
+        this.projectLogoUrl = projectLogoUrl;
+        this.category = category;
+        this.stage = stage;
+        this.likes = likes;
+        this.event = event;
+        this.moderationPassed = moderationPassed;
+    }
+
     public Long getId() {
         return id;
     }

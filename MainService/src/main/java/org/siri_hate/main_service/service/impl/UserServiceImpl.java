@@ -1,5 +1,6 @@
 package org.siri_hate.main_service.service.impl;
 
+import jakarta.transaction.Transactional;
 import org.siri_hate.main_service.exception.NoSuchArticleFoundException;
 import org.siri_hate.main_service.exception.NoSuchNewsFoundException;
 import org.siri_hate.main_service.exception.NoSuchProjectFoundException;
@@ -58,6 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Page<ArticleSummaryResponse> getMyArticles(String username, Pageable pageable) {
 
         User user = userRepository.findUserByUsername(username)
@@ -73,6 +75,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Page<NewsSummaryResponse> getMyNews(String username, Pageable pageable) {
 
         User user = userRepository.findUserByUsername(username)
@@ -88,6 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Page<ProjectSummaryResponse> getProjectsAsOwner(String username, Pageable pageable) {
 
         User user = userRepository.findUserByUsername(username)
@@ -104,6 +108,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Page<ProjectSummaryResponse> getProjectsAsMember(String username, Pageable pageable) {
 
         User user = userRepository.findUserByUsername(username)

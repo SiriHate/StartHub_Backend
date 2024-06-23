@@ -2,33 +2,33 @@ package org.siri_hate.main_service.model.dto.request.project;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
-import org.siri_hate.main_service.model.entity.ProjectMember;
+import org.siri_hate.main_service.model.dto.request.project_members.ProjectMemberRequest;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class ProjectFullRequest {
 
-    private Set<ProjectMember> members = new HashSet<>();
+    private Set<ProjectMemberRequest> members = new HashSet<>();
 
-    @NotBlank
+    @NotBlank(message = "Project name should not be blank")
     private String projectName;
 
-    @NotBlank
+    @NotBlank(message = "Project description should not be blank")
     private String projectDescription;
 
     private String projectLogoUrl;
 
-    @Positive
+    @Positive(message = "Category id should be positive")
     private Long categoryId;
 
-    @NotBlank
+    @NotBlank(message = "Stage should not be blank")
     private String stage;
 
     public ProjectFullRequest() { }
 
     public ProjectFullRequest(
-            Set<ProjectMember> members,
+            Set<ProjectMemberRequest> members,
             String projectName,
             String projectDescription,
             String projectLogoUrl,
@@ -43,11 +43,11 @@ public class ProjectFullRequest {
         this.stage = stage;
     }
 
-    public Set<ProjectMember> getMembers() {
+    public Set<ProjectMemberRequest> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<ProjectMember> members) {
+    public void setMembers(Set<ProjectMemberRequest> members) {
         this.members = members;
     }
 

@@ -1,8 +1,8 @@
 package org.siri_hate.user_service.service;
 
-import org.siri_hate.user_service.model.dto.request.ChangePasswordForm;
-import org.siri_hate.user_service.model.dto.request.ChangePasswordTokenRequest;
-import org.siri_hate.user_service.model.dto.request.RecoveryPasswordRequest;
+import org.siri_hate.user_service.model.dto.request.auth.ChangePasswordForm;
+import org.siri_hate.user_service.model.dto.request.tokens.ChangePasswordTokenRequest;
+import org.siri_hate.user_service.model.dto.request.auth.RecoveryPasswordRequest;
 import org.siri_hate.user_service.model.dto.request.member.*;
 import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
 import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;

@@ -2,7 +2,7 @@ package org.siri_hate.user_service.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.siri_hate.user_service.model.dto.mapper.SpecialistSpecializationMapper;
-import org.siri_hate.user_service.model.dto.request.SpecialistSpecializationRequest;
+import org.siri_hate.user_service.model.dto.request.specialist_specialization.SpecialistSpecializationRequest;
 import org.siri_hate.user_service.model.dto.response.specialization.SpecialistSpecializationFullResponse;
 import org.siri_hate.user_service.model.dto.response.specialization.SpecialistSpecializationSummaryResponse;
 import org.siri_hate.user_service.model.entity.SpecialistSpecialization;
