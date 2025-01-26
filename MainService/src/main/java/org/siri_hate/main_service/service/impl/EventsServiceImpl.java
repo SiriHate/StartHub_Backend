@@ -15,11 +15,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-/**
- * This class implements the EventsService interface.
- * It provides methods for creating, retrieving, updating, and deleting Event entities.
- * It is annotated with @Service, indicating that it's a bean and Spring will create an instance of it at runtime.
- */
+
 @Service
 public class EventsServiceImpl implements EventsService {
 
@@ -27,23 +23,14 @@ public class EventsServiceImpl implements EventsService {
 
     final private EventMapper eventMapper;
 
-    /**
-     * Constructor for EventsServiceImpl.
-     *
-     * @param eventRepository the EventRepository to use for database operations.
-     * @param eventMapper     the EventMapper to use for converting between DTOs and entities.
-     */
+
     @Autowired
     public EventsServiceImpl(EventRepository eventRepository, EventMapper eventMapper) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
     }
 
-    /**
-     * This method creates a new Event entity from a request DTO and saves it in the database.
-     *
-     * @param event the EventFullRequest DTO containing the data for the new Event.
-     */
+
     @Override
     @Transactional
     public void createEvent(EventFullRequest event) {
@@ -51,12 +38,7 @@ public class EventsServiceImpl implements EventsService {
         eventRepository.save(eventEntity);
     }
 
-    /**
-     * This method retrieves an Event entity by its ID and converts it to a full response DTO.
-     *
-     * @param id the ID of the Event to retrieve.
-     * @return an EventFullResponse DTO.
-     */
+
     @Override
     public EventFullResponse getEventById(Long id) {
 
@@ -69,11 +51,7 @@ public class EventsServiceImpl implements EventsService {
         return eventMapper.toEventFullResponse(event.get());
     }
 
-    /**
-     * This method retrieves all Event entities and converts them to summary response DTOs.
-     *
-     * @return a List of EventSummaryResponse DTOs.
-     */
+
     @Override
     public List<EventSummaryResponse> getAllEvents() {
 
@@ -86,12 +64,7 @@ public class EventsServiceImpl implements EventsService {
         return eventMapper.toEventSummaryResponseList(eventList);
     }
 
-    /**
-     * This method updates an existing Event entity with data from a provided Event entity and saves it in the database.
-     *
-     * @param id           the ID of the Event to update.
-     * @param eventDetails the Event containing the new data for the Event.
-     */
+
     @Override
     @Transactional
     public void updateEvent(Long id, Event eventDetails) {
@@ -105,11 +78,7 @@ public class EventsServiceImpl implements EventsService {
         eventRepository.save(eventDetails);
     }
 
-    /**
-     * This method deletes an Event entity by its ID from the database.
-     *
-     * @param id the ID of the Event to delete.
-     */
+
     @Override
     @Transactional
     public void deleteEvent(Long id) {

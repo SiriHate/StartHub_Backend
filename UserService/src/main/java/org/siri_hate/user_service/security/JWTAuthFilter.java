@@ -15,40 +15,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * JWT authentication filter class.
- * This class extends the OncePerRequestFilter class to ensure a single execution per request dispatch.
- * It is used to authenticate requests with headers matching "Authorization" and a token starting with "Bearer ".
- */
+
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final UserService userService;
 
-    /**
-     * Constructor for the JWTAuthFilter class.
-     * This constructor initializes the JWTService and UserService.
-     *
-     * @param jwtService the JWT service
-     * @param userService the user service
-     */
+    
     JWTAuthFilter(JWTService jwtService, UserService userService) {
         this.jwtService = jwtService;
         this.userService = userService;
     }
 
-    /**
-     * Method for JWT authentication.
-     * This method extracts the token from the "Authorization" header, if present.
-     * If the token is valid, it sets the authentication in the security context.
-     *
-     * @param request the HTTP request
-     * @param response the HTTP response
-     * @param filterChain the filter chain
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,

@@ -17,11 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
-/**
- * Admin service implementation class.
- * This class implements the AdminService interface and provides the business logic for admin operations.
- * It uses the AdminRepository and AdminMapper to interact with the database and map between DTOs and entities.
- */
+
 @Service
 public class AdminServiceImpl implements AdminService {
 
@@ -31,26 +27,14 @@ public class AdminServiceImpl implements AdminService {
     // Admin mapper instance
     final private AdminMapper adminMapper;
 
-    /**
-     * Constructor for the AdminServiceImpl class.
-     * This constructor initializes the AdminRepository and AdminMapper.
-     *
-     * @param adminRepository the admin repository
-     * @param adminMapper the admin mapper
-     */
+
     @Autowired
     public AdminServiceImpl(AdminRepository adminRepository, AdminMapper adminMapper) {
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
     }
 
-    /**
-     * Creates a new admin.
-     * This method maps the AdminFullRequest DTO to an Admin entity, checks if an admin with the same username already exists, and saves the new admin to the database.
-     *
-     * @param admin the admin full request DTO
-     * @return the admin full response DTO
-     */
+
     @Override
     @Transactional
     public AdminFullResponse createAdmin(AdminFullRequest admin) {
@@ -65,13 +49,7 @@ public class AdminServiceImpl implements AdminService {
         return adminMapper.toAdminFullResponse(adminEntity);
     }
 
-    /**
-     * Retrieves all admins.
-     * This method retrieves all admins from the database and maps them to AdminSummaryResponse DTOs.
-     *
-     * @param pageable the pagination information
-     * @return a page of admin summary response DTOs
-     */
+
     @Override
     public Page<AdminSummaryResponse> getAllAdmins(Pageable pageable) {
 
@@ -84,13 +62,7 @@ public class AdminServiceImpl implements AdminService {
         return adminMapper.toAdminSummaryResponsePage(admins);
     }
 
-    /**
-     * Retrieves an admin by ID.
-     * This method retrieves an admin from the database by ID and maps it to an AdminFullResponse DTO.
-     *
-     * @param id the ID of the admin
-     * @return the admin full response DTO
-     */
+
     @Override
     public AdminFullResponse getAdminById(Long id) {
 
@@ -100,14 +72,7 @@ public class AdminServiceImpl implements AdminService {
         return adminMapper.toAdminFullResponse(admin);
     }
 
-    /**
-     * Updates an admin by ID.
-     * This method retrieves an admin from the database by ID, updates it with the information from the AdminFullRequest DTO, and saves the updated admin to the database.
-     *
-     * @param id the ID of the admin
-     * @param admin the admin full request DTO
-     * @return the admin full response DTO
-     */
+
     @Override
     @Transactional
     public AdminFullResponse updateAdminById(Long id, AdminFullRequest admin) {
@@ -120,12 +85,7 @@ public class AdminServiceImpl implements AdminService {
         return adminMapper.toAdminFullResponse(updatedAdmin);
     }
 
-    /**
-     * Deletes an admin by ID.
-     * This method retrieves an admin from the database by ID and deletes it.
-     *
-     * @param id the ID of the admin
-     */
+
     @Override
     @Transactional
     public void deleteAdminById(Long id) {

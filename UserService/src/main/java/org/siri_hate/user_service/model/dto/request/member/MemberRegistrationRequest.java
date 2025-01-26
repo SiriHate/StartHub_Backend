@@ -6,46 +6,31 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
-/**
- * DTO for member registration request.
- * This class is used to transfer data related to member registration requests.
- */
+
 public class MemberRegistrationRequest {
 
-    /**
-     * The name of the member.
-     */
+
     @NotBlank(message = "Name should not be null")
     private String name;
 
-    /**
-     * The email of the member.
-     */
+
     @NotBlank(message = "Email should not be null")
     @Email(message = "Must provide a valid email address")
     private String email;
 
-    /**
-     * The phone number of the member.
-     */
+
     @NotBlank(message = "Phone should not be null")
     private String phone;
 
-    /**
-     * The birthday of the member.
-     */
+
     @NotNull(message = "Birth day should not be null")
     private LocalDate birthday;
 
-    /**
-     * The username of the member.
-     */
+
     @NotBlank(message = "Username id should not be null")
     private String username;
 
-    /**
-     * The password of the member.
-     */
+
     @NotBlank(message = "Password id should not be null")
     @Size(min = 8, message = "Password must contain more than 8 characters")
     private String password;

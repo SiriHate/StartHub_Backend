@@ -5,44 +5,29 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-/**
- * DTO for member profile data request.
- * This class is used to transfer data related to member profile data requests.
- */
+
 public class MemberProfileDataRequest {
 
-    /**
-     * The name of the member.
-     */
+
     @NotBlank(message = "Name must not be null")
     private String name;
 
-    /**
-     * The phone number of the member.
-     */
+
     @NotBlank(message = "Phone must not be null")
     private String phone;
 
-    /**
-     * The email of the member.
-     */
+
     @NotBlank(message = "Email must not be null")
     private String email;
 
-    /**
-     * The birthday of the member.
-     */
+
     @NotNull(message = "Birthday must not be null")
     private LocalDate birthday;
 
-    /**
-     * The about section of the member.
-     */
+
     private String about;
 
-    /**
-     * The ID of the member's specialization.
-     */
+
     private Long specializationId;
 
     public MemberProfileDataRequest() { }

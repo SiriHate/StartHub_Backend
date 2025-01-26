@@ -22,11 +22,7 @@ import java.util.Base64;
 import java.util.ConcurrentModificationException;
 import java.util.Optional;
 
-/**
- * Confirmation service implementation class.
- * This class implements the ConfirmationService interface and provides the business logic for confirmation operations.
- * It uses the ConfirmationTokenRepository, MemberService, and KafkaProducerService to interact with the database, manage members, and send confirmation messages respectively.
- */
+
 @Service
 public class ConfirmationServiceImpl implements ConfirmationService {
 
@@ -39,14 +35,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
     // Kafka producer service instance
     private final KafkaProducerService kafkaProducerService;
 
-    /**
-     * Constructor for the ConfirmationServiceImpl class.
-     * This constructor initializes the ConfirmationTokenRepository, MemberService, and KafkaProducerService.
-     *
-     * @param confirmationTokenRepository the confirmation token repository
-     * @param memberService the member service
-     * @param kafkaProducerService the Kafka producer service
-     */
+    
     @Autowired
     private ConfirmationServiceImpl(
             ConfirmationTokenRepository confirmationTokenRepository,
@@ -58,12 +47,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         this.kafkaProducerService = kafkaProducerService;
     }
 
-    /**
-     * Generates a confirmation token.
-     * This method generates a secure random key and encodes it to a string using Base64.
-     *
-     * @return the confirmation token
-     */
+    
     @Override
     public String generateConfirmationToken() {
         BytesKeyGenerator keyGenerator = KeyGenerators.secureRandom(32);
@@ -71,12 +55,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(key);
     }
 
-    /**
-     * Sends a registration confirmation.
-     * This method generates a confirmation token, saves it to the database, and sends a confirmation message with the token.
-     *
-     * @param member the member to send the confirmation to
-     */
+    
     @Override
     public void sendRegistrationConfirmation(Member member) {
         ConfirmationMessageType messageType = ConfirmationMessageType.REGISTRATION_CONFIRMATION;
@@ -94,12 +73,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         kafkaProducerService.sendConfirmationToken(confirmationMessage);
     }
 
-    /**
-     * Sends a change password confirmation.
-     * This method generates a confirmation token, saves it to the database, and sends a confirmation message with the token.
-     *
-     * @param member the member to send the confirmation to
-     */
+    
     @Override
     public void sendChangePasswordConfirmation(Member member) {
         ConfirmationMessageType messageType = ConfirmationMessageType.CHANGE_PASSWORD_CONFIRMATION;
@@ -117,12 +91,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         kafkaProducerService.sendConfirmationToken(confirmationMessage);
     }
 
-    /**
-     * Checks a confirmation token.
-     * This method retrieves a confirmation token from the database, activates the member account associated with the token, and deletes the token.
-     *
-     * @param token the confirmation token to check
-     */
+    
     @Override
     @Transactional
     public void checkConfirmationToken(String token) {
@@ -143,13 +112,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
 
     }
 
-    /**
-     * Retrieves the user ID associated with a token.
-     * This method retrieves a confirmation token from the database and returns the ID of the member associated with the token.
-     *
-     * @param token the confirmation token
-     * @return the user ID
-     */
+    
     @Override
     public Long getUserIdByToken(String token) {
 
@@ -162,12 +125,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         return foundToken.get().getMember().getId();
     }
 
-    /**
-     * Deletes a confirmation token.
-     * This method retrieves a confirmation token from the database and deletes it.
-     *
-     * @param token the confirmation token to delete
-     */
+    
     @Override
     public void deleteConfirmationTokenByTokenValue(String token) {
 
@@ -181,12 +139,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         confirmationTokenRepository.delete(confirmationToken);
     }
 
-    /**
-     * Finds a confirmation token.
-     * This method retrieves a confirmation token from the database.
-     *
-     * @param token the confirmation token to find
-     */
+    
     @Override
     public void findConfirmationTokenByTokenValue(String token) {
         Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);

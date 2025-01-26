@@ -31,11 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * Member service implementation class.
- * This class implements the MemberService interface and provides the business logic for member operations.
- * It uses the MemberRepository, PasswordEncoder, ConfirmationService, NotificationService, MemberMapper, and SpecialistSpecializationService to interact with the database, manage members, send confirmations and notifications, map between DTOs and entities, and manage specialist specializations respectively.
- */
+
 @Service
 public class MemberServiceImpl implements MemberService {
 
@@ -57,17 +53,7 @@ public class MemberServiceImpl implements MemberService {
     // Specialist specialization service instance
     final private SpecialistSpecializationService specialistSpecializationService;
 
-    /**
-     * Constructor for the MemberServiceImpl class.
-     * This constructor initializes the MemberRepository, PasswordEncoder, ConfirmationService, NotificationService, MemberMapper, and SpecialistSpecializationService.
-     *
-     * @param memberRepository the member repository
-     * @param passwordEncoder the password encoder
-     * @param confirmationService the confirmation service
-     * @param notificationService the notification service
-     * @param memberMapper the member mapper
-     * @param specialistSpecializationService the specialist specialization service
-     */
+
     @Autowired
     private MemberServiceImpl(
             MemberRepository memberRepository,
@@ -86,13 +72,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-    /**
-     * Handles member registration.
-     * This method maps the MemberRegistrationRequest DTO to a Member entity, checks if a member with the same username already exists, and saves the new member to the database.
-     * It also sends a registration confirmation.
-     *
-     * @param member the member registration request DTO
-     */
+
     @Override
     @Transactional
     public void memberRegistration(MemberRegistrationRequest member) {
@@ -110,13 +90,7 @@ public class MemberServiceImpl implements MemberService {
         confirmationService.sendRegistrationConfirmation(memberEntity);
     }
 
-    /**
-     * Activates a member account.
-     * This method activates a member account by setting the enabled flag to true and saving the member to the database.
-     * It also sends a successful registration notification.
-     *
-     * @param id the member ID
-     */
+
     @Override
     public void activateMemberAccount(Long id) {
 
@@ -136,12 +110,7 @@ public class MemberServiceImpl implements MemberService {
         notificationService.sendSuccessfulRegistrationNotification(memberName, memberEmail);
     }
 
-    /**
-     * Handles member password recovery requests.
-     * This method sends a change password confirmation to the member with the provided email.
-     *
-     * @param recoveryPasswordRequest the recovery password request DTO
-     */
+
     @Override
     public void memberPasswordRecoveryRequest(RecoveryPasswordRequest recoveryPasswordRequest) {
 
@@ -156,12 +125,7 @@ public class MemberServiceImpl implements MemberService {
         confirmationService.sendChangePasswordConfirmation(member);
     }
 
-    /**
-     * Handles member password recovery confirmations.
-     * This method changes the member password and sends a changed password notification.
-     *
-     * @param changePasswordTokenRequest the change password token request DTO
-     */
+
     @Override
     public void memberPasswordRecoveryConfirmation(ChangePasswordTokenRequest changePasswordTokenRequest) {
 
@@ -187,13 +151,7 @@ public class MemberServiceImpl implements MemberService {
         notificationService.sendChangedPasswordNotification(memberName, memberEmail);
     }
 
-    /**
-     * Handles member password changes.
-     * This method changes the member password and sends a changed password notification.
-     *
-     * @param username the member username
-     * @param changePasswordForm the change password form DTO
-     */
+
     @Override
     @Transactional
     public void memberPasswordChange(String username, ChangePasswordForm changePasswordForm) {
@@ -216,13 +174,7 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
     }
 
-    /**
-     * Retrieves all members.
-     * This method retrieves all members from the database and maps them to a page of MemberSummaryResponse DTOs.
-     *
-     * @param pageable the pagination information
-     * @return a page of member summary response DTOs
-     */
+
     @Override
     public Page<MemberSummaryResponse> getAllMembers(Pageable pageable) {
 
@@ -246,13 +198,7 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.toMemberSummaryResponsePage(members);
     }
 
-    /**
-     * Retrieves a member by ID.
-     * This method retrieves a member by ID from the database and maps it to a MemberFullResponse DTO.
-     *
-     * @param id the member ID
-     * @return the member full response DTO
-     */
+
     @Override
     public MemberFullResponse getMemberById(Long id) {
 
@@ -265,13 +211,7 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.toMemberFullResponse(member.get());
     }
 
-    /**
-     * Retrieves a member by username.
-     * This method retrieves a member by username from the database and maps it to a MemberFullResponse DTO.
-     *
-     * @param username the member username
-     * @return the member full response DTO
-     */
+
     @Override
     public MemberFullResponse getMemberByUsername(String username) {
 
@@ -284,15 +224,7 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.toMemberFullResponse(member);
     }
 
-    /**
-     * Retrieves members by username and specialization.
-     * This method retrieves members by username and specialization from the database and maps them to a page of MemberSummaryResponse DTOs.
-     *
-     * @param username the member username
-     * @param specialization the member specialization
-     * @param pageable the pagination information
-     * @return a page of member summary response DTOs
-     */
+
     @Override
     public Page<MemberSummaryResponse> getMembersByUsernameAndSpecialization(
             String username,
@@ -313,14 +245,7 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.toMemberSummaryResponsePage(members);
     }
 
-    /**
-     * Updates a member.
-     * This method updates a member by ID with the provided member data and maps the updated member to a MemberFullResponse DTO.
-     *
-     * @param id the member ID
-     * @param member the member full request DTO
-     * @return the member full response DTO
-     */
+
     @Override
     @Transactional
     public MemberFullResponse memberUpdate(Long id, MemberFullRequest member) {
@@ -334,12 +259,7 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.toMemberFullResponse(updatedMember);
     }
 
-    /**
-     * Deletes a member by ID.
-     * This method deletes a member by ID from the database and sends a deleted account notification.
-     *
-     * @param id the member ID
-     */
+
     @Override
     @Transactional
     public void deleteMemberById(Long id) {
@@ -359,12 +279,7 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.delete(memberOptional.get());
     }
 
-    /**
-     * Deletes a member by username.
-     * This method deletes a member by username from the database and sends a deleted account notification.
-     *
-     * @param username the member username
-     */
+
     @Override
     @Transactional
     public void deleteMemberByUsername(String username) {
@@ -382,13 +297,7 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
-    /**
-     * Changes a member's avatar.
-     * This method changes a member's avatar by username and maps the updated member to a MemberFullResponse DTO.
-     *
-     * @param username the member username
-     * @param avatar the member change avatar request DTO
-     */
+
     @Override
     @Transactional
     public void memberChangeAvatar(String username, MemberChangeAvatarRequest avatar) {
@@ -403,13 +312,7 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(updatedMember);
     }
 
-    /**
-     * Changes a member's personal information.
-     * This method changes a member's personal information by username and maps the updated member to a MemberFullResponse DTO.
-     *
-     * @param username the member username
-     * @param profileDataRequest the member profile data request DTO
-     */
+
     @Override
     @Transactional
     public MemberFullResponse memberChangePersonalInfo(String username, MemberProfileDataRequest profileDataRequest) {
@@ -430,13 +333,7 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.toMemberFullResponse(updatedMember);
     }
 
-    /**
-     * Changes a member's profile visibility.
-     * This method changes a member's profile visibility by username and maps the updated member to a MemberFullResponse DTO.
-     *
-     * @param request the member change profile visibility request DTO
-     * @param username the member username
-     */
+
     @Override
     @Transactional
     public MemberFullResponse changeMemberProfileVisibility(

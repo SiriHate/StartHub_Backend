@@ -18,11 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * Configuration class for setting up security measures in the application.
- * It enables web security and method security features and defines beans
- * required for authentication and authorization.
- */
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -30,24 +26,13 @@ public class SecurityConfiguration {
 
     private final UserDetailsService userDetailsService;
 
-    /**
-     * Constructs a SecurityConfiguration instance with the provided UserDetailsService.
-     *
-     * @param userDetailsService Service responsible for loading user-specific data.
-     */
+
     @Autowired
     public SecurityConfiguration(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
-    /**
-     * Configures the security filter chain with HTTP security configurations and a JWT authentication filter.
-     *
-     * @param http         HttpSecurity instance to configure security settings.
-     * @param jwtAuthFilter JWT authentication filter to be applied in the security filter chain.
-     * @return SecurityFilterChain instance configured with specified security rules.
-     * @throws Exception If configuration of HttpSecurity fails.
-     */
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthFilter jwtAuthFilter) throws Exception {
         return http
@@ -64,22 +49,13 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    /**
-     * Defines a PasswordEncoder bean for encoding and verifying passwords.
-     *
-     * @return Instance of BCryptPasswordEncoder for password encoding.
-     */
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Defines an AuthenticationProvider bean for authenticating users.
-     *
-     * @param passwordEncoder Password encoder used to encode passwords.
-     * @return Instance of DaoAuthenticationProvider configured with UserDetailsService and PasswordEncoder.
-     */
+
     @Bean
     public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -88,13 +64,7 @@ public class SecurityConfiguration {
         return authenticationProvider;
     }
 
-    /**
-     * Defines an AuthenticationManager bean for managing authentication processes.
-     *
-     * @param config AuthenticationConfiguration instance required to obtain AuthenticationManager.
-     * @return AuthenticationManager instance retrieved from AuthenticationConfiguration.
-     * @throws Exception If authentication manager cannot be obtained.
-     */
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
