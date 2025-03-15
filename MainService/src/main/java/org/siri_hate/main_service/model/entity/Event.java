@@ -1,130 +1,110 @@
 package org.siri_hate.main_service.model.entity;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-
 
 @Entity
 @Table(name = "events")
 public class Event {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+  @Column(name = "name")
+  private String eventName;
 
+  @Column(name = "category")
+  private String category;
 
-    @Column(name = "name")
-    private String eventName;
+  @Column(name = "description")
+  private String eventDescription;
 
+  @Column(name = "date")
+  private LocalDateTime EventDate;
 
-    @Column(name = "category")
-    private String category;
+  @Column(name = "online_conference_link")
+  private String onlineConferenceLink;
 
+  @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
+  private Project project;
 
-    @Column(name = "description")
-    private String eventDescription;
+  public Event() {}
 
+  public Event(
+      String eventName,
+      String category,
+      String eventDescription,
+      LocalDateTime eventDate,
+      String onlineConferenceLink) {
+    this.eventName = eventName;
+    this.category = category;
+    this.eventDescription = eventDescription;
+    EventDate = eventDate;
+    this.onlineConferenceLink = onlineConferenceLink;
+  }
 
-    @Column(name = "date")
-    private LocalDateTime EventDate;
+  public Long getId() {
+    return id;
+  }
 
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    @Column(name = "online_conference_link")
-    private String onlineConferenceLink;
+  public String getEventName() {
+    return eventName;
+  }
 
+  public void setEventName(String eventName) {
+    this.eventName = eventName;
+  }
 
-    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
-    private Project project;
+  public String getCategory() {
+    return category;
+  }
 
+  public void setCategory(String category) {
+    this.category = category;
+  }
 
-    public Event() { }
+  public String getEventDescription() {
+    return eventDescription;
+  }
 
+  public void setEventDescription(String eventDescription) {
+    this.eventDescription = eventDescription;
+  }
 
-    public Event(
-            String eventName,
-            String category,
-            String eventDescription,
-            LocalDateTime eventDate,
-            String onlineConferenceLink
-                ) {
-        this.eventName = eventName;
-        this.category = category;
-        this.eventDescription = eventDescription;
-        EventDate = eventDate;
-        this.onlineConferenceLink = onlineConferenceLink;
-    }
+  public LocalDateTime getEventDate() {
+    return EventDate;
+  }
 
+  public void setEventDate(LocalDateTime eventDate) {
+    EventDate = eventDate;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public String getOnlineConferenceLink() {
+    return onlineConferenceLink;
+  }
 
+  public void setOnlineConferenceLink(String onlineConferenceLink) {
+    this.onlineConferenceLink = onlineConferenceLink;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public Project getProject() {
+    return project;
+  }
 
-
-    public String getEventName() {
-        return eventName;
-    }
-
-
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
-    }
-
-
-    public String getCategory() {
-        return category;
-    }
-
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-
-    public String getEventDescription() {
-        return eventDescription;
-    }
-
-
-    public void setEventDescription(String eventDescription) {
-        this.eventDescription = eventDescription;
-    }
-
-
-    public LocalDateTime getEventDate() {
-        return EventDate;
-    }
-
-
-    public void setEventDate(LocalDateTime eventDate) {
-        EventDate = eventDate;
-    }
-
-
-    public String getOnlineConferenceLink() {
-        return onlineConferenceLink;
-    }
-
-
-    public void setOnlineConferenceLink(String onlineConferenceLink) {
-        this.onlineConferenceLink = onlineConferenceLink;
-    }
-
-
-    public Project getProject() {
-        return project;
-    }
-
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
+  public void setProject(Project project) {
+    this.project = project;
+  }
 }

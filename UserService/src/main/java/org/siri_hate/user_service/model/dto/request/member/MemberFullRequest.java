@@ -2,195 +2,143 @@ package org.siri_hate.user_service.model.dto.request.member;
 
 import java.time.LocalDate;
 
-
 public class MemberFullRequest {
 
-    
-    private String username;
+  private String username;
+  private String password;
+  private String role;
+  private boolean isEnabled;
+  private String avatarUrl;
+  private String name;
+  private Long specializationId;
+  private String about;
+  private String email;
+  private String phone;
+  private LocalDate birthday;
+  private boolean profileHiddenFlag;
 
-    
-    private String password;
+  public MemberFullRequest() {}
 
-    
-    private String role;
+  public MemberFullRequest(
+      String username,
+      String password,
+      String role,
+      boolean isEnabled,
+      String avatarUrl,
+      String name,
+      Long specializationId,
+      String about,
+      String email,
+      String phone,
+      LocalDate birthday,
+      boolean profileHiddenFlag) {
+    this.username = username;
+    this.password = password;
+    this.role = role;
+    this.isEnabled = isEnabled;
+    this.avatarUrl = avatarUrl;
+    this.name = name;
+    this.specializationId = specializationId;
+    this.about = about;
+    this.email = email;
+    this.phone = phone;
+    this.birthday = birthday;
+    this.profileHiddenFlag = profileHiddenFlag;
+  }
 
-    
-    private boolean isEnabled;
+  public String getUsername() {
+    return username;
+  }
 
-    
-    private String avatarUrl;
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    
-    private String name;
+  public String getPassword() {
+    return password;
+  }
 
-    
-    private Long specializationId;
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    
-    private String about;
+  public String getRole() {
+    return role;
+  }
 
-    
-    private String email;
+  public void setRole(String role) {
+    this.role = role;
+  }
 
-    
-    private String phone;
+  public boolean isEnabled() {
+    return isEnabled;
+  }
 
-    
-    private LocalDate birthday;
+  public void setEnabled(boolean enabled) {
+    isEnabled = enabled;
+  }
 
-    
-    private boolean profileHiddenFlag;
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
 
-    
-    public MemberFullRequest() { }
+  public void setAvatarUrl(String avatarUrl) {
+    this.avatarUrl = avatarUrl;
+  }
 
-    
-    public MemberFullRequest(
-            String username,
-            String password,
-            String role,
-            boolean isEnabled,
-            String avatarUrl,
-            String name,
-            Long specializationId,
-            String about,
-            String email,
-            String phone,
-            LocalDate birthday,
-            boolean profileHiddenFlag
-                            ) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.isEnabled = isEnabled;
-        this.avatarUrl = avatarUrl;
-        this.name = name;
-        this.specializationId = specializationId;
-        this.about = about;
-        this.email = email;
-        this.phone = phone;
-        this.birthday = birthday;
-        this.profileHiddenFlag = profileHiddenFlag;
-    }
+  public String getName() {
+    return name;
+  }
 
-    
-    public String getUsername() {
-        return username;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public Long getSpecializationId() {
+    return specializationId;
+  }
 
-    
-    public String getPassword() {
-        return password;
-    }
+  public void setSpecialization(Long specializationId) {
+    this.specializationId = specializationId;
+  }
 
-    
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public String getAbout() {
+    return about;
+  }
 
-    
-    public String getRole() {
-        return role;
-    }
+  public void setAbout(String about) {
+    this.about = about;
+  }
 
-    
-    public void setRole(String role) {
-        this.role = role;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    
-    public boolean isEnabled() {
-        return isEnabled;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
+  public String getPhone() {
+    return phone;
+  }
 
-    
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
+  public LocalDate getBirthday() {
+    return birthday;
+  }
 
-    
-    public String getName() {
-        return name;
-    }
+  public void setBirthday(LocalDate birthday) {
+    this.birthday = birthday;
+  }
 
-    
-    public void setName(String name) {
-        this.name = name;
-    }
+  public boolean isProfileHiddenFlag() {
+    return profileHiddenFlag;
+  }
 
-    
-    public Long getSpecializationId() {
-        return specializationId;
-    }
-
-    
-    public void setSpecialization(Long specializationId) {
-        this.specializationId = specializationId;
-    }
-
-    
-    public String getAbout() {
-        return about;
-    }
-
-    
-    public void setAbout(String about) {
-        this.about = about;
-    }
-
-    
-    public String getEmail() {
-        return email;
-    }
-
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    
-    public String getPhone() {
-        return phone;
-    }
-
-    
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    
-    public LocalDate getBirthday() {
-        return birthday;
-    }
-
-    
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
-    }
-
-    
-    public boolean isProfileHiddenFlag() {
-        return profileHiddenFlag;
-    }
-
-    
-    public void setProfileHiddenFlag(boolean profileHiddenFlag) {
-        this.profileHiddenFlag = profileHiddenFlag;
-    }
-
+  public void setProfileHiddenFlag(boolean profileHiddenFlag) {
+    this.profileHiddenFlag = profileHiddenFlag;
+  }
 }

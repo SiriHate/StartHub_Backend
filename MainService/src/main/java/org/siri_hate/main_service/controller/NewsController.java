@@ -15,60 +15,69 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
 @RequestMapping("/api/v1/main_service/news")
 public class NewsController {
 
-    final private NewsService newsService;
+  private final NewsService newsService;
 
-    @Autowired
-    public NewsController(NewsService newsService) {
-        this.newsService = newsService;
-    }
+  @Autowired
+  public NewsController(NewsService newsService) {
+    this.newsService = newsService;
+  }
 
-    @PostMapping
-    public ResponseEntity<String> createNews(@Valid @RequestBody NewsFullRequest news) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        newsService.createNews(username, news);
-        return new ResponseEntity<>("News was successfully created", HttpStatus.CREATED);
-    }
+  @PostMapping
+  public ResponseEntity<String> createNews(@Valid @RequestBody NewsFullRequest news) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
+    newsService.createNews(username, news);
+    return new ResponseEntity<>("News was successfully created", HttpStatus.CREATED);
+  }
 
-    @GetMapping
-    public ResponseEntity<Page<NewsSummaryResponse>> getAllNews(@PageableDefault(size = 1) Pageable pageable) {
-        Page<NewsSummaryResponse> news = newsService.getAllNews(pageable);
-        return new ResponseEntity<>(news, HttpStatus.OK);
-    }
+  @GetMapping
+  public ResponseEntity<Page<NewsSummaryResponse>> getAllNews(
+      @PageableDefault(size = 1) Pageable pageable) {
+    Page<NewsSummaryResponse> news = newsService.getAllNews(pageable);
+    return new ResponseEntity<>(news, HttpStatus.OK);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<NewsFullResponse> getNewsById(@PathVariable Long id) {
-        NewsFullResponse news = newsService.getNewsById(id);
-        return new ResponseEntity<>(news, HttpStatus.OK);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<NewsFullResponse> getNewsById(@PathVariable Long id) {
+    NewsFullResponse news = newsService.getNewsById(id);
+    return new ResponseEntity<>(news, HttpStatus.OK);
+  }
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<NewsSummaryResponse>> getNewsByCategoryAndSearchQuery(
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String query,
-            @PageableDefault(size = 10) Pageable pageable
-                                                                                    ) {
-        Page<NewsSummaryResponse> newsList = newsService.getNewsByCategoryAndSearchQuery(category, query, pageable);
-        return new ResponseEntity<>(newsList, HttpStatus.OK);
-    }
+  @GetMapping("/search")
+  public ResponseEntity<Page<NewsSummaryResponse>> getNewsByCategoryAndSearchQuery(
+      @RequestParam(required = false) String category,
+      @RequestParam(required = false) String query,
+      @PageableDefault(size = 10) Pageable pageable) {
+    Page<NewsSummaryResponse> newsList =
+        newsService.getNewsByCategoryAndSearchQuery(category, query, pageable);
+    return new ResponseEntity<>(newsList, HttpStatus.OK);
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateNews(@PathVariable Long id, @Valid @RequestBody News newsDetails) {
-        newsService.updateNews(id, newsDetails);
-        return new ResponseEntity<>("News has been successfully modified", HttpStatus.OK);
-    }
+  @PutMapping("/{id}")
+  public ResponseEntity<String> updateNews(
+      @PathVariable Long id, @Valid @RequestBody News newsDetails) {
+    newsService.updateNews(id, newsDetails);
+    return new ResponseEntity<>("News has been successfully modified", HttpStatus.OK);
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteNews(@PathVariable Long id) {
-        newsService.deleteNews(id);
-        return new ResponseEntity<>("News has been successfully deleted", HttpStatus.NO_CONTENT);
-    }
-
+  @DeleteMapping("/{id}")
+  public ResponseEntity<String> deleteNews(@PathVariable Long id) {
+    newsService.deleteNews(id);
+    return new ResponseEntity<>("News has been successfully deleted", HttpStatus.NO_CONTENT);
+  }
 }

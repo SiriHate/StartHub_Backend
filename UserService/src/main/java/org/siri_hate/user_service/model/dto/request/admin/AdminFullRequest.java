@@ -1,41 +1,31 @@
 package org.siri_hate.user_service.model.dto.request.admin;
 
-
 public class AdminFullRequest {
 
+  private String username;
 
-    private String username;
+  private String password;
 
+  public AdminFullRequest() {}
 
-    private String password;
+  public AdminFullRequest(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
 
+  public String getUsername() {
+    return username;
+  }
 
-    public AdminFullRequest() { }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
+  public String getPassword() {
+    return password;
+  }
 
-    public AdminFullRequest(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-
-    public String getUsername() {
-        return username;
-    }
-
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-
-    public String getPassword() {
-        return password;
-    }
-
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+  public void setPassword(String password) {
+    this.password = password;
+  }
 }

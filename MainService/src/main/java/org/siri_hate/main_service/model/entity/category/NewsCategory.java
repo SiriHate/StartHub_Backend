@@ -1,66 +1,62 @@
 package org.siri_hate.main_service.model.entity.category;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.Objects;
-
 
 @Entity
 @Table(name = "news_categories")
 public class NewsCategory {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+  @Column(name = "name", unique = true, nullable = false)
+  private String name;
 
+  public NewsCategory() {}
 
-    @Column(name = "name", unique = true, nullable = false)
-    private String name;
+  public NewsCategory(Long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 
+  public Long getId() {
+    return id;
+  }
 
-    public NewsCategory() { }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
+  public String getName() {
+    return name;
+  }
 
-    public NewsCategory(Long id, String name) {
-        this.id = id;
-        this.name = name;
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-
-    public Long getId() {
-        return id;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
+    NewsCategory newsCategory = (NewsCategory) o;
+    return Objects.equals(id, newsCategory.id) && Objects.equals(name, newsCategory.name);
+  }
 
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NewsCategory newsCategory = (NewsCategory) o;
-        return Objects.equals(id, newsCategory.id) && Objects.equals(name, newsCategory.name);
-    }
-
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
-
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name);
+  }
 }

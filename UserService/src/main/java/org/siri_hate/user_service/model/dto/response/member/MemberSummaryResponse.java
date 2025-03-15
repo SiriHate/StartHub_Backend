@@ -1,89 +1,61 @@
 package org.siri_hate.user_service.model.dto.response.member;
 
-
 public class MemberSummaryResponse {
 
-    
-    private Long id;
+  private Long id;
+  private String username;
+  private String name;
+  private String avatarUrl;
+  private String specialization;
 
-    
-    private String username;
+  public MemberSummaryResponse() {}
 
-    
-    private String name;
+  public MemberSummaryResponse(
+      Long id, String username, String name, String avatarUrl, String specialization) {
+    this.id = id;
+    this.username = username;
+    this.name = name;
+    this.avatarUrl = avatarUrl;
+    this.specialization = specialization;
+  }
 
-    
-    private String avatarUrl;
+  public Long getId() {
+    return id;
+  }
 
-    
-    private String specialization;
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    
-    public MemberSummaryResponse() { }
+  public String getUsername() {
+    return username;
+  }
 
-    
-    public MemberSummaryResponse(
-            Long id,
-            String username,
-            String name,
-            String avatarUrl,
-            String specialization
-                                ) {
-        this.id = id;
-        this.username = username;
-        this.name = name;
-        this.avatarUrl = avatarUrl;
-        this.specialization = specialization;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    
-    public Long getId() {
-        return id;
-    }
+  public String getName() {
+    return name;
+  }
 
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    
-    public String getUsername() {
-        return username;
-    }
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
 
-    
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public void setAvatarUrl(String avatarUrl) {
+    this.avatarUrl = avatarUrl;
+  }
 
-    
-    public String getName() {
-        return name;
-    }
+  public String getSpecialization() {
+    return specialization;
+  }
 
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-    
-    public String getSpecialization() {
-        return specialization;
-    }
-
-    
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
-    }
-
+  public void setSpecialization(String specialization) {
+    this.specialization = specialization;
+  }
 }

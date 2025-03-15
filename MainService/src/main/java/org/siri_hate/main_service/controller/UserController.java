@@ -22,47 +22,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/main_service/users")
 public class UserController {
 
-    final private UserService userService;
+  private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+  @Autowired
+  public UserController(UserService userService) {
+    this.userService = userService;
+  }
 
-    @GetMapping("/my/projects/owned")
-    public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsOwner(
-            @PageableDefault(size = 10) Pageable pageable
-                                                                          ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Page<ProjectSummaryResponse> projects = userService.getProjectsAsOwner(username, pageable);
-        return new ResponseEntity<>(projects, HttpStatus.OK);
-    }
+  @GetMapping("/my/projects/owned")
+  public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsOwner(
+      @PageableDefault(size = 10) Pageable pageable) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
+    Page<ProjectSummaryResponse> projects = userService.getProjectsAsOwner(username, pageable);
+    return new ResponseEntity<>(projects, HttpStatus.OK);
+  }
 
-    @GetMapping("/my/projects/member")
-    public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsMember(
-            @PageableDefault(size = 10) Pageable pageable
-                                                                           ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Page<ProjectSummaryResponse> projects = userService.getProjectsAsMember(username, pageable);
-        return new ResponseEntity<>(projects, HttpStatus.OK);
-    }
+  @GetMapping("/my/projects/member")
+  public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsMember(
+      @PageableDefault(size = 10) Pageable pageable) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
+    Page<ProjectSummaryResponse> projects = userService.getProjectsAsMember(username, pageable);
+    return new ResponseEntity<>(projects, HttpStatus.OK);
+  }
 
-    @GetMapping("/my/articles")
-    public ResponseEntity<Page<ArticleSummaryResponse>> getMyArticles(@PageableDefault(size = 10) Pageable pageable) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Page<ArticleSummaryResponse> articles = userService.getMyArticles(username, pageable);
-        return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
+  @GetMapping("/my/articles")
+  public ResponseEntity<Page<ArticleSummaryResponse>> getMyArticles(
+      @PageableDefault(size = 10) Pageable pageable) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
+    Page<ArticleSummaryResponse> articles = userService.getMyArticles(username, pageable);
+    return new ResponseEntity<>(articles, HttpStatus.OK);
+  }
 
-    @GetMapping("/my/news")
-    public ResponseEntity<Page<NewsSummaryResponse>> getMyNews(@PageableDefault(size = 10) Pageable pageable) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        Page<NewsSummaryResponse> news = userService.getMyNews(username, pageable);
-        return new ResponseEntity<>(news, HttpStatus.OK);
-    }
-
+  @GetMapping("/my/news")
+  public ResponseEntity<Page<NewsSummaryResponse>> getMyNews(
+      @PageableDefault(size = 10) Pageable pageable) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
+    Page<NewsSummaryResponse> news = userService.getMyNews(username, pageable);
+    return new ResponseEntity<>(news, HttpStatus.OK);
+  }
 }

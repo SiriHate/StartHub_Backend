@@ -7,25 +7,18 @@ import org.siri_hate.main_service.model.entity.News;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
 public interface NewsService {
 
-    
-    void createNews(String username, NewsFullRequest news);
+  void createNews(String username, NewsFullRequest news);
 
-    
-    NewsFullResponse getNewsById(Long id);
+  NewsFullResponse getNewsById(Long id);
 
-    
-    Page<NewsSummaryResponse> getNewsByCategoryAndSearchQuery(String category, String query, Pageable pageable);
+  Page<NewsSummaryResponse> getNewsByCategoryAndSearchQuery(
+      String category, String query, Pageable pageable);
 
-    
-    Page<NewsSummaryResponse> getAllNews(Pageable pageable);
+  Page<NewsSummaryResponse> getAllNews(Pageable pageable);
 
-    
-    void updateNews(Long id, News newsDetails);
+  void updateNews(Long id, News newsDetails);
 
-    
-    void deleteNews(Long id);
-
+  void deleteNews(Long id);
 }

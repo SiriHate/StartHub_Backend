@@ -1,69 +1,50 @@
 package org.siri_hate.user_service.model.dto.response.moderator;
 
-
 public class ModeratorFullResponse {
 
-    
-    private Long id;
+  private Long id;
+  private String username;
+  private String name;
+  private Long employeeId;
 
-    
-    private String username;
+  public ModeratorFullResponse() {}
 
-    
-    private String name;
+  public ModeratorFullResponse(Long id, String username, String name, Long employeeId) {
+    this.id = id;
+    this.username = username;
+    this.name = name;
+    this.employeeId = employeeId;
+  }
 
-    
-    private Long employeeId;
+  public Long getId() {
+    return id;
+  }
 
-    
-    public ModeratorFullResponse() {}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    
-    public ModeratorFullResponse(Long id, String username, String name, Long employeeId) {
-        this.id = id;
-        this.username = username;
-        this.name = name;
-        this.employeeId = employeeId;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    
-    public Long getId() {
-        return id;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public String getName() {
+    return name;
+  }
 
-    
-    public String getUsername() {
-        return username;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public Long getEmployeeId() {
+    return employeeId;
+  }
 
-    
-    public String getName() {
-        return name;
-    }
-
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    
-    public Long getEmployeeId() {
-        return employeeId;
-    }
-
-    
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
-
+  public void setEmployeeId(Long employeeId) {
+    this.employeeId = employeeId;
+  }
 }

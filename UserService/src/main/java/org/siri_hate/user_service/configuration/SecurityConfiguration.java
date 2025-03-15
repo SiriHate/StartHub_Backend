@@ -18,56 +18,56 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private final UserDetailsService userDetailsService;
+  private final UserDetailsService userDetailsService;
 
+  @Autowired
+  public SecurityConfiguration(UserDetailsService userDetailsService) {
+    this.userDetailsService = userDetailsService;
+  }
 
-    @Autowired
-    public SecurityConfiguration(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthFilter jwtAuthFilter)
+      throws Exception {
+    return http.csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers("/api/v1/users/member/check_token")
+                    .authenticated()
+                    .requestMatchers("/api/v1/users/member/delete_my_account")
+                    .authenticated()
+                    .requestMatchers("/api/v1/users/member/change_personal_info")
+                    .authenticated()
+                    .requestMatchers("/api/v1/users/member/change_password")
+                    .authenticated()
+                    .requestMatchers("/api/v1/user_service/members/change_profile_visibility")
+                    .authenticated()
+                    .anyRequest()
+                    .permitAll())
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
+  }
 
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthFilter jwtAuthFilter) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                                               .requestMatchers("/api/v1/users/member/check_token").authenticated()
-                                               .requestMatchers("/api/v1/users/member/delete_my_account").authenticated()
-                                               .requestMatchers("/api/v1/users/member/change_personal_info").authenticated()
-                                               .requestMatchers("/api/v1/users/member/change_password").authenticated()
-                                               .requestMatchers("/api/v1/user_service/members/change_profile_visibility").authenticated()
-                                               .anyRequest().permitAll()
-                                      )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+  @Bean
+  public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
+    DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+    authenticationProvider.setUserDetailsService(userDetailsService);
+    authenticationProvider.setPasswordEncoder(passwordEncoder);
+    return authenticationProvider;
+  }
 
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
-    @Bean
-    public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
-        return authenticationProvider;
-    }
-
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+      throws Exception {
+    return config.getAuthenticationManager();
+  }
 }

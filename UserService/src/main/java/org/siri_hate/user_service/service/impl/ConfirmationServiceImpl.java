@@ -1,6 +1,9 @@
 package org.siri_hate.user_service.service.impl;
 
 import jakarta.transaction.Transactional;
+import java.util.Base64;
+import java.util.ConcurrentModificationException;
+import java.util.Optional;
 import org.hibernate.StaleObjectStateException;
 import org.siri_hate.user_service.exception.NoSuchConfirmationTokenException;
 import org.siri_hate.user_service.kafka.KafkaProducerService;
@@ -18,134 +21,105 @@ import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
-import java.util.ConcurrentModificationException;
-import java.util.Optional;
-
-
 @Service
 public class ConfirmationServiceImpl implements ConfirmationService {
 
-    // ConfirmationToken repository instance
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+  private final ConfirmationTokenRepository confirmationTokenRepository;
+  private final MemberService memberService;
+  private final KafkaProducerService kafkaProducerService;
 
-    // Member service instance
-    private final MemberService memberService;
+  @Autowired
+  private ConfirmationServiceImpl(
+      ConfirmationTokenRepository confirmationTokenRepository,
+      MemberService memberService,
+      KafkaProducerService kafkaProducerService) {
+    this.confirmationTokenRepository = confirmationTokenRepository;
+    this.memberService = memberService;
+    this.kafkaProducerService = kafkaProducerService;
+  }
 
-    // Kafka producer service instance
-    private final KafkaProducerService kafkaProducerService;
+  @Override
+  public String generateConfirmationToken() {
+    BytesKeyGenerator keyGenerator = KeyGenerators.secureRandom(32);
+    byte[] key = keyGenerator.generateKey();
+    return Base64.getUrlEncoder().withoutPadding().encodeToString(key);
+  }
 
-    
-    @Autowired
-    private ConfirmationServiceImpl(
-            ConfirmationTokenRepository confirmationTokenRepository,
-            MemberService memberService,
-            KafkaProducerService kafkaProducerService
-                                   ) {
-        this.confirmationTokenRepository = confirmationTokenRepository;
-        this.memberService = memberService;
-        this.kafkaProducerService = kafkaProducerService;
+  @Override
+  public void sendRegistrationConfirmation(Member member) {
+    ConfirmationMessageType messageType = ConfirmationMessageType.REGISTRATION_CONFIRMATION;
+    String tokenValue = generateConfirmationToken();
+    String tokenType = TokenType.CONFIRM_REGISTRATION.getValue();
+    ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, tokenValue, member);
+    confirmationTokenRepository.save(confirmationToken);
+    String confirmationTokenValue = confirmationToken.getTokenValue();
+    ConfirmationMessage confirmationMessage =
+        new ConfirmationMessage(
+            messageType, member.getName(), member.getEmail(), confirmationTokenValue);
+    kafkaProducerService.sendConfirmationToken(confirmationMessage);
+  }
+
+  @Override
+  public void sendChangePasswordConfirmation(Member member) {
+    ConfirmationMessageType messageType = ConfirmationMessageType.CHANGE_PASSWORD_CONFIRMATION;
+    String tokenValue = generateConfirmationToken();
+    String tokenType = TokenType.CONFIRM_CHANGE_PASSWORD.getValue();
+    ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, tokenValue, member);
+    confirmationTokenRepository.save(confirmationToken);
+    String confirmationTokenValue = confirmationToken.getTokenValue();
+    ConfirmationMessage confirmationMessage =
+        new ConfirmationMessage(
+            messageType, member.getName(), member.getEmail(), confirmationTokenValue);
+    kafkaProducerService.sendConfirmationToken(confirmationMessage);
+  }
+
+  @Override
+  @Transactional
+  public void checkConfirmationToken(String token) {
+
+    try {
+      Optional<ConfirmationToken> foundToken =
+          confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
+      if (foundToken.isPresent()) {
+        Long userId = foundToken.get().getMember().getId();
+        memberService.activateMemberAccount(userId);
+        confirmationTokenRepository.delete(foundToken.get());
+      } else {
+        throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
+      }
+    } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
+      throw new ConcurrentModificationException(
+          "The confirmation token was modified or deleted by another transaction.");
     }
+  }
 
-    
-    @Override
-    public String generateConfirmationToken() {
-        BytesKeyGenerator keyGenerator = KeyGenerators.secureRandom(32);
-        byte[] key = keyGenerator.generateKey();
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(key);
+  @Override
+  public Long getUserIdByToken(String token) {
+    Optional<ConfirmationToken> foundToken =
+        confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
+    if (foundToken.isEmpty()) {
+      throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
     }
+    return foundToken.get().getMember().getId();
+  }
 
-    
-    @Override
-    public void sendRegistrationConfirmation(Member member) {
-        ConfirmationMessageType messageType = ConfirmationMessageType.REGISTRATION_CONFIRMATION;
-        String tokenValue = generateConfirmationToken();
-        String tokenType = TokenType.CONFIRM_REGISTRATION.getValue();
-        ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, tokenValue, member);
-        confirmationTokenRepository.save(confirmationToken);
-        String confirmationTokenValue = confirmationToken.getTokenValue();
-        ConfirmationMessage confirmationMessage = new ConfirmationMessage(
-                messageType,
-                member.getName(),
-                member.getEmail(),
-                confirmationTokenValue
-        );
-        kafkaProducerService.sendConfirmationToken(confirmationMessage);
+  @Override
+  public void deleteConfirmationTokenByTokenValue(String token) {
+    Optional<ConfirmationToken> foundToken =
+        confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
+    if (foundToken.isEmpty()) {
+      throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
     }
+    ConfirmationToken confirmationToken = foundToken.get();
+    confirmationTokenRepository.delete(confirmationToken);
+  }
 
-    
-    @Override
-    public void sendChangePasswordConfirmation(Member member) {
-        ConfirmationMessageType messageType = ConfirmationMessageType.CHANGE_PASSWORD_CONFIRMATION;
-        String tokenValue = generateConfirmationToken();
-        String tokenType = TokenType.CONFIRM_CHANGE_PASSWORD.getValue();
-        ConfirmationToken confirmationToken = new ConfirmationToken(tokenType, tokenValue, member);
-        confirmationTokenRepository.save(confirmationToken);
-        String confirmationTokenValue = confirmationToken.getTokenValue();
-        ConfirmationMessage confirmationMessage = new ConfirmationMessage(
-                messageType,
-                member.getName(),
-                member.getEmail(),
-                confirmationTokenValue
-        );
-        kafkaProducerService.sendConfirmationToken(confirmationMessage);
+  @Override
+  public void findConfirmationTokenByTokenValue(String token) {
+    Optional<ConfirmationToken> foundToken =
+        confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
+    if (foundToken.isEmpty()) {
+      throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
     }
-
-    
-    @Override
-    @Transactional
-    public void checkConfirmationToken(String token) {
-
-        try {
-            Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
-            if (foundToken.isPresent()) {
-                Long userId = foundToken.get().getMember().getId();
-                memberService.activateMemberAccount(userId);
-                confirmationTokenRepository.delete(foundToken.get());
-            } else {
-                throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
-            }
-        } catch (StaleObjectStateException | ObjectOptimisticLockingFailureException e) {
-            throw new ConcurrentModificationException(
-                    "The confirmation token was modified or deleted by another transaction.");
-        }
-
-    }
-
-    
-    @Override
-    public Long getUserIdByToken(String token) {
-
-        Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
-
-        if (foundToken.isEmpty()) {
-            throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
-        }
-
-        return foundToken.get().getMember().getId();
-    }
-
-    
-    @Override
-    public void deleteConfirmationTokenByTokenValue(String token) {
-
-        Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
-
-        if (foundToken.isEmpty()) {
-            throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
-        }
-
-        ConfirmationToken confirmationToken = foundToken.get();
-        confirmationTokenRepository.delete(confirmationToken);
-    }
-
-    
-    @Override
-    public void findConfirmationTokenByTokenValue(String token) {
-        Optional<ConfirmationToken> foundToken = confirmationTokenRepository.findConfirmationTokenByTokenValue(token);
-        if (foundToken.isEmpty()) {
-            throw new NoSuchConfirmationTokenException("Required confirmation token was not found");
-        }
-    }
-
+  }
 }

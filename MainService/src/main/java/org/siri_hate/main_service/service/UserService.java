@@ -7,22 +7,15 @@ import org.siri_hate.main_service.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
 public interface UserService {
 
+  User findOrCreateUser(String username);
 
-    User findOrCreateUser(String username);
+  Page<ArticleSummaryResponse> getMyArticles(String username, Pageable pageable);
 
+  Page<NewsSummaryResponse> getMyNews(String username, Pageable pageable);
 
-    Page<ArticleSummaryResponse> getMyArticles(String username, Pageable pageable);
+  Page<ProjectSummaryResponse> getProjectsAsOwner(String username, Pageable pageable);
 
-
-    Page<NewsSummaryResponse> getMyNews(String username, Pageable pageable);
-
-
-    Page<ProjectSummaryResponse> getProjectsAsOwner(String username, Pageable pageable);
-
-
-    Page<ProjectSummaryResponse> getProjectsAsMember(String username, Pageable pageable);
-
+  Page<ProjectSummaryResponse> getProjectsAsMember(String username, Pageable pageable);
 }

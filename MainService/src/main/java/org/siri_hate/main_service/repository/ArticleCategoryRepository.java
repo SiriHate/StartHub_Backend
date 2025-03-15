@@ -4,8 +4,5 @@ import org.siri_hate.main_service.model.entity.category.ArticleCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface ArticleCategoryRepository extends JpaRepository<ArticleCategory, Long> {
-
-}
+public interface ArticleCategoryRepository extends JpaRepository<ArticleCategory, Long> {}

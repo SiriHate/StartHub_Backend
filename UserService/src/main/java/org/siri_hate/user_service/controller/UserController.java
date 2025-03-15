@@ -1,6 +1,5 @@
 package org.siri_hate.user_service.controller;
 
-
 import jakarta.validation.Valid;
 import org.siri_hate.user_service.model.dto.request.auth.LoginForm;
 import org.siri_hate.user_service.service.UserService;
@@ -12,25 +11,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @Validated
 @RequestMapping("/api/v1/user_service/users")
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
+  @Autowired
+  public UserController(UserService userService) {
+    this.userService = userService;
+  }
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-
-    @PostMapping("/login")
-    public ResponseEntity<String> userLogin(@RequestBody @Valid LoginForm loginForm) {
-        String token = userService.userLogin(loginForm);
-        return ResponseEntity.ok(token);
-    }
-
+  @PostMapping("/login")
+  public ResponseEntity<String> userLogin(@RequestBody @Valid LoginForm loginForm) {
+    String token = userService.userLogin(loginForm);
+    return ResponseEntity.ok(token);
+  }
 }

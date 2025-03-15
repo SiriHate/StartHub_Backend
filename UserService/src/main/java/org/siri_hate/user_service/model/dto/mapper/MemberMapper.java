@@ -1,5 +1,6 @@
 package org.siri_hate.user_service.model.dto.mapper;
 
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -14,48 +15,38 @@ import org.siri_hate.user_service.model.dto.response.member.MemberSummaryRespons
 import org.siri_hate.user_service.model.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import java.util.List;
-
 
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
 
+  MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);
 
-    MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);
+  @Mappings({
+    @Mapping(source = "username", target = "username"),
+    @Mapping(source = "password", target = "password")
+  })
+  Member toMemberFromRegistration(MemberRegistrationRequest member);
 
+  @Mapping(source = "specialization.name", target = "specialization")
+  MemberFullResponse toMemberFullResponse(Member member);
 
-    @Mappings({
-            @Mapping(source = "username", target = "username"),
-            @Mapping(source = "password", target = "password")
-    })
-    Member toMemberFromRegistration(MemberRegistrationRequest member);
+  @Mapping(source = "specialization.name", target = "specialization")
+  MemberSummaryResponse toMemberSummaryResponse(Member member);
 
+  List<MemberSummaryResponse> toMemberSummaryResponseList(List<Member> members);
 
-    @Mapping(source = "specialization.name", target = "specialization")
-    MemberFullResponse toMemberFullResponse(Member member);
+  @Mapping(target = "specialization", ignore = true)
+  Member memberUpdateProfileData(
+      MemberProfileDataRequest profileDataRequest, @MappingTarget Member member);
 
+  @Mapping(target = "specialization", ignore = true)
+  Member memberUpdateFullData(MemberFullRequest memberFullRequest, @MappingTarget Member member);
 
-    @Mapping(source = "specialization.name", target = "specialization")
-    MemberSummaryResponse toMemberSummaryResponse(Member member);
+  Member memberUpdateAvatar(MemberChangeAvatarRequest newAvatar, @MappingTarget Member member);
 
-
-    List<MemberSummaryResponse> toMemberSummaryResponseList(List<Member> members);
-
-
-    @Mapping(target = "specialization", ignore = true)
-    Member memberUpdateProfileData(MemberProfileDataRequest profileDataRequest, @MappingTarget Member member);
-
-
-    @Mapping(target = "specialization", ignore = true)
-    Member memberUpdateFullData(MemberFullRequest memberFullRequest, @MappingTarget Member member);
-
-
-    Member memberUpdateAvatar(MemberChangeAvatarRequest newAvatar, @MappingTarget Member member);
-
-
-    default Page<MemberSummaryResponse> toMemberSummaryResponsePage(Page<Member> members) {
-        List<MemberSummaryResponse> summaryResponses = toMemberSummaryResponseList(members.getContent());
-        return new PageImpl<>(summaryResponses, members.getPageable(), members.getTotalElements());
-    }
-
+  default Page<MemberSummaryResponse> toMemberSummaryResponsePage(Page<Member> members) {
+    List<MemberSummaryResponse> summaryResponses =
+        toMemberSummaryResponseList(members.getContent());
+    return new PageImpl<>(summaryResponses, members.getPageable(), members.getTotalElements());
+  }
 }

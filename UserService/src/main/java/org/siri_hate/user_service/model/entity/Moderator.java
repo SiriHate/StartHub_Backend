@@ -1,100 +1,90 @@
 package org.siri_hate.user_service.model.entity;
 
-import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.List;
-
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Table(name = "moderators")
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Moderator extends User {
 
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
 
-    
-    @Column(name = "name", nullable = false)
-    private String name;
+  @Column(name = "name", nullable = false)
+  private String name;
 
-    
-    @Column(name = "employee_id", nullable = false, unique = true)
-    private Long employeeId;
+  @Column(name = "employee_id", nullable = false, unique = true)
+  private Long employeeId;
 
-    
-    public Moderator() {}
+  public Moderator() {}
 
-    
-    public Moderator(
-            Long id,
-            String username,
-            String password,
-            String role,
-            boolean isEnabled,
-            String name, Long employeeId) {
-        super(id, username, password, role, isEnabled);
-        this.name = name;
-        this.employeeId = employeeId;
-    }
+  public Moderator(
+      Long id,
+      String username,
+      String password,
+      String role,
+      boolean isEnabled,
+      String name,
+      Long employeeId) {
+    super(id, username, password, role, isEnabled);
+    this.name = name;
+    this.employeeId = employeeId;
+  }
 
-    
-    @Override
-    public Long getId() {
-        return id;
-    }
+  @Override
+  public Long getId() {
+    return id;
+  }
 
-    
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+  @Override
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    
-    public Long getEmployeeId() {
-        return employeeId;
-    }
+  public Long getEmployeeId() {
+    return employeeId;
+  }
 
-    
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
+  public void setEmployeeId(Long employeeId) {
+    this.employeeId = employeeId;
+  }
 
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of();
+  }
 
-    
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
+  @Override
+  public boolean isAccountNonExpired() {
+    return false;
+  }
 
-    
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
+  @Override
+  public boolean isAccountNonLocked() {
+    return false;
+  }
 
-    
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return false;
+  }
 }

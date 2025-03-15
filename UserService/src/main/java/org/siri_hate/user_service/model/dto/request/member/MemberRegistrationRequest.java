@@ -6,99 +6,90 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
-
 public class MemberRegistrationRequest {
 
+  @NotBlank(message = "Name should not be null")
+  private String name;
 
-    @NotBlank(message = "Name should not be null")
-    private String name;
+  @NotBlank(message = "Email should not be null")
+  @Email(message = "Must provide a valid email address")
+  private String email;
 
+  @NotBlank(message = "Phone should not be null")
+  private String phone;
 
-    @NotBlank(message = "Email should not be null")
-    @Email(message = "Must provide a valid email address")
-    private String email;
+  @NotNull(message = "Birth day should not be null")
+  private LocalDate birthday;
 
+  @NotBlank(message = "Username id should not be null")
+  private String username;
 
-    @NotBlank(message = "Phone should not be null")
-    private String phone;
+  @NotBlank(message = "Password id should not be null")
+  @Size(min = 8, message = "Password must contain more than 8 characters")
+  private String password;
 
+  public MemberRegistrationRequest() {}
 
-    @NotNull(message = "Birth day should not be null")
-    private LocalDate birthday;
+  public MemberRegistrationRequest(
+      String name,
+      String email,
+      String phone,
+      LocalDate birthday,
+      String username,
+      String password) {
+    this.name = name;
+    this.email = email;
+    this.phone = phone;
+    this.birthday = birthday;
+    this.username = username;
+    this.password = password;
+  }
 
+  public String getName() {
+    return name;
+  }
 
-    @NotBlank(message = "Username id should not be null")
-    private String username;
+  public void setName(String name) {
+    this.name = name;
+  }
 
+  public String getEmail() {
+    return email;
+  }
 
-    @NotBlank(message = "Password id should not be null")
-    @Size(min = 8, message = "Password must contain more than 8 characters")
-    private String password;
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public MemberRegistrationRequest() {}
+  public String getPhone() {
+    return phone;
+  }
 
-    public MemberRegistrationRequest(
-            String name,
-            String email,
-            String phone,
-            LocalDate birthday,
-            String username,
-            String password
-                                    ) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.birthday = birthday;
-        this.username = username;
-        this.password = password;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public LocalDate getBirthday() {
+    return birthday;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setBirthday(LocalDate birthday) {
+    this.birthday = birthday;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public LocalDate getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+  public void setPassword(String password) {
+    this.password = password;
+  }
 }

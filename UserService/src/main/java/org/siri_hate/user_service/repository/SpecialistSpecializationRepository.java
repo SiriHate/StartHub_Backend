@@ -4,11 +4,9 @@ import org.siri_hate.user_service.model.entity.SpecialistSpecialization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface SpecialistSpecializationRepository extends JpaRepository<SpecialistSpecialization, Long> {
+public interface SpecialistSpecializationRepository
+    extends JpaRepository<SpecialistSpecialization, Long> {
 
-    
-    SpecialistSpecialization findSpecialistSpecializationsByName(String name);
-
+  SpecialistSpecialization findSpecialistSpecializationsByName(String name);
 }

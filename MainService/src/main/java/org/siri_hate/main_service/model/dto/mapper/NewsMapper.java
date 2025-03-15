@@ -1,5 +1,8 @@
 package org.siri_hate.main_service.model.dto.mapper;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -12,48 +15,33 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-
 @Mapper(componentModel = "spring")
 public interface NewsMapper {
 
+  NewsMapper INSTANCE = Mappers.getMapper(NewsMapper.class);
 
-    NewsMapper INSTANCE = Mappers.getMapper(NewsMapper.class);
+  News toNews(NewsFullRequest news);
 
+  @Mapping(source = "category.name", target = "category")
+  NewsSummaryResponse toNewsSummaryResponse(News news);
 
-    News toNews(NewsFullRequest news);
+  @Mapping(source = "category.name", target = "category")
+  NewsFullResponse toNewsFullResponse(News news);
 
+  List<NewsSummaryResponse> toNewsSummaryResponseList(List<News> news);
 
-    @Mapping(source = "category.name", target = "category")
-    NewsSummaryResponse toNewsSummaryResponse(News news);
+  News newsUpdate(NewsFullRequest newsFullRequest, @MappingTarget News news);
 
+  default Page<NewsSummaryResponse> toNewsSummaryResponsePage(Page<News> newsPage) {
+    List<NewsSummaryResponse> summaryResponses =
+        newsPage.stream().map(this::toNewsSummaryResponse).collect(Collectors.toList());
+    return new PageImpl<>(summaryResponses, newsPage.getPageable(), newsPage.getTotalElements());
+  }
 
-    @Mapping(source = "category.name", target = "category")
-    NewsFullResponse toNewsFullResponse(News news);
-
-
-    List<NewsSummaryResponse> toNewsSummaryResponseList(List<News> news);
-
-
-    News newsUpdate(NewsFullRequest newsFullRequest, @MappingTarget News news);
-
-
-    default Page<NewsSummaryResponse> toNewsSummaryResponsePage(Page<News> newsPage) {
-        List<NewsSummaryResponse> summaryResponses = newsPage.stream()
-                .map(this::toNewsSummaryResponse)
-                .collect(Collectors.toList());
-        return new PageImpl<>(summaryResponses, newsPage.getPageable(), newsPage.getTotalElements());
-    }
-
-
-    default Page<NewsSummaryResponse> toNewsSummaryResponsePage(Set<News> newsSet, Pageable pageable) {
-        List<NewsSummaryResponse> summaryResponses = newsSet.stream()
-                .map(this::toNewsSummaryResponse)
-                .collect(Collectors.toList());
-        return new PageImpl<>(summaryResponses, pageable, newsSet.size());
-    }
-
+  default Page<NewsSummaryResponse> toNewsSummaryResponsePage(
+      Set<News> newsSet, Pageable pageable) {
+    List<NewsSummaryResponse> summaryResponses =
+        newsSet.stream().map(this::toNewsSummaryResponse).collect(Collectors.toList());
+    return new PageImpl<>(summaryResponses, pageable, newsSet.size());
+  }
 }

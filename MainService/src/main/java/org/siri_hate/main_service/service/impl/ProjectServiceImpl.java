@@ -1,6 +1,9 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import org.siri_hate.main_service.exception.NoSuchProjectFoundException;
 import org.siri_hate.main_service.model.dto.mapper.ProjectMapper;
 import org.siri_hate.main_service.model.dto.request.project.ProjectFullRequest;
@@ -21,137 +24,98 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-    private final ProjectRepository projectRepository;
+  private final ProjectRepository projectRepository;
+  private final ProjectMapper projectMapper;
+  private final ProjectCategoryService projectCategoryService;
+  private final UserService userService;
 
-    private final ProjectMapper projectMapper;
+  @Autowired
+  public ProjectServiceImpl(
+      ProjectRepository projectRepository,
+      ProjectMapper projectMapper,
+      ProjectCategoryService projectCategoryService,
+      UserService userService) {
+    this.projectRepository = projectRepository;
+    this.projectMapper = projectMapper;
+    this.projectCategoryService = projectCategoryService;
+    this.userService = userService;
+  }
 
-    private final ProjectCategoryService projectCategoryService;
-
-    final private UserService userService;
-
-    
-    @Autowired
-    public ProjectServiceImpl(
-            ProjectRepository projectRepository,
-            ProjectMapper projectMapper,
-            ProjectCategoryService projectCategoryService,
-            UserService userService
-                             ) {
-        this.projectRepository = projectRepository;
-        this.projectMapper = projectMapper;
-        this.projectCategoryService = projectCategoryService;
-        this.userService = userService;
+  @Override
+  @Transactional
+  public void createProject(String username, ProjectFullRequest project) {
+    Project projectEntity = projectMapper.toProject(project);
+    projectEntity.setUser(userService.findOrCreateUser(username));
+    projectEntity.setCategory(
+        projectCategoryService.getProjectCategoryEntityById(project.getCategoryId()));
+    projectEntity.setModerationPassed(false);
+    Set<ProjectMember> projectMembers = new HashSet<>();
+    for (ProjectMemberRequest memberRequest : project.getMembers()) {
+      User memberUser = userService.findOrCreateUser(memberRequest.getUsername());
+      ProjectMember projectMember = new ProjectMember();
+      projectMember.setUser(memberUser);
+      projectMember.setRole(memberRequest.getRole());
+      projectMembers.add(projectMember);
     }
+    projectEntity.setMembers(projectMembers);
+    projectEntity.setMembers(projectMembers);
+    projectRepository.save(projectEntity);
+  }
 
-    
-    @Override
-    @Transactional
-    public void createProject(String username, ProjectFullRequest project) {
-        Project projectEntity = projectMapper.toProject(project);
-        projectEntity.setUser(userService.findOrCreateUser(username));
-        projectEntity.setCategory(projectCategoryService.getProjectCategoryEntityById(project.getCategoryId()));
-        projectEntity.setModerationPassed(false);
-
-        Set<ProjectMember> projectMembers = new HashSet<>();
-        for (ProjectMemberRequest memberRequest : project.getMembers()) {
-            User memberUser = userService.findOrCreateUser(memberRequest.getUsername());
-            ProjectMember projectMember = new ProjectMember();
-            projectMember.setUser(memberUser);
-            projectMember.setRole(memberRequest.getRole());
-            projectMembers.add(projectMember);
-        }
-
-        projectEntity.setMembers(projectMembers);
-
-        projectEntity.setMembers(projectMembers);
-
-        projectRepository.save(projectEntity);
+  @Override
+  public Page<ProjectSummaryResponse> getAllProjects(Pageable pageable) {
+    Page<Project> projectsPage = projectRepository.findAll(pageable);
+    if (projectsPage.isEmpty()) {
+      throw new RuntimeException("No projects found");
     }
+    return projectMapper.toProjectSummaryResponsePage(projectsPage);
+  }
 
-    
-    @Override
-    public Page<ProjectSummaryResponse> getAllProjects(Pageable pageable) {
-
-        Page<Project> projectsPage = projectRepository.findAll(pageable);
-
-        if (projectsPage.isEmpty()) {
-            throw new RuntimeException("No projects found");
-        }
-
-        return projectMapper.toProjectSummaryResponsePage(projectsPage);
+  public Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
+      String category, String query, Pageable pageable) {
+    Specification<Project> spec =
+        Specification.where(ProjectSpecification.projectNameStartsWith(query))
+            .and(ProjectSpecification.hasCategory(category));
+    Page<Project> projects = projectRepository.findAll(spec, pageable);
+    if (projects.isEmpty()) {
+      throw new NoSuchProjectFoundException("No projects found");
     }
+    return projectMapper.toProjectSummaryResponsePage(projects);
+  }
 
-    
-    public Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
-            String category,
-            String query,
-            Pageable pageable
-                                                                           ) {
-
-        Specification<Project> spec = Specification.where(ProjectSpecification.projectNameStartsWith(query))
-                .and(ProjectSpecification.hasCategory(category));
-
-        Page<Project> projects = projectRepository.findAll(spec, pageable);
-
-        if (projects.isEmpty()) {
-            throw new NoSuchProjectFoundException("No projects found");
-        }
-
-        return projectMapper.toProjectSummaryResponsePage(projects);
+  @Override
+  @Transactional
+  public ProjectFullResponse getProjectById(Long id) {
+    Optional<Project> project = projectRepository.findById(id);
+    if (project.isEmpty()) {
+      throw new RuntimeException("No project found with id " + id);
     }
+    return projectMapper.toProjectFullResponse(project.get());
+  }
 
-    
-    @Override
-    @Transactional
-    public ProjectFullResponse getProjectById(Long id) {
-
-        Optional<Project> project = projectRepository.findById(id);
-
-        if (project.isEmpty()) {
-            throw new RuntimeException("No project found with id " + id);
-        }
-
-        return projectMapper.toProjectFullResponse(project.get());
+  @Override
+  @Transactional
+  public void updateProject(ProjectFullRequest project, Long id) {
+    Optional<Project> projectOptional = projectRepository.findById(id);
+    if (projectOptional.isEmpty()) {
+      throw new RuntimeException("No project with id " + id + " found");
     }
+    projectRepository.save(projectMapper.toProject(project));
+  }
 
-    
-    @Override
-    @Transactional
-    public void updateProject(ProjectFullRequest project, Long id) {
-
-        Optional<Project> projectOptional = projectRepository.findById(id);
-
-        if (projectOptional.isEmpty()) {
-            throw new RuntimeException("No project with id " + id + " found");
-        }
-
-        projectRepository.save(projectMapper.toProject(project));
+  @Override
+  @Transactional
+  public void deleteProjectById(String username, Long id) {
+    Optional<Project> projectOptional = projectRepository.findById(id);
+    if (projectOptional.isEmpty()) {
+      throw new RuntimeException("No project with id " + id + " found");
     }
-
-    
-    @Override
-    @Transactional
-    public void deleteProjectById(String username, Long id) {
-
-        Optional<Project> projectOptional = projectRepository.findById(id);
-
-        if (projectOptional.isEmpty()) {
-            throw new RuntimeException("No project with id " + id + " found");
-        }
-
-        if (!(projectOptional.get().getUser().getUsername().equals(username))) {
-            throw new RuntimeException("User is not owner of project with id " + id);
-        }
-
-        projectRepository.delete(projectOptional.get());
+    if (!(projectOptional.get().getUser().getUsername().equals(username))) {
+      throw new RuntimeException("User is not owner of project with id " + id);
     }
-
+    projectRepository.delete(projectOptional.get());
+  }
 }

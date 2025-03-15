@@ -1,41 +1,31 @@
 package org.siri_hate.user_service.model.dto.response.admin;
 
-
 public class AdminFullResponse {
 
+  private Long id;
 
-    private Long id;
+  private String username;
 
+  public AdminFullResponse() {}
 
-    private String username;
+  public AdminFullResponse(Long id, String username) {
+    this.id = id;
+    this.username = username;
+  }
 
+  public Long getId() {
+    return id;
+  }
 
-    public AdminFullResponse() { }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
+  public String getUsername() {
+    return username;
+  }
 
-    public AdminFullResponse(Long id, String username) {
-        this.id = id;
-        this.username = username;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public String getUsername() {
-        return username;
-    }
-
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
+  public void setUsername(String username) {
+    this.username = username;
+  }
 }

@@ -1,24 +1,15 @@
 package org.siri_hate.user_service.model.enums;
 
-
 public enum TokenType {
+  CONFIRM_REGISTRATION("CONFIRM_REGISTRATION"),
+  CONFIRM_CHANGE_PASSWORD("CONFIRM_CHANGE_PASSWORD");
+  private final String value;
 
-    
-    CONFIRM_REGISTRATION("CONFIRM_REGISTRATION"),
+  private TokenType(String value) {
+    this.value = value;
+  }
 
-    
-    CONFIRM_CHANGE_PASSWORD("CONFIRM_CHANGE_PASSWORD");
-
-    private final String value;
-
-    
-    private TokenType(String value) {
-        this.value = value;
-    }
-
-    
-    public String getValue() {
-        return value;
-    }
-
+  public String getValue() {
+    return value;
+  }
 }

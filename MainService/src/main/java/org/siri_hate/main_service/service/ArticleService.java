@@ -7,25 +7,18 @@ import org.siri_hate.main_service.model.entity.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
 public interface ArticleService {
 
-    
-    void createArticle(String username, ArticleFullRequest article);
+  void createArticle(String username, ArticleFullRequest article);
 
-    
-    ArticleFullResponse getArticleById(Long id);
+  ArticleFullResponse getArticleById(Long id);
 
-    
-    Page<ArticleSummaryResponse> getArticlesByCategoryAndSearchQuery(String category, String query, Pageable pageable);
+  Page<ArticleSummaryResponse> getArticlesByCategoryAndSearchQuery(
+      String category, String query, Pageable pageable);
 
-    
-    Page<ArticleSummaryResponse> getAllArticles(Pageable pageable);
+  Page<ArticleSummaryResponse> getAllArticles(Pageable pageable);
 
-    
-    void updateArticle(Long id, Article articleDetails);
+  void updateArticle(Long id, Article articleDetails);
 
-    
-    void deleteArticle(Long id);
-
+  void deleteArticle(Long id);
 }

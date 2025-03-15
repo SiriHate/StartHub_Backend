@@ -6,25 +6,18 @@ import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryRespo
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
 public interface ProjectService {
 
-    
-    void createProject(String username, ProjectFullRequest project);
+  void createProject(String username, ProjectFullRequest project);
 
-    
-    Page<ProjectSummaryResponse> getAllProjects(Pageable pageable);
+  Page<ProjectSummaryResponse> getAllProjects(Pageable pageable);
 
-    
-    Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(String category, String query, Pageable pageable);
+  Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
+      String category, String query, Pageable pageable);
 
-    
-    ProjectFullResponse getProjectById(Long id);
+  ProjectFullResponse getProjectById(Long id);
 
-    
-    void updateProject(ProjectFullRequest project, Long id);
+  void updateProject(ProjectFullRequest project, Long id);
 
-    
-    void deleteProjectById(String username, Long id);
-
+  void deleteProjectById(String username, Long id);
 }
