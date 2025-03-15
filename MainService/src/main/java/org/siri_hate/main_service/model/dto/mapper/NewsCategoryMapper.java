@@ -27,9 +27,6 @@ public interface NewsCategoryMapper {
     List<NewsCategorySummaryResponse> toNewsCategorySummaryResponseList(List<NewsCategory> newsCategories);
 
 
-    NewsCategory updateNewsCategoryFromRequest(
-            NewsCategoryRequest request,
-            @MappingTarget NewsCategory newsCategory
-                                              );
+    NewsCategory updateNewsCategoryFromRequest(NewsCategoryRequest request, @MappingTarget NewsCategory newsCategory);
 
 }

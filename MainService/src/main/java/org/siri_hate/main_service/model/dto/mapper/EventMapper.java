@@ -13,23 +13,15 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface EventMapper {
-
-
     EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
-
 
     Event toEvent(EventFullRequest event);
 
-
     EventFullResponse toEventFullResponse(Event event);
-
 
     EventSummaryResponse toEventSummaryResponse(Event event);
 
-
     List<EventSummaryResponse> toEventSummaryResponseList(List<Event> events);
 
-
     Event eventUpdate(EventFullRequest eventFullRequest, @MappingTarget Event event);
-
 }
