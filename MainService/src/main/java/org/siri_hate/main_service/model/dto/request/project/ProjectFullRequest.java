@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Positive;
 import java.util.HashSet;
 import java.util.Set;
 import org.siri_hate.main_service.model.dto.request.project_members.ProjectMemberRequest;
+import org.siri_hate.main_service.model.entity.category.ProjectCategory;
 
 public class ProjectFullRequest {
 
@@ -18,11 +19,7 @@ public class ProjectFullRequest {
 
   private String projectLogoUrl;
 
-  @Positive(message = "Category id should be positive")
-  private Long categoryId;
-
-  @NotBlank(message = "Stage should not be blank")
-  private String stage;
+  private ProjectCategory category;
 
   public ProjectFullRequest() {}
 
@@ -31,14 +28,12 @@ public class ProjectFullRequest {
       String projectName,
       String projectDescription,
       String projectLogoUrl,
-      Long categoryId,
-      String stage) {
+      ProjectCategory category) {
     this.members = members;
     this.projectName = projectName;
     this.projectDescription = projectDescription;
     this.projectLogoUrl = projectLogoUrl;
-    this.categoryId = categoryId;
-    this.stage = stage;
+    this.category = category;
   }
 
   public Set<ProjectMemberRequest> getMembers() {
@@ -73,19 +68,11 @@ public class ProjectFullRequest {
     this.projectLogoUrl = projectLogoUrl;
   }
 
-  public Long getCategoryId() {
-    return categoryId;
+  public ProjectCategory getCategory() {
+    return category;
   }
 
-  public void setCategoryId(Long categoryId) {
-    this.categoryId = categoryId;
-  }
-
-  public String getStage() {
-    return stage;
-  }
-
-  public void setStage(String stage) {
-    this.stage = stage;
+  public void setCategory(ProjectCategory category) {
+    this.category = category;
   }
 }

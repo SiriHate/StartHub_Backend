@@ -3,6 +3,7 @@ package org.siri_hate.user_service.model.dto.request.member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import org.siri_hate.user_service.model.entity.SpecialistSpecialization;
 
 public class MemberProfileDataRequest {
 
@@ -19,7 +20,7 @@ public class MemberProfileDataRequest {
   private LocalDate birthday;
 
   private String about;
-  private Long specializationId;
+  private SpecialistSpecialization specialization;
 
   public MemberProfileDataRequest() {}
 
@@ -29,13 +30,13 @@ public class MemberProfileDataRequest {
       String email,
       LocalDate birthday,
       String about,
-      Long specializationId) {
+      SpecialistSpecialization specialization) {
     this.name = name;
     this.phone = phone;
     this.email = email;
     this.birthday = birthday;
     this.about = about;
-    this.specializationId = specializationId;
+    this.specialization = specialization;
   }
 
   public String getName() {
@@ -78,11 +79,11 @@ public class MemberProfileDataRequest {
     this.about = about;
   }
 
-  public Long getSpecializationId() {
-    return specializationId;
+  public SpecialistSpecialization getSpecialization() {
+    return specialization;
   }
 
-  public void setSpecializationId(Long specializationId) {
-    this.specializationId = specializationId;
+  public void setSpecialization(SpecialistSpecialization specialization) {
+    this.specialization = specialization;
   }
 }

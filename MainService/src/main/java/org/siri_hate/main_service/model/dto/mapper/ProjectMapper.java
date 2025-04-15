@@ -24,17 +24,20 @@ public interface ProjectMapper {
 
   Project toProject(ProjectFullRequest project);
 
+  void projectUpdate(ProjectFullRequest request, @MappingTarget Project existingProject);
+
   @Mapping(source = "category.name", target = "category")
   @Mapping(source = "user", target = "projectOwner")
   @Mapping(source = "members", target = "members")
+  @Mapping(target = "likes", expression = "java(getLikesCount(project))")
+  @Mapping(target = "hasSurvey", expression = "java(project.getSurvey() != null)")
   ProjectFullResponse toProjectFullResponse(Project project);
 
   @Mapping(source = "category.name", target = "category")
+  @Mapping(target = "likes", expression = "java(getLikesCount(project))")
   ProjectSummaryResponse toProjectSummaryResponse(Project project);
 
   List<ProjectSummaryResponse> toProjectSummaryResponseList(List<Project> projects);
-
-  Project projectUpdate(ProjectFullRequest projectFullRequest, @MappingTarget Project project);
 
   default Page<ProjectSummaryResponse> toProjectSummaryResponsePage(Page<Project> projects) {
     List<ProjectSummaryResponse> summaryResponses =
@@ -47,5 +50,9 @@ public interface ProjectMapper {
     List<ProjectSummaryResponse> summaryResponses =
         projectSet.stream().map(this::toProjectSummaryResponse).collect(Collectors.toList());
     return new PageImpl<>(summaryResponses, pageable, projectSet.size());
+  }
+
+  default Long getLikesCount(Project project) {
+    return (long) project.getProjectLikes().size();
   }
 }

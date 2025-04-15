@@ -20,4 +20,14 @@ public interface ProjectService {
   void updateProject(ProjectFullRequest project, Long id);
 
   void deleteProjectById(String username, Long id);
+
+  boolean toggleProjectLike(String username, Long projectId);
+
+  Long getProjectLikesCount(Long projectId);
+
+  Page<ProjectSummaryResponse> getModeratedProjects(Pageable pageable);
+
+  Page<ProjectSummaryResponse> getUnmoderatedProjects(Pageable pageable);
+
+  void updateProjectModerationStatus(Long projectId, Boolean moderationPassed);
 }

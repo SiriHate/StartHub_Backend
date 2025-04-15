@@ -47,7 +47,8 @@ public class NewsServiceImpl implements NewsService {
     News newsEntity = newsMapper.toNews(news);
     newsEntity.setUser(userService.findOrCreateUser(username));
     newsEntity.setPublicationDate(LocalDate.now());
-    newsEntity.setCategory(newsCategoryService.getNewsCategoryEntityById(news.getCategoryId()));
+    newsEntity.setCategory(
+        newsCategoryService.getNewsCategoryEntityById(news.getCategory().getId()));
     newsEntity.setModerationPassed(false);
     newsRepository.save(newsEntity);
   }
@@ -84,13 +85,14 @@ public class NewsServiceImpl implements NewsService {
 
   @Override
   @Transactional
-  public void updateNews(Long id, News newsDetails) {
-    Optional<News> news = newsRepository.findById(id);
-    if (news.isEmpty()) {
-      throw new NoSuchElementException("News with id = " + id + " not found");
-    }
-    newsDetails.setId(id);
-    newsRepository.save(newsDetails);
+  public void updateNews(Long id, NewsFullRequest newsFullRequest) {
+    News existingNews =
+        newsRepository
+            .findById(id)
+            .orElseThrow(() -> new NoSuchElementException("News with id = " + id + " not found"));
+
+    newsMapper.newsUpdate(newsFullRequest, existingNews);
+    newsRepository.save(existingNews);
   }
 
   @Override

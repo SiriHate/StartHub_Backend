@@ -2,6 +2,7 @@ package org.siri_hate.main_service.model.dto.request.news;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import org.siri_hate.main_service.model.entity.category.NewsCategory;
 
 public class NewsFullRequest {
 
@@ -10,18 +11,17 @@ public class NewsFullRequest {
 
   String previewUrl;
 
-  @Positive(message = "Category id should be positive")
-  Long categoryId;
+  NewsCategory category;
 
   @NotBlank(message = "Content should not be blank")
   String content;
 
   public NewsFullRequest() {}
 
-  public NewsFullRequest(String title, String previewUrl, Long categoryId, String content) {
+  public NewsFullRequest(String title, String previewUrl, NewsCategory category, String content) {
     this.title = title;
     this.previewUrl = previewUrl;
-    this.categoryId = categoryId;
+    this.category = category;
     this.content = content;
   }
 
@@ -41,12 +41,12 @@ public class NewsFullRequest {
     this.previewUrl = previewUrl;
   }
 
-  public Long getCategoryId() {
-    return categoryId;
+  public NewsCategory getCategory() {
+    return category;
   }
 
-  public void setCategoryId(Long categoryId) {
-    this.categoryId = categoryId;
+  public void setCategory(NewsCategory category) {
+    this.category = category;
   }
 
   public String getContent() {

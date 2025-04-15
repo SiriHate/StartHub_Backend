@@ -1,5 +1,6 @@
 package org.siri_hate.user_service.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.siri_hate.user_service.model.entity.Moderator;
 import org.springframework.data.domain.Page;
@@ -12,5 +13,5 @@ public interface ModeratorRepository extends JpaRepository<Moderator, Long> {
 
   Optional<Moderator> findModeratorByUsername(String username);
 
-  Page<Moderator> findModeratorByUsernameStartingWithIgnoreCase(String username, Pageable pageable);
+  List<Moderator> findModeratorByUsernameStartingWithIgnoreCase(String username);
 }

@@ -18,7 +18,7 @@ public interface ArticleService {
 
   Page<ArticleSummaryResponse> getAllArticles(Pageable pageable);
 
-  void updateArticle(Long id, Article articleDetails);
+  void updateArticle(Long id, ArticleFullRequest article);
 
   void deleteArticle(Long id);
 }

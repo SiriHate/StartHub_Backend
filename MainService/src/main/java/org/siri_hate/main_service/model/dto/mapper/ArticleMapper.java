@@ -30,7 +30,7 @@ public interface ArticleMapper {
 
   List<ArticleSummaryResponse> toArticleSummaryResponseList(List<Article> articles);
 
-  Article articleUpdate(ArticleFullRequest articleFullRequest, @MappingTarget Article article);
+  void articleUpdate(ArticleFullRequest articleFullRequest, @MappingTarget Article article);
 
   default Page<ArticleSummaryResponse> toArticleSummaryResponsePage(Page<Article> articles) {
     List<ArticleSummaryResponse> summaryResponses =

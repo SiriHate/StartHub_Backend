@@ -31,7 +31,7 @@ public class UserController {
 
   @GetMapping("/my/projects/owned")
   public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsOwner(
-      @PageableDefault(size = 10) Pageable pageable) {
+      @PageableDefault() Pageable pageable) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String username = authentication.getName();
     Page<ProjectSummaryResponse> projects = userService.getProjectsAsOwner(username, pageable);
@@ -40,7 +40,7 @@ public class UserController {
 
   @GetMapping("/my/projects/member")
   public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsMember(
-      @PageableDefault(size = 10) Pageable pageable) {
+      @PageableDefault() Pageable pageable) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String username = authentication.getName();
     Page<ProjectSummaryResponse> projects = userService.getProjectsAsMember(username, pageable);
@@ -49,7 +49,7 @@ public class UserController {
 
   @GetMapping("/my/articles")
   public ResponseEntity<Page<ArticleSummaryResponse>> getMyArticles(
-      @PageableDefault(size = 10) Pageable pageable) {
+      @PageableDefault() Pageable pageable) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String username = authentication.getName();
     Page<ArticleSummaryResponse> articles = userService.getMyArticles(username, pageable);
@@ -57,8 +57,7 @@ public class UserController {
   }
 
   @GetMapping("/my/news")
-  public ResponseEntity<Page<NewsSummaryResponse>> getMyNews(
-      @PageableDefault(size = 10) Pageable pageable) {
+  public ResponseEntity<Page<NewsSummaryResponse>> getMyNews(@PageableDefault() Pageable pageable) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String username = authentication.getName();
     Page<NewsSummaryResponse> news = userService.getMyNews(username, pageable);

@@ -1,6 +1,7 @@
 package org.siri_hate.user_service.model.dto.request.member;
 
 import java.time.LocalDate;
+import org.siri_hate.user_service.model.entity.SpecialistSpecialization;
 
 public class MemberFullRequest {
 
@@ -10,7 +11,7 @@ public class MemberFullRequest {
   private boolean isEnabled;
   private String avatarUrl;
   private String name;
-  private Long specializationId;
+  private SpecialistSpecialization specialization;
   private String about;
   private String email;
   private String phone;
@@ -26,7 +27,7 @@ public class MemberFullRequest {
       boolean isEnabled,
       String avatarUrl,
       String name,
-      Long specializationId,
+      SpecialistSpecialization specialization,
       String about,
       String email,
       String phone,
@@ -38,7 +39,7 @@ public class MemberFullRequest {
     this.isEnabled = isEnabled;
     this.avatarUrl = avatarUrl;
     this.name = name;
-    this.specializationId = specializationId;
+    this.specialization = specialization;
     this.about = about;
     this.email = email;
     this.phone = phone;
@@ -94,12 +95,12 @@ public class MemberFullRequest {
     this.name = name;
   }
 
-  public Long getSpecializationId() {
-    return specializationId;
+  public SpecialistSpecialization getSpecialization() {
+    return specialization;
   }
 
-  public void setSpecialization(Long specializationId) {
-    this.specializationId = specializationId;
+  public void setSpecialization(SpecialistSpecialization specialization) {
+    this.specialization = specialization;
   }
 
   public String getAbout() {

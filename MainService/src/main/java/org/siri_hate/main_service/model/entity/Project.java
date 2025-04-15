@@ -1,5 +1,6 @@
 package org.siri_hate.main_service.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,11 +12,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.siri_hate.main_service.model.entity.category.ProjectCategory;
+import org.siri_hate.main_service.model.entity.survey.ProjectSurvey;
 
 @Entity
 @Table(name = "projects")
@@ -52,18 +57,19 @@ public class Project {
   @JoinColumn(name = "category_id", nullable = false)
   private ProjectCategory category;
 
-  @Column(name = "stage")
-  private String stage;
-
-  @Column(name = "likes")
-  private Long likes;
-
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "event_id", referencedColumnName = "id")
-  private Event event;
+  @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ProjectLike> projectLikes = new ArrayList<>();
 
   @Column(name = "moderation_passed")
   private Boolean moderationPassed;
+
+  @JsonIgnore
+  @OneToOne(
+      mappedBy = "project",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
+  private ProjectSurvey survey;
 
   public Project() {}
 
@@ -74,9 +80,7 @@ public class Project {
       String projectDescription,
       String projectLogoUrl,
       ProjectCategory category,
-      String stage,
-      Long likes,
-      Event event,
+      List<ProjectLike> projectLikes,
       Boolean moderationPassed) {
     this.user = user;
     this.members = members;
@@ -84,9 +88,24 @@ public class Project {
     this.projectDescription = projectDescription;
     this.projectLogoUrl = projectLogoUrl;
     this.category = category;
-    this.stage = stage;
-    this.likes = likes;
-    this.event = event;
+    this.projectLikes = projectLikes;
+    this.moderationPassed = moderationPassed;
+  }
+
+  public Project(
+      Set<ProjectMember> members,
+      String projectName,
+      String projectDescription,
+      String projectLogoUrl,
+      ProjectCategory category,
+      List<ProjectLike> projectLikes,
+      Boolean moderationPassed) {
+    this.members = members;
+    this.projectName = projectName;
+    this.projectDescription = projectDescription;
+    this.projectLogoUrl = projectLogoUrl;
+    this.category = category;
+    this.projectLikes = projectLikes;
     this.moderationPassed = moderationPassed;
   }
 
@@ -146,28 +165,25 @@ public class Project {
     this.category = category;
   }
 
-  public String getStage() {
-    return stage;
+  public List<ProjectLike> getProjectLikes() {
+    return projectLikes;
   }
 
-  public void setStage(String stage) {
-    this.stage = stage;
+  public void setProjectLikes(List<ProjectLike> projectLikes) {
+    this.projectLikes = projectLikes;
   }
 
-  public Long getLikes() {
-    return likes;
-  }
+  public void addLike(User user) {
 
-  public void setLikes(Long likes) {
-    this.likes = likes;
-  }
+    boolean alreadyLiked =
+        projectLikes.stream().anyMatch(like -> like.getUser().getId().equals(user.getId()));
 
-  public Event getEvent() {
-    return event;
-  }
+    if (alreadyLiked) {
+      return;
+    }
 
-  public void setEvent(Event event) {
-    this.event = event;
+    ProjectLike like = new ProjectLike(user, this);
+    projectLikes.add(like);
   }
 
   public Boolean getModerationPassed() {
@@ -176,5 +192,13 @@ public class Project {
 
   public void setModerationPassed(Boolean moderationPassed) {
     this.moderationPassed = moderationPassed;
+  }
+
+  public ProjectSurvey getSurvey() {
+    return survey;
+  }
+
+  public void setSurvey(ProjectSurvey survey) {
+    this.survey = survey;
   }
 }

@@ -47,8 +47,16 @@ public class ProjectController {
 
   @GetMapping
   public ResponseEntity<Page<ProjectSummaryResponse>> getAllProjects(
-      @PageableDefault(size = 1) Pageable pageable) {
-    Page<ProjectSummaryResponse> projects = projectService.getAllProjects(pageable);
+      @RequestParam(required = false) Boolean moderationPassed,
+      @PageableDefault(size = 10) Pageable pageable) {
+    Page<ProjectSummaryResponse> projects;
+    if (moderationPassed != null) {
+      projects = moderationPassed ? 
+          projectService.getModeratedProjects(pageable) : 
+          projectService.getUnmoderatedProjects(pageable);
+    } else {
+      projects = projectService.getAllProjects(pageable);
+    }
     return new ResponseEntity<>(projects, HttpStatus.OK);
   }
 
@@ -81,5 +89,27 @@ public class ProjectController {
     Page<ProjectSummaryResponse> projects =
         projectService.getProjectsByCategoryAndSearchQuery(category, query, pageable);
     return new ResponseEntity<>(projects, HttpStatus.OK);
+  }
+
+  @PostMapping("/{id}/likes")
+  public ResponseEntity<Boolean> toggleProjectLike(@PathVariable @Positive Long id) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
+    boolean isLiked = projectService.toggleProjectLike(username, id);
+    return new ResponseEntity<>(isLiked, HttpStatus.OK);
+  }
+
+  @GetMapping("/{id}/likes/count")
+  public ResponseEntity<Long> getProjectLikesCount(@PathVariable @Positive Long id) {
+    Long likesCount = projectService.getProjectLikesCount(id);
+    return new ResponseEntity<>(likesCount, HttpStatus.OK);
+  }
+
+  @PatchMapping("/{id}/moderationPassed")
+  public ResponseEntity<String> updateProjectModerationStatus(
+      @PathVariable @Positive Long id,
+      @RequestBody Boolean moderationPassed) {
+    projectService.updateProjectModerationStatus(id, moderationPassed);
+    return new ResponseEntity<>("Project moderation status has been successfully updated", HttpStatus.OK);
   }
 }

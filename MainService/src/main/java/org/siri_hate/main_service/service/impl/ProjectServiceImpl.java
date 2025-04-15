@@ -50,7 +50,7 @@ public class ProjectServiceImpl implements ProjectService {
     Project projectEntity = projectMapper.toProject(project);
     projectEntity.setUser(userService.findOrCreateUser(username));
     projectEntity.setCategory(
-        projectCategoryService.getProjectCategoryEntityById(project.getCategoryId()));
+        projectCategoryService.getProjectCategoryEntityById(project.getCategory().getId()));
     projectEntity.setModerationPassed(false);
     Set<ProjectMember> projectMembers = new HashSet<>();
     for (ProjectMemberRequest memberRequest : project.getMembers()) {
@@ -98,12 +98,14 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Override
   @Transactional
-  public void updateProject(ProjectFullRequest project, Long id) {
-    Optional<Project> projectOptional = projectRepository.findById(id);
-    if (projectOptional.isEmpty()) {
-      throw new RuntimeException("No project with id " + id + " found");
-    }
-    projectRepository.save(projectMapper.toProject(project));
+  public void updateProject(ProjectFullRequest request, Long id) {
+    Project existingProject =
+        projectRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("No project with id " + id + " found"));
+
+    projectMapper.projectUpdate(request, existingProject);
+    projectRepository.save(existingProject);
   }
 
   @Override
@@ -117,5 +119,70 @@ public class ProjectServiceImpl implements ProjectService {
       throw new RuntimeException("User is not owner of project with id " + id);
     }
     projectRepository.delete(projectOptional.get());
+  }
+
+  @Override
+  @Transactional
+  public boolean toggleProjectLike(String username, Long projectId) {
+    Project project =
+        projectRepository
+            .findById(projectId)
+            .orElseThrow(
+                () ->
+                    new NoSuchProjectFoundException("No project with id " + projectId + " found"));
+
+    User user = userService.findOrCreateUser(username);
+
+    boolean alreadyLiked =
+        project.getProjectLikes().stream()
+            .anyMatch(like -> like.getUser().getId().equals(user.getId()));
+
+    if (alreadyLiked) {
+      project.getProjectLikes().removeIf(like -> like.getUser().getId().equals(user.getId()));
+      projectRepository.save(project);
+      return false;
+    } else {
+      project.addLike(user);
+      projectRepository.save(project);
+      return true;
+    }
+  }
+
+  @Override
+  public Long getProjectLikesCount(Long projectId) {
+    Project project =
+        projectRepository
+            .findById(projectId)
+            .orElseThrow(
+                () ->
+                    new NoSuchProjectFoundException("No project with id " + projectId + " found"));
+    return (long) project.getProjectLikes().size();
+  }
+
+  @Override
+  public Page<ProjectSummaryResponse> getModeratedProjects(Pageable pageable) {
+    Page<Project> projects = projectRepository.findByModerationPassedTrue(pageable);
+    if (projects.isEmpty()) {
+      throw new NoSuchProjectFoundException("No moderated projects found");
+    }
+    return projectMapper.toProjectSummaryResponsePage(projects);
+  }
+
+  @Override
+  public Page<ProjectSummaryResponse> getUnmoderatedProjects(Pageable pageable) {
+    Page<Project> projects = projectRepository.findByModerationPassedFalse(pageable);
+    if (projects.isEmpty()) {
+      throw new NoSuchProjectFoundException("No unmoderated projects found");
+    }
+    return projectMapper.toProjectSummaryResponsePage(projects);
+  }
+
+  @Override
+  @Transactional
+  public void updateProjectModerationStatus(Long projectId, Boolean moderationPassed) {
+    Project project = projectRepository.findById(projectId)
+        .orElseThrow(() -> new NoSuchProjectFoundException("No project with id " + projectId + " found"));
+    project.setModerationPassed(moderationPassed);
+    projectRepository.save(project);
   }
 }

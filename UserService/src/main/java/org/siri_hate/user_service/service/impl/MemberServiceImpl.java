@@ -240,10 +240,6 @@ public class MemberServiceImpl implements MemberService {
       throw new EntityNotFoundException("Member with username: " + username + " not found!");
     }
     Member updatedMember = memberMapper.memberUpdateProfileData(profileDataRequest, member);
-    SpecialistSpecialization specialization =
-        specialistSpecializationService.getSpecialistSpecializationEntityById(
-            profileDataRequest.getSpecializationId());
-    updatedMember.setSpecialization(specialization);
     memberRepository.save(updatedMember);
     return memberMapper.toMemberFullResponse(updatedMember);
   }

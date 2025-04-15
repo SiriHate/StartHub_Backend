@@ -48,7 +48,7 @@ public class ArticleServiceImpl implements ArticleService {
     articleEntity.setUser(userService.findOrCreateUser(username));
     articleEntity.setPublicationDate(LocalDate.now());
     articleEntity.setCategory(
-        articleCategoryService.getArticleCategoryEntityById(article.getCategoryId()));
+        articleCategoryService.getArticleCategoryEntityById(article.getCategory().getId()));
     articleEntity.setModerationPassed(false);
     articleRepository.save(articleEntity);
   }
@@ -87,12 +87,15 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   @Transactional
-  public void updateArticle(Long id, Article articleDetails) {
-    Optional<Article> article = articleRepository.findById(id);
-    if (article.isEmpty()) {
-      throw new NoSuchElementException("Article with id = " + id + "not found");
-    }
-    articleRepository.save(article.get());
+  public void updateArticle(Long id, ArticleFullRequest articleFullRequest) {
+    Article existingArticle =
+        articleRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new NoSuchElementException("Article with id = " + id + " not found"));
+
+    articleMapper.articleUpdate(articleFullRequest, existingArticle);
+    articleRepository.save(existingArticle);
   }
 
   @Override

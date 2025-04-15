@@ -20,7 +20,7 @@ public interface ModeratorMapper {
 
   ModeratorFullResponse toModeratorFullResponse(Moderator moderator);
 
-  List<ModeratorFullRequest> toModeratorFullResponseList(List<Moderator> moderators);
+  List<ModeratorFullResponse> toModeratorFullResponseList(List<Moderator> moderators);
 
   ModeratorSummaryResponse toModeratorSummaryResponse(Moderator moderator);
 
@@ -29,11 +29,7 @@ public interface ModeratorMapper {
   Moderator moderatorUpdate(
       ModeratorFullRequest moderatorFullRequest, @MappingTarget Moderator moderator);
 
-  default Page<ModeratorSummaryResponse> toModeratorSummaryResponsePage(
-      Page<Moderator> moderators) {
-    List<ModeratorSummaryResponse> summaryResponses =
-        toModeratorSummaryResponseList(moderators.getContent());
-    return new PageImpl<>(
-        summaryResponses, moderators.getPageable(), moderators.getTotalElements());
+  default List<ModeratorSummaryResponse> toModeratorSummaryResponseList(Page<Moderator> moderators) {
+    return toModeratorSummaryResponseList(moderators.getContent());
   }
 }

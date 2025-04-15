@@ -13,8 +13,8 @@ public class ProjectFullResponse {
   private String projectDescription;
   private String projectLogoUrl;
   private String category;
-  private String stage;
   private Long likes;
+  private boolean hasSurvey;
 
   public ProjectFullResponse() {}
 
@@ -26,8 +26,8 @@ public class ProjectFullResponse {
       String projectDescription,
       String projectLogoUrl,
       String category,
-      String stage,
-      Long likes) {
+      Long likes,
+      boolean hasSurvey) {
     this.id = id;
     this.projectOwner = projectOwner;
     this.members = members;
@@ -35,8 +35,8 @@ public class ProjectFullResponse {
     this.projectDescription = projectDescription;
     this.projectLogoUrl = projectLogoUrl;
     this.category = category;
-    this.stage = stage;
     this.likes = likes;
+    this.hasSurvey = hasSurvey;
   }
 
   public Long getId() {
@@ -95,19 +95,19 @@ public class ProjectFullResponse {
     this.category = category;
   }
 
-  public String getStage() {
-    return stage;
-  }
-
-  public void setStage(String stage) {
-    this.stage = stage;
-  }
-
   public Long getLikes() {
     return likes;
   }
 
   public void setLikes(Long likes) {
     this.likes = likes;
+  }
+
+  public boolean isHasSurvey() {
+    return hasSurvey;
+  }
+
+  public void setHasSurvey(boolean hasSurvey) {
+    this.hasSurvey = hasSurvey;
   }
 }

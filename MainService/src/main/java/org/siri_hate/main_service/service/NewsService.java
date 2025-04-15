@@ -18,7 +18,7 @@ public interface NewsService {
 
   Page<NewsSummaryResponse> getAllNews(Pageable pageable);
 
-  void updateNews(Long id, News newsDetails);
+  void updateNews(Long id, NewsFullRequest news);
 
   void deleteNews(Long id);
 }

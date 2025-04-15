@@ -1,7 +1,7 @@
 package org.siri_hate.main_service.model.dto.request.article;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import org.siri_hate.main_service.model.entity.category.ArticleCategory;
 
 public class ArticleFullRequest {
 
@@ -9,16 +9,17 @@ public class ArticleFullRequest {
 
   String previewUrl;
 
-  @Positive Long categoryId;
+  ArticleCategory category;
 
   @NotBlank String content;
 
   public ArticleFullRequest() {}
 
-  public ArticleFullRequest(String title, String previewUrl, Long categoryId, String content) {
+  public ArticleFullRequest(
+      String title, String previewUrl, ArticleCategory category, String content) {
     this.title = title;
     this.previewUrl = previewUrl;
-    this.categoryId = categoryId;
+    this.category = category;
     this.content = content;
   }
 
@@ -38,12 +39,12 @@ public class ArticleFullRequest {
     this.previewUrl = previewUrl;
   }
 
-  public Long getCategoryId() {
-    return categoryId;
+  public ArticleCategory getCategory() {
+    return category;
   }
 
-  public void setCategoryId(Long categoryId) {
-    this.categoryId = categoryId;
+  public void setCategory(ArticleCategory category) {
+    this.category = category;
   }
 
   public String getContent() {

@@ -35,11 +35,9 @@ public interface MemberMapper {
 
   List<MemberSummaryResponse> toMemberSummaryResponseList(List<Member> members);
 
-  @Mapping(target = "specialization", ignore = true)
   Member memberUpdateProfileData(
       MemberProfileDataRequest profileDataRequest, @MappingTarget Member member);
 
-  @Mapping(target = "specialization", ignore = true)
   Member memberUpdateFullData(MemberFullRequest memberFullRequest, @MappingTarget Member member);
 
   Member memberUpdateAvatar(MemberChangeAvatarRequest newAvatar, @MappingTarget Member member);

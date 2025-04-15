@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.siri_hate.main_service.model.dto.request.news.NewsFullRequest;
 import org.siri_hate.main_service.model.dto.response.news.NewsFullResponse;
 import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
-import org.siri_hate.main_service.model.entity.News;
 import org.siri_hate.main_service.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,9 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,10 +67,10 @@ public class NewsController {
     return new ResponseEntity<>(newsList, HttpStatus.OK);
   }
 
-  @PutMapping("/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<String> updateNews(
-      @PathVariable Long id, @Valid @RequestBody News newsDetails) {
-    newsService.updateNews(id, newsDetails);
+      @PathVariable Long id, @Valid @RequestBody NewsFullRequest news) {
+    newsService.updateNews(id, news);
     return new ResponseEntity<>("News has been successfully modified", HttpStatus.OK);
   }
 

@@ -2,6 +2,7 @@ package org.siri_hate.user_service.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import org.siri_hate.user_service.exception.NoSuchUserException;
 import org.siri_hate.user_service.model.dto.mapper.ModeratorMapper;
@@ -13,6 +14,7 @@ import org.siri_hate.user_service.repository.ModeratorRepository;
 import org.siri_hate.user_service.service.ModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,12 +51,12 @@ public class ModeratorServiceImpl implements ModeratorService {
 
   @Override
   @Transactional
-  public Page<ModeratorSummaryResponse> getAllModerators(Pageable pageable) {
-    Page<Moderator> moderators = moderatorRepository.findAll(pageable);
+  public List<ModeratorSummaryResponse> getAllModerators() {
+    List<Moderator> moderators = moderatorRepository.findAll();
     if (moderators.isEmpty()) {
       throw new NoSuchUserException("No moderator was found!");
     }
-    return moderatorMapper.toModeratorSummaryResponsePage(moderators);
+    return moderatorMapper.toModeratorSummaryResponseList(moderators);
   }
 
   @Override
@@ -88,5 +90,15 @@ public class ModeratorServiceImpl implements ModeratorService {
       throw new EntityNotFoundException("Moderator with id: " + id + " not found!");
     }
     moderatorRepository.delete(moderatorOptional.get());
+  }
+
+  @Override
+  @Transactional
+  public List<ModeratorFullResponse> searchModerators(String username) {
+    List<Moderator> moderators = moderatorRepository.findModeratorByUsernameStartingWithIgnoreCase(username);
+    if (moderators.isEmpty()) {
+      throw new NoSuchUserException("No moderators found with username starting with: " + username);
+    }
+    return moderatorMapper.toModeratorFullResponseList(moderators);
   }
 }
