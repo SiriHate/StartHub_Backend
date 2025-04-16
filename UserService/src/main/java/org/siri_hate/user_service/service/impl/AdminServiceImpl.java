@@ -15,6 +15,7 @@ import org.siri_hate.user_service.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,10 +25,13 @@ public class AdminServiceImpl implements AdminService {
 
     final private AdminMapper adminMapper;
 
+    final private PasswordEncoder passwordEncoder;
+
     @Autowired
-    public AdminServiceImpl(AdminRepository adminRepository, AdminMapper adminMapper) {
+    public AdminServiceImpl(AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder) {
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,6 +40,8 @@ public class AdminServiceImpl implements AdminService {
         Admin adminEntity = adminMapper.toAdmin(admin);
         if (adminRepository.findAdminByUsername(adminEntity.getUsername()) != null)
             throw new UserAlreadyExistsException("Admin with provided username already exists!");
+        adminEntity.setPassword(passwordEncoder.encode(admin.getPassword()));
+        adminEntity.setName(admin.getName());
         adminRepository.save(adminEntity);
         return adminMapper.toAdminFullResponse(adminEntity);
     }
@@ -59,6 +65,9 @@ public class AdminServiceImpl implements AdminService {
         Admin currentAdmin = adminRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Member with id: " + id + " not found!"));
         Admin updatedAdmin = adminMapper.adminUpdate(admin, currentAdmin);
+        if (admin.getPassword() != null && !admin.getPassword().isEmpty()) {
+            updatedAdmin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        }
         adminRepository.save(updatedAdmin);
         return adminMapper.toAdminFullResponse(updatedAdmin);
     }

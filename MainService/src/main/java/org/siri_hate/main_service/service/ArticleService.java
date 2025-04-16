@@ -18,7 +18,13 @@ public interface ArticleService {
 
   Page<ArticleSummaryResponse> getAllArticles(Pageable pageable);
 
+  Page<ArticleSummaryResponse> getModeratedArticles(Pageable pageable);
+
+  Page<ArticleSummaryResponse> getUnmoderatedArticles(Pageable pageable);
+
   void updateArticle(Long id, ArticleFullRequest article);
 
   void deleteArticle(Long id);
+
+  void updateArticleModerationStatus(Long id, Boolean moderationPassed);
 }

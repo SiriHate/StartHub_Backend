@@ -256,4 +256,24 @@ public class MemberServiceImpl implements MemberService {
     memberRepository.save(member);
     return memberMapper.toMemberFullResponse(member);
   }
+
+  @Override
+  public Page<MemberSummaryResponse> searchMembersByName(String name, Pageable pageable) {
+    Specification<Member> spec = Specification.where(MemberSpecification.nameStartsWithIgnoreCase(name));
+    Page<Member> members = memberRepository.findAll(spec, pageable);
+    if (members.isEmpty()) {
+      throw new NoSuchUserException("No members found");
+    }
+    return memberMapper.toMemberSummaryResponsePage(members);
+  }
+
+  @Override
+  public Page<MemberSummaryResponse> searchMembersByUsername(String username, Pageable pageable) {
+    Specification<Member> spec = Specification.where(MemberSpecification.usernameStartsWithIgnoreCase(username));
+    Page<Member> members = memberRepository.findAll(spec, pageable);
+    if (members.isEmpty()) {
+      throw new NoSuchUserException("No members found");
+    }
+    return memberMapper.toMemberSummaryResponsePage(members);
+  }
 }

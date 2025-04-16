@@ -32,6 +32,10 @@ public interface MemberService {
   Page<MemberSummaryResponse> getMembersByUsernameAndSpecialization(
       String username, String specialization, Pageable pageable);
 
+  Page<MemberSummaryResponse> searchMembersByUsername(String username, Pageable pageable);
+
+  Page<MemberSummaryResponse> searchMembersByName(String name, Pageable pageable);
+
   MemberFullResponse getMemberById(Long id);
 
   MemberFullResponse getMemberByUsername(String username);

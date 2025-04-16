@@ -11,6 +11,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import org.siri_hate.main_service.model.entity.category.ArticleCategory;
+import jakarta.persistence.Basic;
+import jakarta.persistence.FetchType;
 
 @Entity
 @Table(name = "articles")
@@ -37,6 +39,7 @@ public class Article {
 
   @Lob
   @Column(name = "content")
+  @Basic(fetch = FetchType.LAZY)
   private String content;
 
   @Column(name = "publication_date")

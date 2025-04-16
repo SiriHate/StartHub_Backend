@@ -85,9 +85,16 @@ public class ProjectController {
   public ResponseEntity<Page<ProjectSummaryResponse>> searchProjects(
       @RequestParam(required = false) String category,
       @RequestParam(required = false) String query,
+      @RequestParam(required = false) Boolean moderationPassed,
       @PageableDefault(size = 10) Pageable pageable) {
-    Page<ProjectSummaryResponse> projects =
-        projectService.getProjectsByCategoryAndSearchQuery(category, query, pageable);
+    Page<ProjectSummaryResponse> projects;
+    if (moderationPassed != null) {
+      projects = moderationPassed ? 
+          projectService.getModeratedProjects(pageable) : 
+          projectService.getUnmoderatedProjects(pageable);
+    } else {
+      projects = projectService.getProjectsByCategoryAndSearchQuery(category, query, pageable);
+    }
     return new ResponseEntity<>(projects, HttpStatus.OK);
   }
 

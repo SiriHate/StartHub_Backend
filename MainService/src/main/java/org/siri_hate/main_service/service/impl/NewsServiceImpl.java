@@ -85,6 +85,26 @@ public class NewsServiceImpl implements NewsService {
 
   @Override
   @Transactional
+  public Page<NewsSummaryResponse> getModeratedNews(Pageable pageable) {
+    Page<News> news = newsRepository.findByModerationPassedTrue(pageable);
+    if (news.isEmpty()) {
+      throw new NoSuchElementException("No moderated news found");
+    }
+    return newsMapper.toNewsSummaryResponsePage(news);
+  }
+
+  @Override
+  @Transactional
+  public Page<NewsSummaryResponse> getUnmoderatedNews(Pageable pageable) {
+    Page<News> news = newsRepository.findByModerationPassedFalse(pageable);
+    if (news.isEmpty()) {
+      throw new NoSuchElementException("No unmoderated news found");
+    }
+    return newsMapper.toNewsSummaryResponsePage(news);
+  }
+
+  @Override
+  @Transactional
   public void updateNews(Long id, NewsFullRequest newsFullRequest) {
     News existingNews =
         newsRepository
@@ -103,5 +123,16 @@ public class NewsServiceImpl implements NewsService {
       throw new NoSuchElementException("News with id = " + id + " not found");
     }
     newsRepository.delete(news.get());
+  }
+
+  @Override
+  @Transactional
+  public void updateNewsModerationStatus(Long id, Boolean moderationPassed) {
+    News news =
+        newsRepository
+            .findById(id)
+            .orElseThrow(() -> new NoSuchElementException("News with id = " + id + " not found"));
+    news.setModerationPassed(moderationPassed);
+    newsRepository.save(news);
   }
 }

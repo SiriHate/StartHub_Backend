@@ -5,16 +5,18 @@ public class MemberSummaryResponse {
   private Long id;
   private String username;
   private String name;
+  private String email;
   private String avatarUrl;
   private String specialization;
 
   public MemberSummaryResponse() {}
 
   public MemberSummaryResponse(
-      Long id, String username, String name, String avatarUrl, String specialization) {
+      Long id, String username, String name, String email, String avatarUrl, String specialization) {
     this.id = id;
     this.username = username;
     this.name = name;
+    this.email = email;
     this.avatarUrl = avatarUrl;
     this.specialization = specialization;
   }
@@ -41,6 +43,14 @@ public class MemberSummaryResponse {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 
   public String getAvatarUrl() {

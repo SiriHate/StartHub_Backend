@@ -26,4 +26,28 @@ public class MemberSpecification {
   public static Specification<Member> profileIsNotHidden() {
     return (root, query, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("profileHiddenFlag"));
   }
+
+  public static Specification<Member> nameStartsWithIgnoreCase(String name) {
+    return (root, query, criteriaBuilder) -> {
+      if (name == null || name.isEmpty()) {
+        return criteriaBuilder.conjunction();
+      }
+      return criteriaBuilder.like(
+          criteriaBuilder.lower(root.get("name")), 
+          name.toLowerCase() + "%"
+      );
+    };
+  }
+
+  public static Specification<Member> usernameStartsWithIgnoreCase(String username) {
+    return (root, query, criteriaBuilder) -> {
+      if (username == null || username.isEmpty()) {
+        return criteriaBuilder.conjunction();
+      }
+      return criteriaBuilder.like(
+          criteriaBuilder.lower(root.get("username")), 
+          username.toLowerCase() + "%"
+      );
+    };
+  }
 }

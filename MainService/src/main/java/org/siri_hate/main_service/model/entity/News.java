@@ -1,5 +1,6 @@
 package org.siri_hate.main_service.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import org.siri_hate.main_service.model.entity.category.NewsCategory;
+import jakarta.persistence.Basic;
+import jakarta.persistence.FetchType;
 
 @Entity
 @Table(name = "news")
@@ -36,6 +39,7 @@ public class News {
   private NewsCategory category;
 
   @Lob
+  @Basic(fetch = FetchType.LAZY)
   @Column(name = "content")
   private String content;
 

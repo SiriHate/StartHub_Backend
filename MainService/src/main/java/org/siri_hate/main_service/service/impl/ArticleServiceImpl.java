@@ -87,6 +87,26 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   @Transactional
+  public Page<ArticleSummaryResponse> getModeratedArticles(Pageable pageable) {
+    Page<Article> articlePage = articleRepository.findByModerationPassedTrue(pageable);
+    if (articlePage.isEmpty()) {
+      throw new NoSuchElementException("No moderated articles found");
+    }
+    return articleMapper.toArticleSummaryResponsePage(articlePage);
+  }
+
+  @Override
+  @Transactional
+  public Page<ArticleSummaryResponse> getUnmoderatedArticles(Pageable pageable) {
+    Page<Article> articlePage = articleRepository.findByModerationPassedFalse(pageable);
+    if (articlePage.isEmpty()) {
+      throw new NoSuchElementException("No unmoderated articles found");
+    }
+    return articleMapper.toArticleSummaryResponsePage(articlePage);
+  }
+
+  @Override
+  @Transactional
   public void updateArticle(Long id, ArticleFullRequest articleFullRequest) {
     Article existingArticle =
         articleRepository
@@ -106,5 +126,17 @@ public class ArticleServiceImpl implements ArticleService {
       throw new NoSuchElementException("Article with id = " + id + "not found");
     }
     articleRepository.delete(article.get());
+  }
+
+  @Override
+  @Transactional
+  public void updateArticleModerationStatus(Long id, Boolean moderationPassed) {
+    Article article =
+        articleRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new NoSuchElementException("Article with id = " + id + " not found"));
+    article.setModerationPassed(moderationPassed);
+    articleRepository.save(article);
   }
 }

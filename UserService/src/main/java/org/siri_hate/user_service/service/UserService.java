@@ -1,11 +1,16 @@
 package org.siri_hate.user_service.service;
 
 import org.siri_hate.user_service.model.dto.request.auth.LoginForm;
+import org.siri_hate.user_service.model.dto.response.user.CurrentUserResponse;
+import org.siri_hate.user_service.model.dto.response.user.UserLoginResponse;
 import org.siri_hate.user_service.model.entity.User;
+import org.springframework.security.core.Authentication;
 
 public interface UserService {
 
-  String userLogin(LoginForm loginForm);
+  UserLoginResponse userLogin(LoginForm loginForm);
 
   User findMemberByUsername(String username);
+
+  CurrentUserResponse getCurrentUser(Authentication authentication);
 }

@@ -20,7 +20,9 @@ public interface AdminMapper {
 
   @Mappings({
     @Mapping(source = "username", target = "username"),
-    @Mapping(source = "password", target = "password")
+    @Mapping(target = "role", constant = "ADMIN"),
+    @Mapping(target = "enabled", constant = "true"),
+    @Mapping(target = "password", ignore = true)
   })
   Admin toAdmin(AdminFullRequest admin);
 

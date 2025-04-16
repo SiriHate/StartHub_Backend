@@ -1,6 +1,7 @@
 package org.siri_hate.main_service.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.siri_hate.main_service.model.dto.request.article.ArticleFullRequest;
 import org.siri_hate.main_service.model.dto.response.article.ArticleFullResponse;
 import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryResponse;
@@ -52,8 +53,16 @@ public class ArticlesController {
 
   @GetMapping
   public ResponseEntity<Page<ArticleSummaryResponse>> getAllArticles(
+      @RequestParam(required = false) Boolean moderationPassed,
       @PageableDefault(size = 1) Pageable pageable) {
-    Page<ArticleSummaryResponse> articles = articleService.getAllArticles(pageable);
+    Page<ArticleSummaryResponse> articles;
+    if (moderationPassed != null) {
+      articles = moderationPassed ? 
+          articleService.getModeratedArticles(pageable) : 
+          articleService.getUnmoderatedArticles(pageable);
+    } else {
+      articles = articleService.getAllArticles(pageable);
+    }
     return new ResponseEntity<>(articles, HttpStatus.OK);
   }
 
@@ -61,12 +70,17 @@ public class ArticlesController {
   public ResponseEntity<Page<ArticleSummaryResponse>> getArticlesByCategoryAndSearchQuery(
       @RequestParam(required = false) String category,
       @RequestParam(required = false) String query,
+      @RequestParam(required = false) Boolean moderationPassed,
       @PageableDefault(size = 10) Pageable pageable) {
-
-    Page<ArticleSummaryResponse> newsList =
-        articleService.getArticlesByCategoryAndSearchQuery(category, query, pageable);
-
-    return new ResponseEntity<>(newsList, HttpStatus.OK);
+    Page<ArticleSummaryResponse> articles;
+    if (moderationPassed != null) {
+      articles = moderationPassed ? 
+          articleService.getModeratedArticles(pageable) : 
+          articleService.getUnmoderatedArticles(pageable);
+    } else {
+      articles = articleService.getArticlesByCategoryAndSearchQuery(category, query, pageable);
+    }
+    return new ResponseEntity<>(articles, HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
@@ -80,5 +94,13 @@ public class ArticlesController {
   public ResponseEntity<?> deleteArticle(@PathVariable Long id) {
     articleService.deleteArticle(id);
     return new ResponseEntity<>("Article has been successfully deleted", HttpStatus.NO_CONTENT);
+  }
+
+  @PatchMapping("/{id}/moderationPassed")
+  public ResponseEntity<String> updateArticleModerationStatus(
+      @PathVariable @Positive Long id,
+      @RequestBody Boolean moderationPassed) {
+    articleService.updateArticleModerationStatus(id, moderationPassed);
+    return new ResponseEntity<>("Article moderation status has been successfully updated", HttpStatus.OK);
   }
 }

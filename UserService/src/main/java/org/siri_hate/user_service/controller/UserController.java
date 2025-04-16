@@ -2,10 +2,15 @@ package org.siri_hate.user_service.controller;
 
 import jakarta.validation.Valid;
 import org.siri_hate.user_service.model.dto.request.auth.LoginForm;
+import org.siri_hate.user_service.model.dto.response.user.CurrentUserResponse;
+import org.siri_hate.user_service.model.dto.response.user.UserLoginResponse;
 import org.siri_hate.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +29,14 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> userLogin(@RequestBody @Valid LoginForm loginForm) {
-    String token = userService.userLogin(loginForm);
-    return ResponseEntity.ok(token);
+  public ResponseEntity<UserLoginResponse> userLogin(@RequestBody @Valid LoginForm loginForm) {
+    UserLoginResponse response = userService.userLogin(loginForm);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<CurrentUserResponse> getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    return ResponseEntity.ok(userService.getCurrentUser(authentication));
   }
 }

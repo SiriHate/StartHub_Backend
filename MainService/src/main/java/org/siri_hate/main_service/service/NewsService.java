@@ -18,7 +18,13 @@ public interface NewsService {
 
   Page<NewsSummaryResponse> getAllNews(Pageable pageable);
 
+  Page<NewsSummaryResponse> getModeratedNews(Pageable pageable);
+
+  Page<NewsSummaryResponse> getUnmoderatedNews(Pageable pageable);
+
   void updateNews(Long id, NewsFullRequest news);
 
   void deleteNews(Long id);
+
+  void updateNewsModerationStatus(Long id, Boolean moderationPassed);
 }

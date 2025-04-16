@@ -1,6 +1,7 @@
 package org.siri_hate.main_service.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.siri_hate.main_service.model.dto.request.news.NewsFullRequest;
 import org.siri_hate.main_service.model.dto.response.news.NewsFullResponse;
 import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
@@ -46,8 +47,16 @@ public class NewsController {
 
   @GetMapping
   public ResponseEntity<Page<NewsSummaryResponse>> getAllNews(
-      @PageableDefault(size = 1) Pageable pageable) {
-    Page<NewsSummaryResponse> news = newsService.getAllNews(pageable);
+      @RequestParam(required = false) Boolean moderationPassed,
+      @PageableDefault(size = 10) Pageable pageable) {
+    Page<NewsSummaryResponse> news;
+    if (moderationPassed != null) {
+      news = moderationPassed ? 
+          newsService.getModeratedNews(pageable) : 
+          newsService.getUnmoderatedNews(pageable);
+    } else {
+      news = newsService.getAllNews(pageable);
+    }
     return new ResponseEntity<>(news, HttpStatus.OK);
   }
 
@@ -61,10 +70,17 @@ public class NewsController {
   public ResponseEntity<Page<NewsSummaryResponse>> getNewsByCategoryAndSearchQuery(
       @RequestParam(required = false) String category,
       @RequestParam(required = false) String query,
+      @RequestParam(required = false) Boolean moderationPassed,
       @PageableDefault(size = 10) Pageable pageable) {
-    Page<NewsSummaryResponse> newsList =
-        newsService.getNewsByCategoryAndSearchQuery(category, query, pageable);
-    return new ResponseEntity<>(newsList, HttpStatus.OK);
+    Page<NewsSummaryResponse> news;
+    if (moderationPassed != null) {
+      news = moderationPassed ? 
+          newsService.getModeratedNews(pageable) : 
+          newsService.getUnmoderatedNews(pageable);
+    } else {
+      news = newsService.getNewsByCategoryAndSearchQuery(category, query, pageable);
+    }
+    return new ResponseEntity<>(news, HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
@@ -72,6 +88,14 @@ public class NewsController {
       @PathVariable Long id, @Valid @RequestBody NewsFullRequest news) {
     newsService.updateNews(id, news);
     return new ResponseEntity<>("News has been successfully modified", HttpStatus.OK);
+  }
+
+  @PatchMapping("/{id}/moderationPassed")
+  public ResponseEntity<String> updateNewsModerationStatus(
+      @PathVariable @Positive Long id,
+      @RequestBody Boolean moderationPassed) {
+    newsService.updateNewsModerationStatus(id, moderationPassed);
+    return new ResponseEntity<>("News moderation status has been successfully updated", HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")

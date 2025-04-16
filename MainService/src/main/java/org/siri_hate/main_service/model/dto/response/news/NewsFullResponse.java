@@ -11,6 +11,7 @@ public class NewsFullResponse {
   private String category;
   private String content;
   private LocalDate publicationDate;
+  private Boolean moderationPassed;
 
   public NewsFullResponse() {}
 
@@ -21,7 +22,8 @@ public class NewsFullResponse {
       String previewUrl,
       String category,
       String content,
-      LocalDate publicationDate) {
+      LocalDate publicationDate,
+      Boolean moderationPassed) {
     this.id = id;
     this.title = title;
     this.owner = owner;
@@ -29,6 +31,7 @@ public class NewsFullResponse {
     this.category = category;
     this.content = content;
     this.publicationDate = publicationDate;
+    this.moderationPassed = moderationPassed;
   }
 
   public Long getId() {
@@ -85,5 +88,13 @@ public class NewsFullResponse {
 
   public void setPublicationDate(LocalDate publicationDate) {
     this.publicationDate = publicationDate;
+  }
+
+  public Boolean getModerationPassed() {
+    return moderationPassed;
+  }
+
+  public void setModerationPassed(Boolean moderationPassed) {
+    this.moderationPassed = moderationPassed;
   }
 }
