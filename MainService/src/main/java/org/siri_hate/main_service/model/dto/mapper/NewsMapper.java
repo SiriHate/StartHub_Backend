@@ -26,6 +26,7 @@ public interface NewsMapper {
   NewsSummaryResponse toNewsSummaryResponse(News news);
 
   @Mapping(source = "category.name", target = "category")
+  @Mapping(source = "user.username", target = "owner")
   NewsFullResponse toNewsFullResponse(News news);
 
   List<NewsSummaryResponse> toNewsSummaryResponseList(List<News> news);

@@ -94,10 +94,35 @@
     </dependency>
 
     <dependency>
-      <artifactId>logstash-logback-encoder</artifactId>
       <groupId>net.logstash.logback</groupId>
-      <version>8.0</version>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <version>8.1</version>
     </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.5.18</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-access</artifactId>
+      <version>1.5.18</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>1.5.18</version>
+    </dependency>
+
 
   </dependencies>
   <description>NotificationService</description>

@@ -23,6 +23,7 @@ public interface ArticleMapper {
   Article toArticle(ArticleFullRequest article);
 
   @Mapping(source = "category.name", target = "category")
+  @Mapping(source = "user.username", target = "owner")
   ArticleFullResponse toArticleFullResponse(Article article);
 
   @Mapping(source = "category.name", target = "category")
