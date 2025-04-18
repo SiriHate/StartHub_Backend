@@ -16,6 +16,7 @@ import org.siri_hate.main_service.service.ArticleCategoryService;
 import org.siri_hate.main_service.service.ArticleService;
 import org.siri_hate.main_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -77,18 +78,12 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  public Page<ArticleSummaryResponse> getAllArticles(Pageable pageable) {
-    Page<Article> articlePage = articleRepository.findAll(pageable);
-    if (articlePage.isEmpty()) {
-      throw new NoSuchElementException("No articles found");
-    }
-    return articleMapper.toArticleSummaryResponsePage(articlePage);
-  }
-
-  @Override
   @Transactional
-  public Page<ArticleSummaryResponse> getModeratedArticles(Pageable pageable) {
-    Page<Article> articlePage = articleRepository.findByModerationPassedTrue(pageable);
+  public Page<ArticleSummaryResponse> getModeratedArticles(String category, String query, Pageable pageable) {
+    Specification<Article> spec = Specification.where(ArticleSpecification.titleStartsWith(query))
+        .and(ArticleSpecification.hasCategory(category))
+        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isTrue(root.get("moderationPassed")));
+    Page<Article> articlePage = articleRepository.findAll(spec, pageable);
     if (articlePage.isEmpty()) {
       throw new NoSuchElementException("No moderated articles found");
     }
@@ -97,12 +92,25 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   @Transactional
-  public Page<ArticleSummaryResponse> getUnmoderatedArticles(Pageable pageable) {
-    Page<Article> articlePage = articleRepository.findByModerationPassedFalse(pageable);
+  public Page<ArticleSummaryResponse> getUnmoderatedArticles(String category, String query, Pageable pageable) {
+    Specification<Article> spec = Specification.where(ArticleSpecification.titleStartsWith(query))
+        .and(ArticleSpecification.hasCategory(category))
+        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("moderationPassed")));
+    Page<Article> articlePage = articleRepository.findAll(spec, pageable);
     if (articlePage.isEmpty()) {
       throw new NoSuchElementException("No unmoderated articles found");
     }
     return articleMapper.toArticleSummaryResponsePage(articlePage);
+  }
+
+  @Override
+  @Transactional
+  public Page<ArticleSummaryResponse> getArticlesByUser(String username, Pageable pageable) {
+    Page<Article> articles = articleRepository.findByUserUsername(username, pageable);
+    if (articles.isEmpty()) {
+      throw new NoSuchArticleFoundException("No articles found for user: " + username);
+    }
+    return articleMapper.toArticleSummaryResponsePage(articles);
   }
 
   @Override

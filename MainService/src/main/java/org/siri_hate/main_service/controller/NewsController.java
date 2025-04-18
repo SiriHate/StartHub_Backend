@@ -47,27 +47,6 @@ public class NewsController {
 
   @GetMapping
   public ResponseEntity<Page<NewsSummaryResponse>> getAllNews(
-      @RequestParam(required = false) Boolean moderationPassed,
-      @PageableDefault(size = 10) Pageable pageable) {
-    Page<NewsSummaryResponse> news;
-    if (moderationPassed != null) {
-      news = moderationPassed ? 
-          newsService.getModeratedNews(pageable) : 
-          newsService.getUnmoderatedNews(pageable);
-    } else {
-      news = newsService.getAllNews(pageable);
-    }
-    return new ResponseEntity<>(news, HttpStatus.OK);
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<NewsFullResponse> getNewsById(@PathVariable Long id) {
-    NewsFullResponse news = newsService.getNewsById(id);
-    return new ResponseEntity<>(news, HttpStatus.OK);
-  }
-
-  @GetMapping("/search")
-  public ResponseEntity<Page<NewsSummaryResponse>> getNewsByCategoryAndSearchQuery(
       @RequestParam(required = false) String category,
       @RequestParam(required = false) String query,
       @RequestParam(required = false) Boolean moderationPassed,
@@ -75,11 +54,17 @@ public class NewsController {
     Page<NewsSummaryResponse> news;
     if (moderationPassed != null) {
       news = moderationPassed ? 
-          newsService.getModeratedNews(pageable) : 
-          newsService.getUnmoderatedNews(pageable);
+          newsService.getModeratedNews(category, query, pageable) : 
+          newsService.getUnmoderatedNews(category, query, pageable);
     } else {
       news = newsService.getNewsByCategoryAndSearchQuery(category, query, pageable);
     }
+    return new ResponseEntity<>(news, HttpStatus.OK);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<NewsFullResponse> getNewsById(@PathVariable Long id) {
+    NewsFullResponse news = newsService.getNewsById(id);
     return new ResponseEntity<>(news, HttpStatus.OK);
   }
 

@@ -19,7 +19,7 @@ public class MemberSpecification {
       if (specialization == null || specialization.isEmpty()) {
         return criteriaBuilder.conjunction();
       }
-      return criteriaBuilder.equal(root.get("specialization"), specialization);
+      return criteriaBuilder.equal(root.get("specialization").get("name"), specialization);
     };
   }
 
@@ -46,7 +46,7 @@ public class MemberSpecification {
       }
       return criteriaBuilder.like(
           criteriaBuilder.lower(root.get("username")), 
-          username.toLowerCase() + "%"
+          "%" + username.toLowerCase() + "%"
       );
     };
   }

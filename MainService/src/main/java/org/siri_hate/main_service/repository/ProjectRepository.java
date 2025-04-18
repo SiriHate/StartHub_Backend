@@ -14,4 +14,8 @@ public interface ProjectRepository
   Page<Project> findByModerationPassedTrue(Pageable pageable);
   
   Page<Project> findByModerationPassedFalse(Pageable pageable);
+  
+  Page<Project> findByUserUsername(String username, Pageable pageable);
+  
+  Page<Project> findByMembersUserUsername(String username, Pageable pageable);
 }

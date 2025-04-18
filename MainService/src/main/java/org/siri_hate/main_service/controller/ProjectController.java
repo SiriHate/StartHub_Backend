@@ -47,15 +47,17 @@ public class ProjectController {
 
   @GetMapping
   public ResponseEntity<Page<ProjectSummaryResponse>> getAllProjects(
+      @RequestParam(required = false) String category,
+      @RequestParam(required = false) String query,
       @RequestParam(required = false) Boolean moderationPassed,
       @PageableDefault(size = 10) Pageable pageable) {
     Page<ProjectSummaryResponse> projects;
     if (moderationPassed != null) {
       projects = moderationPassed ? 
-          projectService.getModeratedProjects(pageable) : 
-          projectService.getUnmoderatedProjects(pageable);
+          projectService.getModeratedProjects(category, query, pageable) : 
+          projectService.getUnmoderatedProjects(category, query, pageable);
     } else {
-      projects = projectService.getAllProjects(pageable);
+      projects = projectService.getProjectsByCategoryAndSearchQuery(category, query, pageable);
     }
     return new ResponseEntity<>(projects, HttpStatus.OK);
   }
@@ -79,23 +81,6 @@ public class ProjectController {
     String username = authentication.getName();
     projectService.deleteProjectById(username, id);
     return new ResponseEntity<>("Project was successfully deleted", HttpStatus.NO_CONTENT);
-  }
-
-  @GetMapping("/search")
-  public ResponseEntity<Page<ProjectSummaryResponse>> searchProjects(
-      @RequestParam(required = false) String category,
-      @RequestParam(required = false) String query,
-      @RequestParam(required = false) Boolean moderationPassed,
-      @PageableDefault(size = 10) Pageable pageable) {
-    Page<ProjectSummaryResponse> projects;
-    if (moderationPassed != null) {
-      projects = moderationPassed ? 
-          projectService.getModeratedProjects(pageable) : 
-          projectService.getUnmoderatedProjects(pageable);
-    } else {
-      projects = projectService.getProjectsByCategoryAndSearchQuery(category, query, pageable);
-    }
-    return new ResponseEntity<>(projects, HttpStatus.OK);
   }
 
   @PostMapping("/{id}/likes")

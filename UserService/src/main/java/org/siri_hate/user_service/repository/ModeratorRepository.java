@@ -13,5 +13,5 @@ public interface ModeratorRepository extends JpaRepository<Moderator, Long> {
 
   Optional<Moderator> findModeratorByUsername(String username);
 
-  List<Moderator> findModeratorByUsernameStartingWithIgnoreCase(String username);
+  Page<Moderator> findModeratorByUsernameStartingWithIgnoreCase(String username, Pageable pageable);
 }

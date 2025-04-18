@@ -11,13 +11,11 @@ public interface ModeratorService {
 
   void moderatorRegistration(ModeratorFullRequest moderator);
 
-  List<ModeratorSummaryResponse> getAllModerators();
+  Page<ModeratorSummaryResponse> getAllModerators(String username, Pageable pageable);
 
   ModeratorFullResponse getModeratorById(Long id);
 
   ModeratorFullResponse moderatorUpdate(Long id, ModeratorFullRequest moderator);
 
   void deleteModeratorById(Long id);
-
-  List<ModeratorFullResponse> searchModerators(String username);
 }

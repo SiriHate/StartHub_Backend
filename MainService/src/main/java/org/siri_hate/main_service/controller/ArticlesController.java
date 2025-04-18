@@ -53,21 +53,6 @@ public class ArticlesController {
 
   @GetMapping
   public ResponseEntity<Page<ArticleSummaryResponse>> getAllArticles(
-      @RequestParam(required = false) Boolean moderationPassed,
-      @PageableDefault(size = 1) Pageable pageable) {
-    Page<ArticleSummaryResponse> articles;
-    if (moderationPassed != null) {
-      articles = moderationPassed ? 
-          articleService.getModeratedArticles(pageable) : 
-          articleService.getUnmoderatedArticles(pageable);
-    } else {
-      articles = articleService.getAllArticles(pageable);
-    }
-    return new ResponseEntity<>(articles, HttpStatus.OK);
-  }
-
-  @GetMapping("/search")
-  public ResponseEntity<Page<ArticleSummaryResponse>> getArticlesByCategoryAndSearchQuery(
       @RequestParam(required = false) String category,
       @RequestParam(required = false) String query,
       @RequestParam(required = false) Boolean moderationPassed,
@@ -75,8 +60,8 @@ public class ArticlesController {
     Page<ArticleSummaryResponse> articles;
     if (moderationPassed != null) {
       articles = moderationPassed ? 
-          articleService.getModeratedArticles(pageable) : 
-          articleService.getUnmoderatedArticles(pageable);
+          articleService.getModeratedArticles(category, query, pageable) : 
+          articleService.getUnmoderatedArticles(category, query, pageable);
     } else {
       articles = articleService.getArticlesByCategoryAndSearchQuery(category, query, pageable);
     }

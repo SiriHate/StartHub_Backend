@@ -134,19 +134,31 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public Page<MemberSummaryResponse> getAllMembers(Pageable pageable) {
-    Page<Member> memberList = memberRepository.findAll(pageable);
-    if (memberList.isEmpty()) {
-      throw new EntityNotFoundException("No member was found!");
-    }
-    return memberMapper.toMemberSummaryResponsePage(memberList);
-  }
+  public Page<MemberSummaryResponse> getAllMembers(
+      String username,
+      String specialization,
+      Boolean profileHiddenFlag,
+      Pageable pageable) {
+    Specification<Member> spec = Specification.where(null);
 
-  public Page<MemberSummaryResponse> getAllVisibleMembers(Pageable pageable) {
-    Page<Member> members = memberRepository.findMembersByProfileHiddenFlagIsFalse(pageable);
-    if (members.isEmpty()) {
-      throw new EntityNotFoundException("No member was found!");
+    if (username != null && !username.isEmpty()) {
+      spec = spec.and(MemberSpecification.usernameStartsWithIgnoreCase(username));
     }
+
+    if (specialization != null && !specialization.isEmpty()) {
+      spec = spec.and(MemberSpecification.hasSpecialization(specialization));
+    }
+
+    if (profileHiddenFlag != null) {
+      if (profileHiddenFlag) {
+        spec = spec.and((root, query, criteriaBuilder) -> 
+            criteriaBuilder.isTrue(root.get("profileHiddenFlag")));
+      } else {
+        spec = spec.and(MemberSpecification.profileIsNotHidden());
+      }
+    }
+
+    Page<Member> members = memberRepository.findAll(spec, pageable);
     return memberMapper.toMemberSummaryResponsePage(members);
   }
 
@@ -166,20 +178,6 @@ public class MemberServiceImpl implements MemberService {
       throw new EntityNotFoundException("Member with username: " + username + " not found!");
     }
     return memberMapper.toMemberFullResponse(member);
-  }
-
-  @Override
-  public Page<MemberSummaryResponse> getMembersByUsernameAndSpecialization(
-      String username, String specialization, Pageable pageable) {
-    Specification<Member> spec =
-        Specification.where(MemberSpecification.usernameStartsWith(username))
-            .and(MemberSpecification.hasSpecialization(specialization))
-            .and(MemberSpecification.profileIsNotHidden());
-    Page<Member> members = memberRepository.findAll(spec, pageable);
-    if (members.isEmpty()) {
-      throw new NoSuchUserException("No members found");
-    }
-    return memberMapper.toMemberSummaryResponsePage(members);
   }
 
   @Override
@@ -260,16 +258,6 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public Page<MemberSummaryResponse> searchMembersByName(String name, Pageable pageable) {
     Specification<Member> spec = Specification.where(MemberSpecification.nameStartsWithIgnoreCase(name));
-    Page<Member> members = memberRepository.findAll(spec, pageable);
-    if (members.isEmpty()) {
-      throw new NoSuchUserException("No members found");
-    }
-    return memberMapper.toMemberSummaryResponsePage(members);
-  }
-
-  @Override
-  public Page<MemberSummaryResponse> searchMembersByUsername(String username, Pageable pageable) {
-    Specification<Member> spec = Specification.where(MemberSpecification.usernameStartsWithIgnoreCase(username));
     Page<Member> members = memberRepository.findAll(spec, pageable);
     if (members.isEmpty()) {
       throw new NoSuchUserException("No members found");

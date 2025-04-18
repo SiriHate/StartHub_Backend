@@ -2,6 +2,7 @@ package org.siri_hate.user_service.controller;
 
 import jakarta.validation.Valid;
 import org.siri_hate.user_service.model.dto.request.auth.LoginForm;
+import org.siri_hate.user_service.model.dto.request.auth.YandexAuthRequest;
 import org.siri_hate.user_service.model.dto.response.user.CurrentUserResponse;
 import org.siri_hate.user_service.model.dto.response.user.UserLoginResponse;
 import org.siri_hate.user_service.service.UserService;
@@ -31,6 +32,13 @@ public class UserController {
   @PostMapping("/login")
   public ResponseEntity<UserLoginResponse> userLogin(@RequestBody @Valid LoginForm loginForm) {
     UserLoginResponse response = userService.userLogin(loginForm);
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/auth/yandex")
+  public ResponseEntity<UserLoginResponse> userLoginViaYandex(
+      @RequestBody @Valid YandexAuthRequest request) {
+    UserLoginResponse response = userService.userLoginViaYandex(request);
     return ResponseEntity.ok(response);
   }
 

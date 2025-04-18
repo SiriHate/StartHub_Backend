@@ -45,13 +45,6 @@ public interface ProjectMapper {
     return new PageImpl<>(summaryResponses, projects.getPageable(), projects.getTotalElements());
   }
 
-  default Page<ProjectSummaryResponse> toProjectSummaryResponsePage(
-      Set<Project> projectSet, Pageable pageable) {
-    List<ProjectSummaryResponse> summaryResponses =
-        projectSet.stream().map(this::toProjectSummaryResponse).collect(Collectors.toList());
-    return new PageImpl<>(summaryResponses, pageable, projectSet.size());
-  }
-
   default Long getLikesCount(Project project) {
     return (long) project.getProjectLikes().size();
   }

@@ -16,15 +16,15 @@ public interface NewsService {
   Page<NewsSummaryResponse> getNewsByCategoryAndSearchQuery(
       String category, String query, Pageable pageable);
 
-  Page<NewsSummaryResponse> getAllNews(Pageable pageable);
+  Page<NewsSummaryResponse> getModeratedNews(String category, String query, Pageable pageable);
 
-  Page<NewsSummaryResponse> getModeratedNews(Pageable pageable);
-
-  Page<NewsSummaryResponse> getUnmoderatedNews(Pageable pageable);
+  Page<NewsSummaryResponse> getUnmoderatedNews(String category, String query, Pageable pageable);
 
   void updateNews(Long id, NewsFullRequest news);
 
   void deleteNews(Long id);
 
   void updateNewsModerationStatus(Long id, Boolean moderationPassed);
+  
+  Page<NewsSummaryResponse> getNewsByUser(String username, Pageable pageable);
 }

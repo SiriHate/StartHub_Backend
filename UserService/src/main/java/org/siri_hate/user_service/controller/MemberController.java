@@ -68,34 +68,12 @@ public class MemberController {
 
   @GetMapping
   public ResponseEntity<Page<MemberSummaryResponse>> getAllMembers(
-      @PageableDefault(size = 1) Pageable pageable) {
-    Page<MemberSummaryResponse> members = memberService.getAllMembers(pageable);
-    return new ResponseEntity<>(members, HttpStatus.OK);
-  }
-
-  @GetMapping("/visible")
-  public ResponseEntity<Page<MemberSummaryResponse>> getAllVisibleMembers(
-      @PageableDefault(size = 1) Pageable pageable) {
-    Page<MemberSummaryResponse> members = memberService.getAllVisibleMembers(pageable);
-    return new ResponseEntity<>(members, HttpStatus.OK);
-  }
-
-  @GetMapping("/visible/search")
-  public ResponseEntity<Page<MemberSummaryResponse>> searchMembers(
       @RequestParam(required = false) String username,
       @RequestParam(required = false) String specialization,
+      @RequestParam(required = false) Boolean profileHiddenFlag,
       @PageableDefault(size = 10) Pageable pageable) {
-    Page<MemberSummaryResponse> membersPage =
-        memberService.getMembersByUsernameAndSpecialization(username, specialization, pageable);
-    return new ResponseEntity<>(membersPage, HttpStatus.OK);
-  }
-
-  @GetMapping("/search")
-  public ResponseEntity<Page<MemberSummaryResponse>> searchMembersByUsername(
-      @RequestParam String username,
-      @PageableDefault(size = 10) Pageable pageable) {
-    Page<MemberSummaryResponse> membersPage = memberService.searchMembersByUsername(username, pageable);
-    return new ResponseEntity<>(membersPage, HttpStatus.OK);
+    Page<MemberSummaryResponse> members = memberService.getAllMembers(username, specialization, profileHiddenFlag, pageable);
+    return new ResponseEntity<>(members, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")

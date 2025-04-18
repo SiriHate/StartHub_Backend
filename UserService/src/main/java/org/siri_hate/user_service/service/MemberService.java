@@ -25,16 +25,11 @@ public interface MemberService {
 
   void memberPasswordChange(String username, ChangePasswordForm changePasswordForm);
 
-  Page<MemberSummaryResponse> getAllMembers(Pageable pageable);
-
-  Page<MemberSummaryResponse> getAllVisibleMembers(Pageable pageable);
-
-  Page<MemberSummaryResponse> getMembersByUsernameAndSpecialization(
-      String username, String specialization, Pageable pageable);
-
-  Page<MemberSummaryResponse> searchMembersByUsername(String username, Pageable pageable);
-
-  Page<MemberSummaryResponse> searchMembersByName(String name, Pageable pageable);
+  Page<MemberSummaryResponse> getAllMembers(
+      String username,
+      String specialization,
+      Boolean profileHiddenFlag,
+      Pageable pageable);
 
   MemberFullResponse getMemberById(Long id);
 
@@ -53,4 +48,6 @@ public interface MemberService {
 
   MemberFullResponse changeMemberProfileVisibility(
       MemberChangeProfileVisibilityRequest request, String username);
+
+  Page<MemberSummaryResponse> searchMembersByName(String name, Pageable pageable);
 }

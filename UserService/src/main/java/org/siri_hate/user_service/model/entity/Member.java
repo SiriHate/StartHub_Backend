@@ -2,6 +2,8 @@ package org.siri_hate.user_service.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +14,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import org.siri_hate.user_service.model.enums.AuthType;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
@@ -49,6 +52,10 @@ public class Member extends User {
   @Column(name = "is_hidden", nullable = false)
   private Boolean profileHiddenFlag;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "auth_type", nullable = false)
+  private AuthType authType;
+
   public Member() {}
 
   public Member(
@@ -64,7 +71,9 @@ public class Member extends User {
       String email,
       String phone,
       LocalDate birthday,
-      Boolean profileHiddenFlag) {
+      Boolean profileHiddenFlag,
+      AuthType authType
+      ) {
     super(id, username, password, role, isEnabled);
     this.id = id;
     this.avatarUrl = avatarUrl;
@@ -75,6 +84,7 @@ public class Member extends User {
     this.phone = phone;
     this.birthday = birthday;
     this.profileHiddenFlag = profileHiddenFlag;
+    this.authType = authType;
   }
 
   public Long getId() {
@@ -147,6 +157,14 @@ public class Member extends User {
 
   public void setProfileHiddenFlag(Boolean profileHiddenFlag) {
     this.profileHiddenFlag = profileHiddenFlag;
+  }
+
+  public AuthType getAuthType() {
+    return authType;
+  }
+
+  public void setAuthType(AuthType authType) {
+    this.authType = authType;
   }
 
   @Override

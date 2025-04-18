@@ -10,8 +10,6 @@ public interface ProjectService {
 
   void createProject(String username, ProjectFullRequest project);
 
-  Page<ProjectSummaryResponse> getAllProjects(Pageable pageable);
-
   Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
       String category, String query, Pageable pageable);
 
@@ -25,9 +23,13 @@ public interface ProjectService {
 
   Long getProjectLikesCount(Long projectId);
 
-  Page<ProjectSummaryResponse> getModeratedProjects(Pageable pageable);
+  Page<ProjectSummaryResponse> getModeratedProjects(String category, String query, Pageable pageable);
 
-  Page<ProjectSummaryResponse> getUnmoderatedProjects(Pageable pageable);
+  Page<ProjectSummaryResponse> getUnmoderatedProjects(String category, String query, Pageable pageable);
 
   void updateProjectModerationStatus(Long projectId, Boolean moderationPassed);
+
+  Page<ProjectSummaryResponse> getProjectsByOwner(String username, Pageable pageable);
+
+  Page<ProjectSummaryResponse> getProjectsByMember(String username, Pageable pageable);
 }

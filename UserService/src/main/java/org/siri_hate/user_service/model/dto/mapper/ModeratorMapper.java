@@ -14,8 +14,6 @@ import org.springframework.data.domain.PageImpl;
 @Mapper(componentModel = "spring")
 public interface ModeratorMapper {
 
-  ModeratorMapper INSTANCE = Mappers.getMapper(ModeratorMapper.class);
-
   Moderator toModerator(ModeratorFullRequest moderatorFullRequest);
 
   ModeratorFullResponse toModeratorFullResponse(Moderator moderator);
@@ -29,7 +27,8 @@ public interface ModeratorMapper {
   Moderator moderatorUpdate(
       ModeratorFullRequest moderatorFullRequest, @MappingTarget Moderator moderator);
 
-  default List<ModeratorSummaryResponse> toModeratorSummaryResponseList(Page<Moderator> moderators) {
-    return toModeratorSummaryResponseList(moderators.getContent());
+  default Page<ModeratorSummaryResponse> toModeratorSummaryResponsePage(Page<Moderator> moderators) {
+    List<ModeratorSummaryResponse> summaryResponses = toModeratorSummaryResponseList(moderators.getContent());
+    return new PageImpl<>(summaryResponses, moderators.getPageable(), moderators.getTotalElements());
   }
 }

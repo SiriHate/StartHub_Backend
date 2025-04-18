@@ -16,6 +16,7 @@ import org.siri_hate.main_service.service.NewsCategoryService;
 import org.siri_hate.main_service.service.NewsService;
 import org.siri_hate.main_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,7 +35,7 @@ public class NewsServiceImpl implements NewsService {
       NewsRepository newsRepository,
       NewsMapper newsMapper,
       NewsCategoryService newsCategoryService,
-      UserService userService) {
+      @Lazy UserService userService) {
     this.newsRepository = newsRepository;
     this.newsMapper = newsMapper;
     this.newsCategoryService = newsCategoryService;
@@ -62,6 +63,7 @@ public class NewsServiceImpl implements NewsService {
     return newsMapper.toNewsFullResponse(news.get());
   }
 
+  @Override
   public Page<NewsSummaryResponse> getNewsByCategoryAndSearchQuery(
       String category, String query, Pageable pageable) {
     Specification<News> spec =
@@ -75,18 +77,12 @@ public class NewsServiceImpl implements NewsService {
   }
 
   @Override
-  public Page<NewsSummaryResponse> getAllNews(Pageable pageable) {
-    Page<News> news = newsRepository.findAll(pageable);
-    if (news.isEmpty()) {
-      throw new NoSuchElementException("No news found");
-    }
-    return newsMapper.toNewsSummaryResponsePage(news);
-  }
-
-  @Override
   @Transactional
-  public Page<NewsSummaryResponse> getModeratedNews(Pageable pageable) {
-    Page<News> news = newsRepository.findByModerationPassedTrue(pageable);
+  public Page<NewsSummaryResponse> getModeratedNews(String category, String query, Pageable pageable) {
+    Specification<News> spec = Specification.where(NewsSpecification.titleStartsWith(query))
+        .and(NewsSpecification.hasCategory(category))
+        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isTrue(root.get("moderationPassed")));
+    Page<News> news = newsRepository.findAll(spec, pageable);
     if (news.isEmpty()) {
       throw new NoSuchElementException("No moderated news found");
     }
@@ -95,10 +91,23 @@ public class NewsServiceImpl implements NewsService {
 
   @Override
   @Transactional
-  public Page<NewsSummaryResponse> getUnmoderatedNews(Pageable pageable) {
-    Page<News> news = newsRepository.findByModerationPassedFalse(pageable);
+  public Page<NewsSummaryResponse> getUnmoderatedNews(String category, String query, Pageable pageable) {
+    Specification<News> spec = Specification.where(NewsSpecification.titleStartsWith(query))
+        .and(NewsSpecification.hasCategory(category))
+        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("moderationPassed")));
+    Page<News> news = newsRepository.findAll(spec, pageable);
     if (news.isEmpty()) {
       throw new NoSuchElementException("No unmoderated news found");
+    }
+    return newsMapper.toNewsSummaryResponsePage(news);
+  }
+
+  @Override
+  @Transactional
+  public Page<NewsSummaryResponse> getNewsByUser(String username, Pageable pageable) {
+    Page<News> news = newsRepository.findByUserUsername(username, pageable);
+    if (news.isEmpty()) {
+      throw new NoSuchNewsFoundException("No news found for user: " + username);
     }
     return newsMapper.toNewsSummaryResponsePage(news);
   }

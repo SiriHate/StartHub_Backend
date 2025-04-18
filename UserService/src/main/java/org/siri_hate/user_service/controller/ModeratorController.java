@@ -2,7 +2,6 @@ package org.siri_hate.user_service.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import java.util.List;
 import org.siri_hate.user_service.model.dto.request.moderator.ModeratorFullRequest;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResponse;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorSummaryResponse;
@@ -37,15 +36,10 @@ public class ModeratorController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ModeratorSummaryResponse>> getAllModerators() {
-    List<ModeratorSummaryResponse> moderators = moderatorService.getAllModerators();
-    return new ResponseEntity<>(moderators, HttpStatus.OK);
-  }
-
-  @GetMapping("/search")
-  public ResponseEntity<List<ModeratorFullResponse>> searchModerators(
-      @RequestParam(required = false) String username) {
-    List<ModeratorFullResponse> moderators = moderatorService.searchModerators(username);
+  public ResponseEntity<Page<ModeratorSummaryResponse>> getAllModerators(
+      @RequestParam(required = false) String username,
+      @PageableDefault(size = 10) Pageable pageable) {
+    Page<ModeratorSummaryResponse> moderators = moderatorService.getAllModerators(username, pageable);
     return new ResponseEntity<>(moderators, HttpStatus.OK);
   }
 

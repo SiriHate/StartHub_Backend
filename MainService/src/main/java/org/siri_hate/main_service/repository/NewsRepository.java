@@ -13,4 +13,6 @@ public interface NewsRepository extends JpaRepository<News, Long>, JpaSpecificat
   Page<News> findByModerationPassedTrue(Pageable pageable);
 
   Page<News> findByModerationPassedFalse(Pageable pageable);
+  
+  Page<News> findByUserUsername(String username, Pageable pageable);
 }

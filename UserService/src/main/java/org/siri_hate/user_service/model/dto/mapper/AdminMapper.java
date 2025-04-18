@@ -16,8 +16,6 @@ import org.springframework.data.domain.PageImpl;
 @Mapper(componentModel = "spring")
 public interface AdminMapper {
 
-  AdminMapper INSTANCE = Mappers.getMapper(AdminMapper.class);
-
   @Mappings({
     @Mapping(source = "username", target = "username"),
     @Mapping(target = "role", constant = "ADMIN"),

@@ -16,15 +16,15 @@ public interface ArticleService {
   Page<ArticleSummaryResponse> getArticlesByCategoryAndSearchQuery(
       String category, String query, Pageable pageable);
 
-  Page<ArticleSummaryResponse> getAllArticles(Pageable pageable);
+  Page<ArticleSummaryResponse> getModeratedArticles(String category, String query, Pageable pageable);
 
-  Page<ArticleSummaryResponse> getModeratedArticles(Pageable pageable);
-
-  Page<ArticleSummaryResponse> getUnmoderatedArticles(Pageable pageable);
+  Page<ArticleSummaryResponse> getUnmoderatedArticles(String category, String query, Pageable pageable);
 
   void updateArticle(Long id, ArticleFullRequest article);
 
   void deleteArticle(Long id);
 
   void updateArticleModerationStatus(Long id, Boolean moderationPassed);
+  
+  Page<ArticleSummaryResponse> getArticlesByUser(String username, Pageable pageable);
 }

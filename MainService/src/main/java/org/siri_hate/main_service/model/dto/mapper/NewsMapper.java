@@ -38,11 +38,4 @@ public interface NewsMapper {
         newsPage.stream().map(this::toNewsSummaryResponse).collect(Collectors.toList());
     return new PageImpl<>(summaryResponses, newsPage.getPageable(), newsPage.getTotalElements());
   }
-
-  default Page<NewsSummaryResponse> toNewsSummaryResponsePage(
-      Set<News> newsSet, Pageable pageable) {
-    List<NewsSummaryResponse> summaryResponses =
-        newsSet.stream().map(this::toNewsSummaryResponse).collect(Collectors.toList());
-    return new PageImpl<>(summaryResponses, pageable, newsSet.size());
-  }
 }

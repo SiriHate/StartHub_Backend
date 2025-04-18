@@ -19,6 +19,7 @@ import org.siri_hate.main_service.service.ProjectCategoryService;
 import org.siri_hate.main_service.service.ProjectService;
 import org.siri_hate.main_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,7 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
       ProjectRepository projectRepository,
       ProjectMapper projectMapper,
       ProjectCategoryService projectCategoryService,
-      UserService userService) {
+      @Lazy UserService userService) {
     this.projectRepository = projectRepository;
     this.projectMapper = projectMapper;
     this.projectCategoryService = projectCategoryService;
@@ -66,14 +67,6 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public Page<ProjectSummaryResponse> getAllProjects(Pageable pageable) {
-    Page<Project> projectsPage = projectRepository.findAll(pageable);
-    if (projectsPage.isEmpty()) {
-      throw new RuntimeException("No projects found");
-    }
-    return projectMapper.toProjectSummaryResponsePage(projectsPage);
-  }
-
   public Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
       String category, String query, Pageable pageable) {
     Specification<Project> spec =
@@ -160,8 +153,11 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public Page<ProjectSummaryResponse> getModeratedProjects(Pageable pageable) {
-    Page<Project> projects = projectRepository.findByModerationPassedTrue(pageable);
+  public Page<ProjectSummaryResponse> getModeratedProjects(String category, String query, Pageable pageable) {
+    Specification<Project> spec = Specification.where(ProjectSpecification.projectNameStartsWith(query))
+        .and(ProjectSpecification.hasCategory(category))
+        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isTrue(root.get("moderationPassed")));
+    Page<Project> projects = projectRepository.findAll(spec, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No moderated projects found");
     }
@@ -169,8 +165,11 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public Page<ProjectSummaryResponse> getUnmoderatedProjects(Pageable pageable) {
-    Page<Project> projects = projectRepository.findByModerationPassedFalse(pageable);
+  public Page<ProjectSummaryResponse> getUnmoderatedProjects(String category, String query, Pageable pageable) {
+    Specification<Project> spec = Specification.where(ProjectSpecification.projectNameStartsWith(query))
+        .and(ProjectSpecification.hasCategory(category))
+        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("moderationPassed")));
+    Page<Project> projects = projectRepository.findAll(spec, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No unmoderated projects found");
     }
@@ -180,9 +179,33 @@ public class ProjectServiceImpl implements ProjectService {
   @Override
   @Transactional
   public void updateProjectModerationStatus(Long projectId, Boolean moderationPassed) {
-    Project project = projectRepository.findById(projectId)
-        .orElseThrow(() -> new NoSuchProjectFoundException("No project with id " + projectId + " found"));
+    Project project =
+        projectRepository
+            .findById(projectId)
+            .orElseThrow(
+                () ->
+                    new NoSuchProjectFoundException("No project with id " + projectId + " found"));
     project.setModerationPassed(moderationPassed);
     projectRepository.save(project);
+  }
+
+  @Override
+  @Transactional
+  public Page<ProjectSummaryResponse> getProjectsByOwner(String username, Pageable pageable) {
+    Page<Project> projects = projectRepository.findByUserUsername(username, pageable);
+    if (projects.isEmpty()) {
+      throw new NoSuchProjectFoundException("No projects found for user: " + username);
+    }
+    return projectMapper.toProjectSummaryResponsePage(projects);
+  }
+
+  @Override
+  @Transactional
+  public Page<ProjectSummaryResponse> getProjectsByMember(String username, Pageable pageable) {
+    Page<Project> projects = projectRepository.findByMembersUserUsername(username, pageable);
+    if (projects.isEmpty()) {
+      throw new NoSuchProjectFoundException("No projects found for user: " + username);
+    }
+    return projectMapper.toProjectSummaryResponsePage(projects);
   }
 }

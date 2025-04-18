@@ -38,11 +38,4 @@ public interface ArticleMapper {
         articles.stream().map(this::toArticleSummaryResponse).collect(Collectors.toList());
     return new PageImpl<>(summaryResponses, articles.getPageable(), articles.getTotalElements());
   }
-
-  default Page<ArticleSummaryResponse> toArticleSummaryResponsePage(
-      Set<Article> articles, Pageable pageable) {
-    List<ArticleSummaryResponse> summaryResponses =
-        articles.stream().map(this::toArticleSummaryResponse).collect(Collectors.toList());
-    return new PageImpl<>(summaryResponses, pageable, articles.size());
-  }
 }

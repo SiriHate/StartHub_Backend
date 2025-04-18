@@ -11,8 +11,6 @@ import org.siri_hate.user_service.model.entity.SpecialistSpecialization;
 @Mapper(componentModel = "spring")
 public interface SpecialistSpecializationMapper {
 
-  SpecialistSpecializationMapper INSTANCE = Mappers.getMapper(SpecialistSpecializationMapper.class);
-
   SpecialistSpecialization toSpecialistSpecialization(SpecialistSpecializationRequest request);
 
   SpecialistSpecializationSummaryResponse toSpecialistSpecializationSummaryResponse(

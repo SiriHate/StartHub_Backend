@@ -1,24 +1,21 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
-import java.util.Set;
 import org.siri_hate.main_service.exception.NoSuchArticleFoundException;
 import org.siri_hate.main_service.exception.NoSuchNewsFoundException;
 import org.siri_hate.main_service.exception.NoSuchProjectFoundException;
 import org.siri_hate.main_service.exception.NoSuchUserException;
-import org.siri_hate.main_service.model.dto.mapper.ArticleMapper;
-import org.siri_hate.main_service.model.dto.mapper.NewsMapper;
-import org.siri_hate.main_service.model.dto.mapper.ProjectMapper;
 import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryResponse;
 import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
-import org.siri_hate.main_service.model.entity.Article;
-import org.siri_hate.main_service.model.entity.News;
-import org.siri_hate.main_service.model.entity.Project;
 import org.siri_hate.main_service.model.entity.User;
 import org.siri_hate.main_service.repository.UserRepository;
+import org.siri_hate.main_service.service.ArticleService;
+import org.siri_hate.main_service.service.NewsService;
+import org.siri_hate.main_service.service.ProjectService;
 import org.siri_hate.main_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,20 +24,20 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
-  private final ArticleMapper articleMapper;
-  private final NewsMapper newsMapper;
-  private final ProjectMapper projectMapper;
+  private final ArticleService articleService;
+  private final NewsService newsService;
+  private final ProjectService projectService;
 
   @Autowired
   public UserServiceImpl(
       UserRepository userRepository,
-      ArticleMapper articleMapper,
-      NewsMapper newsMapper,
-      ProjectMapper projectMapper) {
+      @Lazy ArticleService articleService,
+      NewsService newsService,
+      ProjectService projectService) {
     this.userRepository = userRepository;
-    this.articleMapper = articleMapper;
-    this.newsMapper = newsMapper;
-    this.projectMapper = projectMapper;
+    this.articleService = articleService;
+    this.newsService = newsService;
+    this.projectService = projectService;
   }
 
   @Override
@@ -62,11 +59,11 @@ public class UserServiceImpl implements UserService {
         userRepository
             .findUserByUsername(username)
             .orElseThrow(() -> new NoSuchUserException("User not found: " + username));
-    Set<Article> articles = user.getArticles();
+    Page<ArticleSummaryResponse> articles = articleService.getArticlesByUser(username, pageable);
     if (articles.isEmpty()) {
       throw new NoSuchArticleFoundException("No articles found for user: " + username);
     }
-    return articleMapper.toArticleSummaryResponsePage(articles, pageable);
+    return articles;
   }
 
   @Override
@@ -76,11 +73,11 @@ public class UserServiceImpl implements UserService {
         userRepository
             .findUserByUsername(username)
             .orElseThrow(() -> new NoSuchUserException("User not found: " + username));
-    Set<News> news = user.getNews();
+    Page<NewsSummaryResponse> news = newsService.getNewsByUser(username, pageable);
     if (news.isEmpty()) {
       throw new NoSuchNewsFoundException("No news found for user: " + username);
     }
-    return newsMapper.toNewsSummaryResponsePage(news, pageable);
+    return news;
   }
 
   @Override
@@ -90,11 +87,11 @@ public class UserServiceImpl implements UserService {
         userRepository
             .findUserByUsername(username)
             .orElseThrow(() -> new NoSuchUserException("User not found: " + username));
-    Set<Project> projects = user.getOwnedProjects();
+    Page<ProjectSummaryResponse> projects = projectService.getProjectsByOwner(username, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
     }
-    return projectMapper.toProjectSummaryResponsePage(projects, pageable);
+    return projects;
   }
 
   @Override
@@ -104,10 +101,10 @@ public class UserServiceImpl implements UserService {
         userRepository
             .findUserByUsername(username)
             .orElseThrow(() -> new NoSuchUserException("User not found: " + username));
-    Set<Project> projects = user.getMemberProjects();
+    Page<ProjectSummaryResponse> projects = projectService.getProjectsByMember(username, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
     }
-    return projectMapper.toProjectSummaryResponsePage(projects, pageable);
+    return projects;
   }
 }

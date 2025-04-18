@@ -15,4 +15,6 @@ public interface ArticleRepository
   Page<Article> findByModerationPassedTrue(Pageable pageable);
   
   Page<Article> findByModerationPassedFalse(Pageable pageable);
+  
+  Page<Article> findByUserUsername(String username, Pageable pageable);
 }
