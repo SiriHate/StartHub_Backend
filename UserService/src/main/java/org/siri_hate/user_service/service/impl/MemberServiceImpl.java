@@ -135,10 +135,7 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Page<MemberSummaryResponse> getAllMembers(
-      String username,
-      String specialization,
-      Boolean profileHiddenFlag,
-      Pageable pageable) {
+      String username, String specialization, Boolean profileHiddenFlag, Pageable pageable) {
     Specification<Member> spec = Specification.where(null);
 
     if (username != null && !username.isEmpty()) {
@@ -151,8 +148,10 @@ public class MemberServiceImpl implements MemberService {
 
     if (profileHiddenFlag != null) {
       if (profileHiddenFlag) {
-        spec = spec.and((root, query, criteriaBuilder) -> 
-            criteriaBuilder.isTrue(root.get("profileHiddenFlag")));
+        spec =
+            spec.and(
+                (root, query, criteriaBuilder) ->
+                    criteriaBuilder.isTrue(root.get("profileHiddenFlag")));
       } else {
         spec = spec.and(MemberSpecification.profileIsNotHidden());
       }
@@ -202,7 +201,7 @@ public class MemberServiceImpl implements MemberService {
             .orElseThrow(
                 () -> new EntityNotFoundException("Member with id: " + id + " not found!"));
     memberRepository.delete(member);
-    notificationService.sendDeletedAccountNotification(member.getName(), member.getEmail());
+    // notificationService.sendDeletedAccountNotification(member.getName(), member.getEmail());
   }
 
   @Override
@@ -257,7 +256,8 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Page<MemberSummaryResponse> searchMembersByName(String name, Pageable pageable) {
-    Specification<Member> spec = Specification.where(MemberSpecification.nameStartsWithIgnoreCase(name));
+    Specification<Member> spec =
+        Specification.where(MemberSpecification.nameStartsWithIgnoreCase(name));
     Page<Member> members = memberRepository.findAll(spec, pageable);
     if (members.isEmpty()) {
       throw new NoSuchUserException("No members found");

@@ -91,16 +91,17 @@ public class MemberController {
     return new ResponseEntity<>(updatedMember, HttpStatus.OK);
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteMemberById(
-      @Positive(message = "ID should be greater than zero") @PathVariable("id") Long id) {
-    memberService.deleteMemberById(id);
-    return new ResponseEntity<>("Successful delete", HttpStatus.NO_CONTENT);
-  }
-
-  @DeleteMapping("/{username}")
-  public ResponseEntity<String> deleteMemberByUsername(@PathVariable("username") String username) {
-    memberService.deleteMemberByUsername(username);
+  @DeleteMapping
+  public ResponseEntity<String> deleteMember(
+      @RequestParam(value = "id", required = false) Long id,
+      @RequestParam(value = "username", required = false) String username) {
+    if (id != null) {
+      memberService.deleteMemberById(id);
+    } else if (username != null) {
+      memberService.deleteMemberByUsername(username);
+    } else {
+      return ResponseEntity.badRequest().body("Either 'id' or 'username' must be provided.");
+    }
     return new ResponseEntity<>("Successful delete", HttpStatus.NO_CONTENT);
   }
 

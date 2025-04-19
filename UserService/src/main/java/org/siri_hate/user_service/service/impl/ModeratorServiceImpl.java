@@ -83,9 +83,26 @@ public class ModeratorServiceImpl implements ModeratorService {
     if (moderatorOptional.isEmpty()) {
       throw new EntityNotFoundException("Moderator with id: " + id + " not found!");
     }
-    Moderator moderatorToUpdate = moderatorMapper.toModerator(moderator);
-    moderatorToUpdate.setId(id);
-    Moderator updatedModerator = moderatorRepository.save(moderatorToUpdate);
+    
+    Moderator existingModerator = moderatorOptional.get();
+    
+    if (moderator.getName() != null) {
+      existingModerator.setName(moderator.getName());
+    }
+    
+    if (moderator.getUsername() != null) {
+      existingModerator.setUsername(moderator.getUsername());
+    }
+    
+    if (moderator.getEmployeeId() != null) {
+      existingModerator.setEmployeeId(moderator.getEmployeeId());
+    }
+    
+    if (moderator.getPassword() != null) {
+      existingModerator.setPassword(passwordEncoder.encode(moderator.getPassword()));
+    }
+    
+    Moderator updatedModerator = moderatorRepository.save(existingModerator);
     return moderatorMapper.toModeratorFullResponse(updatedModerator);
   }
 

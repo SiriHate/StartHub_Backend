@@ -1,6 +1,5 @@
 package org.siri_hate.user_service.service;
 
-import java.util.List;
 import org.siri_hate.user_service.model.dto.request.moderator.ModeratorFullRequest;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResponse;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorSummaryResponse;

@@ -53,7 +53,7 @@ public class ModeratorController {
   @PatchMapping("/{id}")
   public ResponseEntity<ModeratorFullResponse> moderatorUpdate(
       @PathVariable @Positive(message = "ID should be greater than zero") Long id,
-      @Valid ModeratorFullRequest moderator) {
+      @Valid @RequestBody ModeratorFullRequest moderator) {
     ModeratorFullResponse updatedModerator = moderatorService.moderatorUpdate(id, moderator);
     return new ResponseEntity<>(updatedModerator, HttpStatus.OK);
   }
