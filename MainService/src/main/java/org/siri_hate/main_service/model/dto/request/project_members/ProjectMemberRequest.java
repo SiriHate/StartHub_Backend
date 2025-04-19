@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 public class ProjectMemberRequest {
 
   @NotBlank(message = "Username is required")
-  String username;
+  private String username;
 
   @NotBlank(message = "Role should not be blank")
-  String role;
+  private String role;
 
   public ProjectMemberRequest() {}
 

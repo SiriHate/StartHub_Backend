@@ -181,10 +181,12 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<SurveySubmissionResponse> getAllSurveySubmissions(Long projectId) {
-    Project project = projectRepository
-        .findById(projectId)
-        .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
+  public List<SurveySubmissionResponse> getAllSurveySubmissions(Long projectId, String sort) {
+    Project project =
+        projectRepository
+            .findById(projectId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Project not found with id: " + projectId));
 
     ProjectSurvey survey = project.getSurvey();
     if (survey == null) {
@@ -192,9 +194,18 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
     }
 
     List<SurveySubmission> submissions = surveySubmissionRepository.findBySurvey(survey);
-    return submissions.stream()
-        .map(this::mapToSubmissionResponse)
-        .collect(Collectors.toList());
+    List<SurveySubmissionResponse> responses =
+        submissions.stream().map(this::mapToSubmissionResponse).collect(Collectors.toList());
+
+    if (sort != null) {
+      if (sort.equalsIgnoreCase("asc")) {
+        responses.sort((a, b) -> a.getSubmittedAt().compareTo(b.getSubmittedAt()));
+      } else if (sort.equalsIgnoreCase("desc")) {
+        responses.sort((a, b) -> b.getSubmittedAt().compareTo(a.getSubmittedAt()));
+      }
+    }
+
+    return responses;
   }
 
   private SurveySubmissionResponse mapToSubmissionResponse(SurveySubmission submission) {
@@ -203,14 +214,15 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
     response.setSurveyId(submission.getSurvey().getId());
     response.setRespondentUsername(submission.getRespondent().getUsername());
     response.setSubmittedAt(submission.getSubmittedAt());
+    response.setAverageRating(submission.getAverageRating());
 
     response.setAnswers(
         submission.getResponses().stream()
             .map(
                 answer ->
                     new SurveySubmissionResponse.AnswerResponse(
-                        answer.getId(), 
-                        answer.getQuestion().getQuestionText(), 
+                        answer.getId(),
+                        answer.getQuestion().getQuestionText(),
                         answer.getResponseText()))
             .collect(Collectors.toList()));
 

@@ -16,5 +16,5 @@ public interface ProjectSurveyService {
 
     SurveySubmissionResponse submitSurveyAnswers(String username, Long projectId, SurveySubmissionRequest request);
 
-    List<SurveySubmissionResponse> getAllSurveySubmissions(Long projectId);
+    List<SurveySubmissionResponse> getAllSurveySubmissions(Long projectId, String sort);
 }

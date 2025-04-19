@@ -1,8 +1,10 @@
 package org.siri_hate.main_service.model.dto.response.project;
 
 import java.util.Set;
+import java.util.List;
 import org.siri_hate.main_service.model.dto.response.project_members.ProjectMembersSummaryResponse;
 import org.siri_hate.main_service.model.dto.response.user.UserFullResponse;
+import org.siri_hate.main_service.model.dto.response.comment.CommentResponse;
 
 public class ProjectFullResponse {
 
@@ -15,6 +17,7 @@ public class ProjectFullResponse {
   private String category;
   private Long likes;
   private boolean hasSurvey;
+  private List<CommentResponse> comments;
 
   public ProjectFullResponse() {}
 
@@ -27,7 +30,8 @@ public class ProjectFullResponse {
       String projectLogoUrl,
       String category,
       Long likes,
-      boolean hasSurvey) {
+      boolean hasSurvey,
+      List<CommentResponse> comments) {
     this.id = id;
     this.projectOwner = projectOwner;
     this.members = members;
@@ -37,6 +41,7 @@ public class ProjectFullResponse {
     this.category = category;
     this.likes = likes;
     this.hasSurvey = hasSurvey;
+    this.comments = comments;
   }
 
   public Long getId() {
@@ -109,5 +114,13 @@ public class ProjectFullResponse {
 
   public void setHasSurvey(boolean hasSurvey) {
     this.hasSurvey = hasSurvey;
+  }
+
+  public List<CommentResponse> getComments() {
+    return comments;
+  }
+
+  public void setComments(List<CommentResponse> comments) {
+    this.comments = comments;
   }
 }

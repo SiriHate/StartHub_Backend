@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,18 +50,18 @@ public class ProjectSurveyController {
   @PostMapping("/submissions")
   public ResponseEntity<SurveySubmissionResponse> submitSurveyAnswers(
       @PathVariable Long projectId,
-      @Valid @RequestBody SurveySubmissionRequest request,
-      Authentication authentication) {
-    String username = authentication.getName();
+      @Valid @RequestBody SurveySubmissionRequest request) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     SurveySubmissionResponse response =
-        projectSurveyService.submitSurveyAnswers(username, projectId, request);
+        projectSurveyService.submitSurveyAnswers(authentication.getName(), projectId, request);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
   @GetMapping("/submissions")
   public ResponseEntity<List<SurveySubmissionResponse>> getAllSurveySubmissions(
-      @PathVariable Long projectId) {
-    List<SurveySubmissionResponse> responses = projectSurveyService.getAllSurveySubmissions(projectId);
+      @PathVariable Long projectId,
+      @RequestParam(required = false) String sort) {
+    List<SurveySubmissionResponse> responses = projectSurveyService.getAllSurveySubmissions(projectId, sort);
     return new ResponseEntity<>(responses, HttpStatus.OK);
   }
 }

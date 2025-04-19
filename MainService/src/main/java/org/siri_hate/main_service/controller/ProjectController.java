@@ -53,9 +53,10 @@ public class ProjectController {
       @PageableDefault(size = 10) Pageable pageable) {
     Page<ProjectSummaryResponse> projects;
     if (moderationPassed != null) {
-      projects = moderationPassed ? 
-          projectService.getModeratedProjects(category, query, pageable) : 
-          projectService.getUnmoderatedProjects(category, query, pageable);
+      projects =
+          moderationPassed
+              ? projectService.getModeratedProjects(category, query, pageable)
+              : projectService.getUnmoderatedProjects(category, query, pageable);
     } else {
       projects = projectService.getProjectsByCategoryAndSearchQuery(category, query, pageable);
     }
@@ -64,7 +65,7 @@ public class ProjectController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ProjectFullResponse> getProjectById(@PathVariable @Positive Long id) {
-    ProjectFullResponse project = projectService.getProjectById(id);
+    ProjectFullResponse project = projectService.getProjectInfoById(id);
     return new ResponseEntity<>(project, HttpStatus.OK);
   }
 
@@ -99,9 +100,9 @@ public class ProjectController {
 
   @PatchMapping("/{id}/moderationPassed")
   public ResponseEntity<String> updateProjectModerationStatus(
-      @PathVariable @Positive Long id,
-      @RequestBody Boolean moderationPassed) {
+      @PathVariable @Positive Long id, @RequestBody Boolean moderationPassed) {
     projectService.updateProjectModerationStatus(id, moderationPassed);
-    return new ResponseEntity<>("Project moderation status has been successfully updated", HttpStatus.OK);
+    return new ResponseEntity<>(
+        "Project moderation status has been successfully updated", HttpStatus.OK);
   }
 }

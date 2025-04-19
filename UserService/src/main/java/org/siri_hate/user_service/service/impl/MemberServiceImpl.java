@@ -20,6 +20,7 @@ import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
 import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;
 import org.siri_hate.user_service.model.entity.Member;
 import org.siri_hate.user_service.model.entity.SpecialistSpecialization;
+import org.siri_hate.user_service.model.enums.AuthType;
 import org.siri_hate.user_service.model.enums.UserRole;
 import org.siri_hate.user_service.repository.MemberRepository;
 import org.siri_hate.user_service.repository.adapters.MemberSpecification;
@@ -70,6 +71,8 @@ public class MemberServiceImpl implements MemberService {
     }
     memberEntity.setPassword(passwordEncoder.encode(memberEntity.getPassword()));
     memberEntity.setRole(UserRole.MEMBER.name());
+    memberEntity.setAuthType(AuthType.PASSWORD);
+    memberEntity.setProfileHiddenFlag(false);
     memberRepository.save(memberEntity);
     confirmationService.sendRegistrationConfirmation(memberEntity);
   }

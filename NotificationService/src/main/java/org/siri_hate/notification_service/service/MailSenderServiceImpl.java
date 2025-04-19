@@ -31,7 +31,7 @@ public class MailSenderServiceImpl implements MailSenderService {
   private String fromEmailAddress;
 
   @Autowired
-  private MailSenderServiceImpl(
+  public MailSenderServiceImpl(
       JavaMailSender mailSender, SpringTemplateEngine templateEngine, Gson gson) {
     this.mailSender = mailSender;
     this.templateEngine = templateEngine;

@@ -81,12 +81,22 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Override
   @Transactional
-  public ProjectFullResponse getProjectById(Long id) {
+  public ProjectFullResponse getProjectInfoById(Long id) {
     Optional<Project> project = projectRepository.findById(id);
     if (project.isEmpty()) {
       throw new RuntimeException("No project found with id " + id);
     }
-    return projectMapper.toProjectFullResponse(project.get());
+    Project projectEntity = project.get();
+    return projectMapper.toProjectFullResponse(projectEntity);
+  }
+
+  @Override
+  public Project getProjectById(Long id) {
+    Optional<Project> project = projectRepository.findById(id);
+    if (project.isEmpty()) {
+      throw new RuntimeException("No project found with id " + id);
+    }
+    return project.get();
   }
 
   @Override
@@ -153,10 +163,14 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public Page<ProjectSummaryResponse> getModeratedProjects(String category, String query, Pageable pageable) {
-    Specification<Project> spec = Specification.where(ProjectSpecification.projectNameStartsWith(query))
-        .and(ProjectSpecification.hasCategory(category))
-        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isTrue(root.get("moderationPassed")));
+  public Page<ProjectSummaryResponse> getModeratedProjects(
+      String category, String query, Pageable pageable) {
+    Specification<Project> spec =
+        Specification.where(ProjectSpecification.projectNameStartsWith(query))
+            .and(ProjectSpecification.hasCategory(category))
+            .and(
+                (root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.isTrue(root.get("moderationPassed")));
     Page<Project> projects = projectRepository.findAll(spec, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No moderated projects found");
@@ -165,10 +179,14 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public Page<ProjectSummaryResponse> getUnmoderatedProjects(String category, String query, Pageable pageable) {
-    Specification<Project> spec = Specification.where(ProjectSpecification.projectNameStartsWith(query))
-        .and(ProjectSpecification.hasCategory(category))
-        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("moderationPassed")));
+  public Page<ProjectSummaryResponse> getUnmoderatedProjects(
+      String category, String query, Pageable pageable) {
+    Specification<Project> spec =
+        Specification.where(ProjectSpecification.projectNameStartsWith(query))
+            .and(ProjectSpecification.hasCategory(category))
+            .and(
+                (root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.isFalse(root.get("moderationPassed")));
     Page<Project> projects = projectRepository.findAll(spec, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No unmoderated projects found");

@@ -7,14 +7,14 @@ import org.siri_hate.main_service.model.entity.category.NewsCategory;
 public class NewsFullRequest {
 
   @NotBlank(message = "Title should not be blank")
-  String title;
+  private String title;
 
-  String previewUrl;
+  private String previewUrl;
 
-  NewsCategory category;
+  private NewsCategory category;
 
   @NotBlank(message = "Content should not be blank")
-  String content;
+  private String content;
 
   public NewsFullRequest() {}
 

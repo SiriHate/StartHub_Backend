@@ -7,19 +7,19 @@ import java.time.LocalDateTime;
 public class EventFullRequest {
 
   @NotBlank(message = "Event name should not be blank")
-  String eventName;
+  private String eventName;
 
   @NotBlank(message = "Category should not be blank")
-  String category;
+  private String category;
 
   @NotBlank(message = "Event description should not be blank")
-  String eventDescription;
+  private String eventDescription;
 
   @NotNull(message = "Event date should not be blank")
-  LocalDateTime EventDate;
+  private LocalDateTime EventDate;
 
   @NotBlank(message = "Event location should not be blank")
-  String onlineConferenceLink;
+  private String onlineConferenceLink;
 
   public EventFullRequest() {}
 

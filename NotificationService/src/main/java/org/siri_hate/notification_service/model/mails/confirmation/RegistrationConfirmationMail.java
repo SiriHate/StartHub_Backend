@@ -14,7 +14,6 @@ public class RegistrationConfirmationMail extends MailTemplate {
   private final String confirmationUrl;
   private String fullName;
   private String confirmationBaseUrl = System.getenv("CONFIRMATION_BASE_URL");
-
   private String confirmRegistrationUrl = System.getenv("CONFIRMATION_REGISTRATION_URL");
 
   public RegistrationConfirmationMail(String toEmailAddress, String fullName, String token) {

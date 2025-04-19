@@ -10,14 +10,16 @@ import org.mapstruct.factory.Mappers;
 import org.siri_hate.main_service.model.dto.request.project.ProjectFullRequest;
 import org.siri_hate.main_service.model.dto.response.project.ProjectFullResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
+import org.siri_hate.main_service.model.dto.response.comment.CommentResponse;
 import org.siri_hate.main_service.model.entity.Project;
+import org.siri_hate.main_service.model.entity.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 @Mapper(
     componentModel = "spring",
-    uses = {UserMapper.class, ProjectMemberMapper.class})
+    uses = {UserMapper.class, ProjectMemberMapper.class, CommentMapper.class})
 public interface ProjectMapper {
 
   ProjectMapper INSTANCE = Mappers.getMapper(ProjectMapper.class);
@@ -31,6 +33,7 @@ public interface ProjectMapper {
   @Mapping(source = "members", target = "members")
   @Mapping(target = "likes", expression = "java(getLikesCount(project))")
   @Mapping(target = "hasSurvey", expression = "java(project.getSurvey() != null)")
+  @Mapping(target = "comments", expression = "java(mapComments(project.getComments()))")
   ProjectFullResponse toProjectFullResponse(Project project);
 
   @Mapping(source = "category.name", target = "category")
@@ -47,5 +50,14 @@ public interface ProjectMapper {
 
   default Long getLikesCount(Project project) {
     return (long) project.getProjectLikes().size();
+  }
+
+  default List<CommentResponse> mapComments(List<Comment> comments) {
+    if (comments == null) {
+      return null;
+    }
+    return comments.stream()
+        .map(CommentMapper.INSTANCE::toCommentResponse)
+        .collect(Collectors.toList());
   }
 }

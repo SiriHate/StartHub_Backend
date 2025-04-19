@@ -60,6 +60,9 @@ public class Project {
   @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ProjectLike> projectLikes = new ArrayList<>();
 
+  @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Comment> comments = new ArrayList<>();
+
   @Column(name = "moderation_passed")
   private Boolean moderationPassed;
 
@@ -200,5 +203,13 @@ public class Project {
 
   public void setSurvey(ProjectSurvey survey) {
     this.survey = survey;
+  }
+
+  public List<Comment> getComments() {
+    return comments;
+  }
+
+  public void setComments(List<Comment> comments) {
+    this.comments = comments;
   }
 }
