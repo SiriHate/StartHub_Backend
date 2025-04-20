@@ -2,9 +2,11 @@ package org.siri_hate.user_service.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.siri_hate.user_service.exception.NoSuchUserException;
 import org.siri_hate.user_service.exception.UserAlreadyExistsException;
+import org.siri_hate.user_service.kafka.KafkaProducerService;
 import org.siri_hate.user_service.model.dto.mapper.AdminMapper;
 import org.siri_hate.user_service.model.dto.request.admin.AdminFullRequest;
 import org.siri_hate.user_service.model.dto.response.admin.AdminFullResponse;
@@ -27,11 +29,14 @@ public class AdminServiceImpl implements AdminService {
 
     final private PasswordEncoder passwordEncoder;
 
+    final private KafkaProducerService kafkaProducerService;
+
     @Autowired
-    public AdminServiceImpl(AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder) {
+    public AdminServiceImpl(AdminRepository adminRepository, AdminMapper adminMapper, PasswordEncoder passwordEncoder, KafkaProducerService kafkaProducerService) {
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.passwordEncoder = passwordEncoder;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     @Override
@@ -77,6 +82,18 @@ public class AdminServiceImpl implements AdminService {
     public void deleteAdminById(Long id) {
         Optional<Admin> adminOptional = adminRepository.findById(id);
         if (adminOptional.isEmpty()) throw new NoSuchUserException("No admin with provided id exists!");
-        adminRepository.delete(adminOptional.get());
+        Admin admin = adminOptional.get();
+        String username = admin.getUsername();
+        adminRepository.delete(admin);
+        kafkaProducerService.sendUserDeletionMessage(username);
+    }
+
+    @Override
+    public void deleteAdminByUsername(String username) {
+        Admin admin = adminRepository.findAdminByUsername(username);
+        if (admin == null) {
+            throw new NoSuchElementException("Admin not found with username: " + username);
+        }
+        adminRepository.delete(admin);
     }
 }

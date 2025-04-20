@@ -2,6 +2,8 @@ package org.siri_hate.user_service.kafka;
 
 import org.siri_hate.user_service.kafka.messages.ConfirmationMessage;
 import org.siri_hate.user_service.kafka.messages.NotificationMessage;
+import org.siri_hate.user_service.kafka.messages.ProjectUpdateNotification;
+import org.siri_hate.user_service.model.dto.kafka.UserDeletionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,6 +20,12 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
   @Value("${confirmation.topic.name}")
   private String confirmationTopicName;
 
+  @Value("${user.deletion.topic.s2m.name}")
+  private String userDeletionTopic;
+
+  @Value("${project.update.notification.topic.producer}")
+  private String projectUpdateNotificationTopic;
+
   @Autowired
   public KafkaProducerServiceImpl(KafkaTemplate<String, Object> kafkaTemplate) {
     this.kafkaTemplate = kafkaTemplate;
@@ -31,5 +39,16 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
   @Override
   public void sendNotification(NotificationMessage notificationMessage) {
     kafkaTemplate.send(notificationTopicName, notificationMessage);
+  }
+
+  @Override
+  public void sendUserDeletionMessage(String username) {
+    UserDeletionMessage message = new UserDeletionMessage(username);
+    kafkaTemplate.send(userDeletionTopic, message);
+  }
+
+  @Override
+  public void sendProjectUpdateNotification(ProjectUpdateNotification notification) {
+    kafkaTemplate.send(projectUpdateNotificationTopic, notification);
   }
 }

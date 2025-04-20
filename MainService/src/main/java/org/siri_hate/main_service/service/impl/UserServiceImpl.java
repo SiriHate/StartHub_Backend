@@ -5,12 +5,14 @@ import org.siri_hate.main_service.exception.NoSuchArticleFoundException;
 import org.siri_hate.main_service.exception.NoSuchNewsFoundException;
 import org.siri_hate.main_service.exception.NoSuchProjectFoundException;
 import org.siri_hate.main_service.exception.NoSuchUserException;
+import org.siri_hate.main_service.model.dto.kafka.UserDeletionMessage;
 import org.siri_hate.main_service.model.dto.response.article.ArticleSummaryResponse;
 import org.siri_hate.main_service.model.dto.response.news.NewsSummaryResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
 import org.siri_hate.main_service.model.entity.User;
 import org.siri_hate.main_service.repository.UserRepository;
 import org.siri_hate.main_service.service.ArticleService;
+import org.siri_hate.main_service.service.KafkaService;
 import org.siri_hate.main_service.service.NewsService;
 import org.siri_hate.main_service.service.ProjectService;
 import org.siri_hate.main_service.service.UserService;
@@ -27,17 +29,20 @@ public class UserServiceImpl implements UserService {
   private final ArticleService articleService;
   private final NewsService newsService;
   private final ProjectService projectService;
+  private final KafkaService kafkaService;
 
   @Autowired
   public UserServiceImpl(
       UserRepository userRepository,
       @Lazy ArticleService articleService,
       NewsService newsService,
-      ProjectService projectService) {
+      ProjectService projectService,
+      KafkaService kafkaService) {
     this.userRepository = userRepository;
     this.articleService = articleService;
     this.newsService = newsService;
     this.projectService = projectService;
+    this.kafkaService = kafkaService;
   }
 
   @Override
@@ -55,10 +60,6 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public Page<ArticleSummaryResponse> getMyArticles(String username, Pageable pageable) {
-    User user =
-        userRepository
-            .findUserByUsername(username)
-            .orElseThrow(() -> new NoSuchUserException("User not found: " + username));
     Page<ArticleSummaryResponse> articles = articleService.getArticlesByUser(username, pageable);
     if (articles.isEmpty()) {
       throw new NoSuchArticleFoundException("No articles found for user: " + username);
@@ -69,10 +70,6 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public Page<NewsSummaryResponse> getMyNews(String username, Pageable pageable) {
-    User user =
-        userRepository
-            .findUserByUsername(username)
-            .orElseThrow(() -> new NoSuchUserException("User not found: " + username));
     Page<NewsSummaryResponse> news = newsService.getNewsByUser(username, pageable);
     if (news.isEmpty()) {
       throw new NoSuchNewsFoundException("No news found for user: " + username);
@@ -83,10 +80,6 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public Page<ProjectSummaryResponse> getProjectsAsOwner(String username, Pageable pageable) {
-    User user =
-        userRepository
-            .findUserByUsername(username)
-            .orElseThrow(() -> new NoSuchUserException("User not found: " + username));
     Page<ProjectSummaryResponse> projects = projectService.getProjectsByOwner(username, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
@@ -97,14 +90,35 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public Page<ProjectSummaryResponse> getProjectsAsMember(String username, Pageable pageable) {
-    User user =
-        userRepository
-            .findUserByUsername(username)
-            .orElseThrow(() -> new NoSuchUserException("User not found: " + username));
     Page<ProjectSummaryResponse> projects = projectService.getProjectsByMember(username, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
     }
     return projects;
+  }
+
+  @Override
+  @Transactional
+  public void deleteUserByUsername(String username) {
+    User user =
+        userRepository
+            .findUserByUsername(username)
+            .orElseThrow(
+                () -> new NoSuchUserException("User not found with username: " + username));
+    userRepository.delete(user);
+    kafkaService.sendUserDeletionMessage(username);
+  }
+
+  @Override
+  @Transactional
+  public void deleteUserByUsername(UserDeletionMessage message) {
+    String username = message.getUsername();
+    User user =
+        userRepository
+            .findUserByUsername(message.getUsername())
+            .orElseThrow(
+                () -> new NoSuchUserException("User not found with username: " + username));
+    userRepository.delete(user);
+    kafkaService.sendUserDeletionMessage(username);
   }
 }

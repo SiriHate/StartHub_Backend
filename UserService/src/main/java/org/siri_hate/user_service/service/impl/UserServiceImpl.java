@@ -15,7 +15,6 @@ import org.siri_hate.user_service.model.enums.UserRole;
 import org.siri_hate.user_service.repository.MemberRepository;
 import org.siri_hate.user_service.repository.UserRepository;
 import org.siri_hate.user_service.security.JWTService;
-import org.siri_hate.user_service.service.MemberService;
 import org.siri_hate.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,7 +31,6 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final AuthenticationManager authenticationManager;
   private final JWTService jwtService;
-  private final MemberService memberService;
   private final MemberRepository memberRepository;
   private final WebClient webClient;
 
@@ -42,12 +39,10 @@ public class UserServiceImpl implements UserService {
       UserRepository userRepository,
       AuthenticationManager authenticationManager,
       JWTService jwtService,
-      MemberService memberService,
       MemberRepository memberRepository) {
     this.userRepository = userRepository;
     this.authenticationManager = authenticationManager;
     this.jwtService = jwtService;
-    this.memberService = memberService;
     this.memberRepository = memberRepository;
     this.webClient = WebClient.builder()
         .baseUrl("https://login.yandex.ru")
@@ -132,5 +127,14 @@ public class UserServiceImpl implements UserService {
     }
 
     return currentUserResponse;
+  }
+
+  @Override
+  public void deleteUserByUsername(String username) {
+    Optional<User> userOptional = userRepository.findUserByUsername(username);
+    if (userOptional.isEmpty()) {
+      return;
+    }
+    userRepository.delete(userOptional.get());
   }
 }

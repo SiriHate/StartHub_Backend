@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.siri_hate.user_service.exception.MismatchedPasswordException;
 import org.siri_hate.user_service.exception.NoSuchUserException;
 import org.siri_hate.user_service.exception.UserAlreadyExistsException;
+import org.siri_hate.user_service.kafka.KafkaProducerService;
 import org.siri_hate.user_service.model.dto.mapper.MemberMapper;
 import org.siri_hate.user_service.model.dto.request.auth.ChangePasswordForm;
 import org.siri_hate.user_service.model.dto.request.auth.RecoveryPasswordRequest;
@@ -19,7 +20,6 @@ import org.siri_hate.user_service.model.dto.request.tokens.ChangePasswordTokenRe
 import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
 import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;
 import org.siri_hate.user_service.model.entity.Member;
-import org.siri_hate.user_service.model.entity.SpecialistSpecialization;
 import org.siri_hate.user_service.model.enums.AuthType;
 import org.siri_hate.user_service.model.enums.UserRole;
 import org.siri_hate.user_service.repository.MemberRepository;
@@ -44,7 +44,7 @@ public class MemberServiceImpl implements MemberService {
   private final ConfirmationService confirmationService;
   private final NotificationService notificationService;
   private final MemberMapper memberMapper;
-  private final SpecialistSpecializationService specialistSpecializationService;
+  private final KafkaProducerService kafkaProducerService;
 
   @Autowired
   private MemberServiceImpl(
@@ -53,13 +53,13 @@ public class MemberServiceImpl implements MemberService {
       @Lazy ConfirmationService confirmationService,
       NotificationService notificationService,
       MemberMapper memberMapper,
-      SpecialistSpecializationService specialistSpecializationService) {
+      KafkaProducerService kafkaProducerService) {
     this.memberRepository = memberRepository;
     this.passwordEncoder = passwordEncoder;
     this.confirmationService = confirmationService;
     this.notificationService = notificationService;
     this.memberMapper = memberMapper;
-    this.specialistSpecializationService = specialistSpecializationService;
+    this.kafkaProducerService = kafkaProducerService;
   }
 
   @Override
@@ -203,8 +203,10 @@ public class MemberServiceImpl implements MemberService {
             .findById(id)
             .orElseThrow(
                 () -> new EntityNotFoundException("Member with id: " + id + " not found!"));
+    
+    String username = member.getUsername();
     memberRepository.delete(member);
-    // notificationService.sendDeletedAccountNotification(member.getName(), member.getEmail());
+    kafkaProducerService.sendUserDeletionMessage(username);
   }
 
   @Override
@@ -218,6 +220,7 @@ public class MemberServiceImpl implements MemberService {
     String name = member.getName();
     String email = member.getEmail();
     notificationService.sendDeletedAccountNotification(name, email);
+    kafkaProducerService.sendUserDeletionMessage(username);
   }
 
   @Override

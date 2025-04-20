@@ -49,8 +49,7 @@ public class ProjectSurveyController {
 
   @PostMapping("/submissions")
   public ResponseEntity<SurveySubmissionResponse> submitSurveyAnswers(
-      @PathVariable Long projectId,
-      @Valid @RequestBody SurveySubmissionRequest request) {
+      @PathVariable Long projectId, @Valid @RequestBody SurveySubmissionRequest request) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     SurveySubmissionResponse response =
         projectSurveyService.submitSurveyAnswers(authentication.getName(), projectId, request);
@@ -59,9 +58,9 @@ public class ProjectSurveyController {
 
   @GetMapping("/submissions")
   public ResponseEntity<List<SurveySubmissionResponse>> getAllSurveySubmissions(
-      @PathVariable Long projectId,
-      @RequestParam(required = false) String sort) {
-    List<SurveySubmissionResponse> responses = projectSurveyService.getAllSurveySubmissions(projectId, sort);
+      @PathVariable Long projectId, @RequestParam(required = false) String sort) {
+    List<SurveySubmissionResponse> responses =
+        projectSurveyService.getAllSurveySubmissions(projectId, sort);
     return new ResponseEntity<>(responses, HttpStatus.OK);
   }
 }

@@ -6,6 +6,8 @@ import org.siri_hate.user_service.model.dto.response.admin.AdminSummaryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface AdminService {
 
   AdminFullResponse createAdmin(AdminFullRequest admin);
@@ -17,4 +19,6 @@ public interface AdminService {
   AdminFullResponse updateAdminById(Long id, AdminFullRequest admin);
 
   void deleteAdminById(Long id);
+
+  void deleteAdminByUsername(String username);
 }

@@ -56,7 +56,13 @@ public class JWTAuthFilter extends OncePerRequestFilter {
   }
 
   private List<GrantedAuthority> extractAuthorities(Claims claims) {
-    return Arrays.stream(claims.get("roles").toString().split(","))
+    String rolesString = (String) claims.get("roles");
+    if (rolesString == null || rolesString.trim().isEmpty()) {
+      return List.of();
+    }
+    return Arrays.stream(rolesString.split(","))
+        .map(String::trim)
+        .filter(role -> !role.isEmpty())
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
   }

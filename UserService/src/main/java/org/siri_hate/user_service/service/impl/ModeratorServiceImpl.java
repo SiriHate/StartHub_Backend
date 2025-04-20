@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import org.siri_hate.user_service.exception.NoSuchUserException;
+import org.siri_hate.user_service.kafka.KafkaProducerService;
 import org.siri_hate.user_service.model.dto.mapper.ModeratorMapper;
 import org.siri_hate.user_service.model.dto.request.moderator.ModeratorFullRequest;
 import org.siri_hate.user_service.model.dto.response.moderator.ModeratorFullResponse;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.NoSuchElementException;
 
 @Service
 public class ModeratorServiceImpl implements ModeratorService {
@@ -24,15 +26,18 @@ public class ModeratorServiceImpl implements ModeratorService {
   private final ModeratorRepository moderatorRepository;
   private final PasswordEncoder passwordEncoder;
   private final ModeratorMapper moderatorMapper;
+  private final KafkaProducerService kafkaProducerService;
 
   @Autowired
   private ModeratorServiceImpl(
       ModeratorRepository moderatorRepository,
       PasswordEncoder passwordEncoder,
-      ModeratorMapper moderatorMapper) {
+      ModeratorMapper moderatorMapper,
+      KafkaProducerService kafkaProducerService) {
     this.moderatorRepository = moderatorRepository;
     this.passwordEncoder = passwordEncoder;
     this.moderatorMapper = moderatorMapper;
+    this.kafkaProducerService = kafkaProducerService;
   }
 
   @Override
@@ -113,6 +118,16 @@ public class ModeratorServiceImpl implements ModeratorService {
     if (moderatorOptional.isEmpty()) {
       throw new EntityNotFoundException("Moderator with id: " + id + " not found!");
     }
-    moderatorRepository.delete(moderatorOptional.get());
+    Moderator moderator = moderatorOptional.get();
+    String username = moderator.getUsername();
+    moderatorRepository.delete(moderator);
+    kafkaProducerService.sendUserDeletionMessage(username);
+  }
+
+  @Override
+  public void deleteModeratorByUsername(String username) {
+    Moderator moderator = moderatorRepository.findModeratorByUsername(username)
+            .orElseThrow(() -> new NoSuchElementException("Moderator not found with username: " + username));
+    moderatorRepository.delete(moderator);
   }
 }

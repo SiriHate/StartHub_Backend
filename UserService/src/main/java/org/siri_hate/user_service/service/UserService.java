@@ -16,4 +16,5 @@ public interface UserService {
   User findMemberByUsername(String username);
 
   CurrentUserResponse getCurrentUser(Authentication authentication);
+  void deleteUserByUsername(String username);
 }

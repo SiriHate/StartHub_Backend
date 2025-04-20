@@ -17,6 +17,7 @@ import org.siri_hate.main_service.repository.ProjectRepository;
 import org.siri_hate.main_service.repository.adapters.ProjectSpecification;
 import org.siri_hate.main_service.service.ProjectCategoryService;
 import org.siri_hate.main_service.service.ProjectService;
+import org.siri_hate.main_service.service.ProjectSubscriberService;
 import org.siri_hate.main_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -32,17 +33,20 @@ public class ProjectServiceImpl implements ProjectService {
   private final ProjectMapper projectMapper;
   private final ProjectCategoryService projectCategoryService;
   private final UserService userService;
+  private final ProjectSubscriberService projectSubscriberService;
 
   @Autowired
   public ProjectServiceImpl(
       ProjectRepository projectRepository,
       ProjectMapper projectMapper,
       ProjectCategoryService projectCategoryService,
-      @Lazy UserService userService) {
+      @Lazy UserService userService,
+      ProjectSubscriberService projectSubscriberService) {
     this.projectRepository = projectRepository;
     this.projectMapper = projectMapper;
     this.projectCategoryService = projectCategoryService;
     this.userService = userService;
+    this.projectSubscriberService = projectSubscriberService;
   }
 
   @Override
@@ -109,6 +113,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     projectMapper.projectUpdate(request, existingProject);
     projectRepository.save(existingProject);
+    projectSubscriberService.notifySubscribersAboutUpdate(id, existingProject.getProjectName());
   }
 
   @Override

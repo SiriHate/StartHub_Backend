@@ -6,6 +6,7 @@ import org.siri_hate.user_service.model.dto.response.moderator.ModeratorSummaryR
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+
 public interface ModeratorService {
 
   void moderatorRegistration(ModeratorFullRequest moderator);
@@ -17,4 +18,6 @@ public interface ModeratorService {
   ModeratorFullResponse moderatorUpdate(Long id, ModeratorFullRequest moderator);
 
   void deleteModeratorById(Long id);
+
+  void deleteModeratorByUsername(String username);
 }
