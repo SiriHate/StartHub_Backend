@@ -27,4 +27,10 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
   public void ConfirmationTopicListener(String message) throws MessagingException {
     mailSenderService.sendConfirmationMail(message);
   }
+
+  @Override
+  @KafkaListener(topics = "project_update_notification_s2n", groupId = "consumers")
+  public void ProjectUpdateTopicListener(String message) throws MessagingException {
+    mailSenderService.sendProjectUpdateMail(message);
+  }
 }

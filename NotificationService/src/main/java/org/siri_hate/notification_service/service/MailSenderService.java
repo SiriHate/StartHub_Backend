@@ -9,5 +9,7 @@ public interface MailSenderService {
 
   void sendNotificationMail(String message) throws MessagingException;
 
+  void sendProjectUpdateMail(String message) throws MessagingException;
+
   void sendEmail(MailTemplate mailTemplate) throws MessagingException;
 }

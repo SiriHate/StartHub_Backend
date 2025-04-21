@@ -3,13 +3,17 @@ package org.siri_hate.notification_service.service;
 import com.google.gson.Gson;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.siri_hate.notification_service.kafka.messages.ConfirmationMessage;
 import org.siri_hate.notification_service.kafka.messages.NotificationMessage;
+import org.siri_hate.notification_service.kafka.messages.ProjectUpdateMessage;
 import org.siri_hate.notification_service.model.mails.MailTemplate;
 import org.siri_hate.notification_service.model.mails.confirmation.RecoveryPasswordMail;
 import org.siri_hate.notification_service.model.mails.confirmation.RegistrationConfirmationMail;
 import org.siri_hate.notification_service.model.mails.notification.DeletedAccountMail;
 import org.siri_hate.notification_service.model.mails.notification.PasswordChangeMail;
+import org.siri_hate.notification_service.model.mails.notification.ProjectUpdateMail;
 import org.siri_hate.notification_service.model.mails.notification.SuccessfulRegistrationMail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,6 +79,24 @@ public class MailSenderServiceImpl implements MailSenderService {
               new PasswordChangeMail(
                   notificationMessage.getUserEmail(), notificationMessage.getUserFullName());
         };
+
+    sendEmail(mailTemplate);
+  }
+
+  public void sendProjectUpdateMail(String message) throws MessagingException {
+    ProjectUpdateMessage projectUpdateMessage = gson.fromJson(message, ProjectUpdateMessage.class);
+
+    LocalDateTime dateTime = LocalDateTime.parse(projectUpdateMessage.getUpdateDate());
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    String formattedDate = dateTime.format(formatter);
+
+    MailTemplate mailTemplate = new ProjectUpdateMail(
+        projectUpdateMessage.getUserEmailAddress(),
+        projectUpdateMessage.getUserRealName(),
+        projectUpdateMessage.getProjectName(),
+        projectUpdateMessage.getProjectLink(),
+        formattedDate
+    );
 
     sendEmail(mailTemplate);
   }
