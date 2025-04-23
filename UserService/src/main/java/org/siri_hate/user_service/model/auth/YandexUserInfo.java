@@ -7,34 +7,28 @@ public class YandexUserInfo {
 
   private String id;
   private String login;
-  
   @JsonProperty("client_id")
   private String clientId;
-  
   @JsonProperty("display_name")
   private String displayName;
-  
   @JsonProperty("real_name")
   private String realName;
-  
   @JsonProperty("first_name")
   private String firstName;
-  
   @JsonProperty("last_name")
   private String lastName;
   private String sex;
-  
   @JsonProperty("default_email")
   private String defaultEmail;
   private List<String> emails;
   private String birthday;
-  
   @JsonProperty("default_phone")
   private Phone defaultPhone;
   private String psuid;
 
   public static class Phone {
     private Long id;
+
     private String number;
 
     public Long getId() {

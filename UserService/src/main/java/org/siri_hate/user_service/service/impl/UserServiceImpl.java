@@ -79,28 +79,32 @@ public class UserServiceImpl implements UserService {
     }
 
     Member existingMember = memberRepository.findMemberByEmail(yandexUserInfo.getDefaultEmail());
-    
+
     if (existingMember != null) {
       String token = jwtService.generateToken(existingMember.getUsername(), existingMember.getAuthorities());
       return new UserLoginResponse(existingMember.getUsername(), token, existingMember.getRole());
     }
 
+    Member newMember = getNewMember(yandexUserInfo);
+    memberRepository.save(newMember);
+    String token = jwtService.generateToken(newMember.getUsername(), newMember.getAuthorities());
+    return new UserLoginResponse(newMember.getUsername(), token, newMember.getRole());
+  }
+
+  private static Member getNewMember(YandexUserInfo yandexUserInfo) {
     Member newMember = new Member();
     newMember.setUsername(yandexUserInfo.getLogin());
     newMember.setName(yandexUserInfo.getDisplayName());
     newMember.setEmail(yandexUserInfo.getDefaultEmail());
-    newMember.setPhone(yandexUserInfo.getDefaultPhone() != null ? yandexUserInfo.getDefaultPhone().getNumber() : "");
+    newMember.setPhone(
+        yandexUserInfo.getDefaultPhone() != null ? yandexUserInfo.getDefaultPhone().getNumber() : "");
     newMember.setRole(UserRole.MEMBER.name());
     newMember.setEnabled(true);
     newMember.setAuthType(AuthType.YANDEX);
     newMember.setProfileHiddenFlag(false);
     newMember.setBirthday(LocalDate.parse(yandexUserInfo.getBirthday()));
     newMember.setPassword("");
-    
-    memberRepository.save(newMember);
-
-    String token = jwtService.generateToken(newMember.getUsername(), newMember.getAuthorities());
-    return new UserLoginResponse(newMember.getUsername(), token, newMember.getRole());
+    return newMember;
   }
 
   @Override

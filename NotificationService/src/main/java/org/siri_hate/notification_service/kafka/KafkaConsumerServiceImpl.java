@@ -34,3 +34,6 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
     mailSenderService.sendProjectUpdateMail(message);
   }
 }
+
+
+

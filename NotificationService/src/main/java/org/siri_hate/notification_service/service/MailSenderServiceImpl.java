@@ -30,6 +30,7 @@ public class MailSenderServiceImpl implements MailSenderService {
   private final JavaMailSender mailSender;
   private final SpringTemplateEngine templateEngine;
   private final Gson gson;
+  private final static String LOGO_FILE_PATH = "src/main/resources/image/logo.png";
 
   @Value("${spring.mail.username}")
   private String fromEmailAddress;
@@ -112,7 +113,7 @@ public class MailSenderServiceImpl implements MailSenderService {
     helper.setTo(mailTemplate.getToEmailAddress());
     helper.setSubject(mailTemplate.getSubject());
     helper.setText(mailTemplate.getMessage(), true);
-    FileSystemResource resource = new FileSystemResource("src/main/resources/image/logo.png");
+    FileSystemResource resource = new FileSystemResource(LOGO_FILE_PATH);
     helper.addInline("logo", resource);
 
     mailSender.send(mail);

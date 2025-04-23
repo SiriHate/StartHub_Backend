@@ -22,8 +22,6 @@ import org.springframework.data.domain.Pageable;
     uses = {UserMapper.class, ProjectMemberMapper.class, CommentMapper.class})
 public interface ProjectMapper {
 
-  ProjectMapper INSTANCE = Mappers.getMapper(ProjectMapper.class);
-
   Project toProject(ProjectFullRequest project);
 
   void projectUpdate(ProjectFullRequest request, @MappingTarget Project existingProject);

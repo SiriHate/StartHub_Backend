@@ -51,4 +51,6 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
   public void sendProjectUpdateNotification(ProjectUpdateNotification notification) {
     kafkaTemplate.send(projectUpdateNotificationTopic, notification);
   }
+
+
 }

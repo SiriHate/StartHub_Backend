@@ -1,7 +1,7 @@
 package org.siri_hate.main_service.model.dto.request.project;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import org.siri_hate.main_service.model.dto.request.project_members.ProjectMemberRequest;
@@ -19,6 +19,7 @@ public class ProjectFullRequest {
 
   private String projectLogoUrl;
 
+  @NotNull(message = "Project category must be specified")
   private ProjectCategory category;
 
   public ProjectFullRequest() {}
