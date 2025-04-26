@@ -83,6 +83,12 @@ public class MemberController {
     return new ResponseEntity<>(member, HttpStatus.OK);
   }
 
+  @GetMapping("/by-username/{username}")
+  public ResponseEntity<MemberFullResponse> getMemberByUsername(@PathVariable("username") String username) {
+    MemberFullResponse member = memberService.getMemberByUsername(username);
+    return new ResponseEntity<>(member, HttpStatus.OK);
+  }
+
   @PatchMapping("/{id}")
   public ResponseEntity<MemberFullResponse> memberUpdate(
       @Positive(message = "ID should be greater than zero") @PathVariable("id") Long id,

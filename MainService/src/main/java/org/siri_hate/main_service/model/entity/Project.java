@@ -35,13 +35,7 @@ public class Project {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @ManyToMany(
-      fetch = FetchType.EAGER,
-      cascade = {CascadeType.ALL})
-  @JoinTable(
-      name = "project_membership",
-      joinColumns = @JoinColumn(name = "project_id"),
-      inverseJoinColumns = @JoinColumn(name = "member_id"))
+  @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<ProjectMember> members = new HashSet<>();
 
   @Column(name = "project_name")

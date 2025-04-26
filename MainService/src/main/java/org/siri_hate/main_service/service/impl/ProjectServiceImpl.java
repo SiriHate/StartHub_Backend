@@ -111,7 +111,26 @@ public class ProjectServiceImpl implements ProjectService {
             .findById(id)
             .orElseThrow(() -> new RuntimeException("No project with id " + id + " found"));
 
-    projectMapper.projectUpdate(request, existingProject);
+    // Обновляем базовые поля проекта
+    existingProject.setProjectName(request.getProjectName());
+    existingProject.setProjectDescription(request.getProjectDescription());
+    existingProject.setProjectLogoUrl(request.getProjectLogoUrl());
+    existingProject.setCategory(
+        projectCategoryService.getProjectCategoryEntityById(request.getCategory().getId()));
+
+    // Очищаем существующих участников
+    existingProject.getMembers().clear();
+    
+    // Добавляем новых участников
+    for (ProjectMemberRequest memberRequest : request.getMembers()) {
+      User memberUser = userService.findOrCreateUser(memberRequest.getUsername());
+      ProjectMember projectMember = new ProjectMember();
+      projectMember.setUser(memberUser);
+      projectMember.setProject(existingProject);
+      projectMember.setRole(memberRequest.getRole());
+      existingProject.getMembers().add(projectMember);
+    }
+    
     projectRepository.save(existingProject);
     projectSubscriberService.notifySubscribersAboutUpdate(id, existingProject.getProjectName());
   }
