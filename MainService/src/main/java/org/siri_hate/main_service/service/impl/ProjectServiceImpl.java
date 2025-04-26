@@ -1,5 +1,6 @@
 package org.siri_hate.main_service.service.impl;
 
+import jakarta.persistence.criteria.Join;
 import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
@@ -233,8 +234,20 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Override
   @Transactional
-  public Page<ProjectSummaryResponse> getProjectsByOwner(String username, Pageable pageable) {
-    Page<Project> projects = projectRepository.findByUserUsername(username, pageable);
+  public Page<ProjectSummaryResponse> getProjectsByOwner(String username, String query, Pageable pageable) {
+    Specification<Project> spec = Specification.where(null);
+    
+    if (query != null && !query.trim().isEmpty()) {
+      spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
+          criteriaBuilder.like(
+              criteriaBuilder.lower(root.get("projectName")),
+              query.toLowerCase() + "%"));
+    }
+    
+    spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
+        criteriaBuilder.equal(root.get("user").get("username"), username));
+    
+    Page<Project> projects = projectRepository.findAll(spec, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
     }
@@ -243,8 +256,22 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Override
   @Transactional
-  public Page<ProjectSummaryResponse> getProjectsByMember(String username, Pageable pageable) {
-    Page<Project> projects = projectRepository.findByMembersUserUsername(username, pageable);
+  public Page<ProjectSummaryResponse> getProjectsByMember(String username, String query, Pageable pageable) {
+    Specification<Project> spec = Specification.where(null);
+    
+    if (query != null && !query.trim().isEmpty()) {
+      spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
+          criteriaBuilder.like(
+              criteriaBuilder.lower(root.get("projectName")),
+              query.toLowerCase() + "%"));
+    }
+    
+    spec = spec.and((root, criteriaQuery, criteriaBuilder) -> {
+      Join<Project, ProjectMember> memberJoin = root.join("members");
+      return criteriaBuilder.equal(memberJoin.get("user").get("username"), username);
+    });
+    
+    Page<Project> projects = projectRepository.findAll(spec, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
     }

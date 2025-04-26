@@ -34,7 +34,7 @@ public interface ProjectService {
 
   void updateProjectModerationStatus(Long projectId, Boolean moderationPassed);
 
-  Page<ProjectSummaryResponse> getProjectsByOwner(String username, Pageable pageable);
+  Page<ProjectSummaryResponse> getProjectsByOwner(String username, String query, Pageable pageable);
 
-  Page<ProjectSummaryResponse> getProjectsByMember(String username, Pageable pageable);
+  Page<ProjectSummaryResponse> getProjectsByMember(String username, String query, Pageable pageable);
 }

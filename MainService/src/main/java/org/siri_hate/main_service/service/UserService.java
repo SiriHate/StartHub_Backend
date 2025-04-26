@@ -12,13 +12,13 @@ public interface UserService {
 
   User findOrCreateUser(String username);
 
-  Page<ArticleSummaryResponse> getMyArticles(String username, Pageable pageable);
+  Page<ArticleSummaryResponse> getMyArticles(String username, String query, Pageable pageable);
 
-  Page<NewsSummaryResponse> getMyNews(String username, Pageable pageable);
+  Page<NewsSummaryResponse> getMyNews(String username, String query, Pageable pageable);
 
-  Page<ProjectSummaryResponse> getProjectsAsOwner(String username, Pageable pageable);
+  Page<ProjectSummaryResponse> getProjectsAsOwner(String username, String query, Pageable pageable);
 
-  Page<ProjectSummaryResponse> getProjectsAsMember(String username, Pageable pageable);
+  Page<ProjectSummaryResponse> getProjectsAsMember(String username, String query, Pageable pageable);
 
   void deleteUserByUsername(String username);
 

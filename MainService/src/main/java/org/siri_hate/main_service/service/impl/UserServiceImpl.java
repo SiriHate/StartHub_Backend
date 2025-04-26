@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public Page<ArticleSummaryResponse> getMyArticles(String username, Pageable pageable) {
-    Page<ArticleSummaryResponse> articles = articleService.getArticlesByUser(username, pageable);
+  public Page<ArticleSummaryResponse> getMyArticles(String username, String query, Pageable pageable) {
+    Page<ArticleSummaryResponse> articles = articleService.getArticlesByUser(username, query, pageable);
     if (articles.isEmpty()) {
       throw new NoSuchArticleFoundException("No articles found for user: " + username);
     }
@@ -69,8 +69,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public Page<NewsSummaryResponse> getMyNews(String username, Pageable pageable) {
-    Page<NewsSummaryResponse> news = newsService.getNewsByUser(username, pageable);
+  public Page<NewsSummaryResponse> getMyNews(String username, String query, Pageable pageable) {
+    Page<NewsSummaryResponse> news = newsService.getNewsByUser(username, query, pageable);
     if (news.isEmpty()) {
       throw new NoSuchNewsFoundException("No news found for user: " + username);
     }
@@ -79,8 +79,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public Page<ProjectSummaryResponse> getProjectsAsOwner(String username, Pageable pageable) {
-    Page<ProjectSummaryResponse> projects = projectService.getProjectsByOwner(username, pageable);
+  public Page<ProjectSummaryResponse> getProjectsAsOwner(String username, String query, Pageable pageable) {
+    Page<ProjectSummaryResponse> projects = projectService.getProjectsByOwner(username, query, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
     }
@@ -89,8 +89,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public Page<ProjectSummaryResponse> getProjectsAsMember(String username, Pageable pageable) {
-    Page<ProjectSummaryResponse> projects = projectService.getProjectsByMember(username, pageable);
+  public Page<ProjectSummaryResponse> getProjectsAsMember(String username, String query, Pageable pageable) {
+    Page<ProjectSummaryResponse> projects = projectService.getProjectsByMember(username, query, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
     }

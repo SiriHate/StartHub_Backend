@@ -103,9 +103,20 @@ public class NewsServiceImpl implements NewsService {
   }
 
   @Override
-  @Transactional
-  public Page<NewsSummaryResponse> getNewsByUser(String username, Pageable pageable) {
-    Page<News> news = newsRepository.findByUserUsername(username, pageable);
+  public Page<NewsSummaryResponse> getNewsByUser(String username, String query, Pageable pageable) {
+    Specification<News> spec = Specification.where(null);
+    
+    if (query != null && !query.trim().isEmpty()) {
+      spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
+          criteriaBuilder.like(
+              criteriaBuilder.lower(root.get("title")),
+              query.toLowerCase() + "%"));
+    }
+    
+    spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
+        criteriaBuilder.equal(root.get("user").get("username"), username));
+    
+    Page<News> news = newsRepository.findAll(spec, pageable);
     if (news.isEmpty()) {
       throw new NoSuchNewsFoundException("No news found for user: " + username);
     }

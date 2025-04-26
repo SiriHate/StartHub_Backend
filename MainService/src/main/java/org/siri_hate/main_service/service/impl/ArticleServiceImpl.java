@@ -104,9 +104,20 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  @Transactional
-  public Page<ArticleSummaryResponse> getArticlesByUser(String username, Pageable pageable) {
-    Page<Article> articles = articleRepository.findByUserUsername(username, pageable);
+  public Page<ArticleSummaryResponse> getArticlesByUser(String username, String query, Pageable pageable) {
+    Specification<Article> spec = Specification.where(null);
+    
+    if (query != null && !query.trim().isEmpty()) {
+      spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
+          criteriaBuilder.like(
+              criteriaBuilder.lower(root.get("title")),
+              query.toLowerCase() + "%"));
+    }
+    
+    spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
+        criteriaBuilder.equal(root.get("user").get("username"), username));
+    
+    Page<Article> articles = articleRepository.findAll(spec, pageable);
     if (articles.isEmpty()) {
       throw new NoSuchArticleFoundException("No articles found for user: " + username);
     }

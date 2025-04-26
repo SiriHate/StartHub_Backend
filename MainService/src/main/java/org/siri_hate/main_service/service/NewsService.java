@@ -26,5 +26,5 @@ public interface NewsService {
 
   void updateNewsModerationStatus(Long id, Boolean moderationPassed);
   
-  Page<NewsSummaryResponse> getNewsByUser(String username, Pageable pageable);
+  Page<NewsSummaryResponse> getNewsByUser(String username, String query, Pageable pageable);
 }

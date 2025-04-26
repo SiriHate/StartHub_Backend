@@ -26,5 +26,5 @@ public interface ArticleService {
 
   void updateArticleModerationStatus(Long id, Boolean moderationPassed);
   
-  Page<ArticleSummaryResponse> getArticlesByUser(String username, Pageable pageable);
+  Page<ArticleSummaryResponse> getArticlesByUser(String username, String query, Pageable pageable);
 }
