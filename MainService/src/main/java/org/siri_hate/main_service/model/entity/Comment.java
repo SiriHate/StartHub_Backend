@@ -1,5 +1,6 @@
 package org.siri_hate.main_service.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ public class Comment {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
+  @JsonIgnore
   private Project project;
 
   @Column(name = "created_date", nullable = false)

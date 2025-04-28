@@ -65,7 +65,6 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
     survey.setProject(project);
     project.setSurvey(survey);
 
-    // Устанавливаем связь между вопросами и опросом
     survey.getQuestions().forEach(question -> question.setSurvey(survey));
 
     ProjectSurvey savedSurvey = projectSurveyRepository.save(survey);
@@ -105,11 +104,9 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
       throw new EntityNotFoundException("Survey not found for project with id: " + projectId);
     }
 
-    // Сначала удаляем все отправки опроса
     List<SurveySubmission> submissions = surveySubmissionRepository.findBySurvey(survey);
     surveySubmissionRepository.deleteAll(submissions);
 
-    // Затем удаляем сам опрос
     project.setSurvey(null);
     projectRepository.save(project);
     projectSurveyRepository.delete(survey);
@@ -136,20 +133,17 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
             .orElseThrow(
                 () -> new EntityNotFoundException("User not found with username: " + username));
 
-    // Проверяем, что пользователь не отвечал на опрос ранее
     boolean hasAlreadySubmitted =
         surveySubmissionRepository.existsBySurveyAndRespondent(survey, user);
     if (hasAlreadySubmitted) {
       throw new IllegalStateException("User has already submitted answers to this survey");
     }
 
-    // Создаем новую отправку опроса
     SurveySubmission submission = new SurveySubmission();
     submission.setSurvey(survey);
     submission.setRespondent(user);
     submission.setSubmittedAt(LocalDateTime.now());
 
-    // Создаем ответы на вопросы
     List<SurveyAnswer> answers =
         request.getAnswers().stream()
             .map(
@@ -175,7 +169,6 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
     submission.setResponses(answers);
     SurveySubmission savedSubmission = surveySubmissionRepository.save(submission);
 
-    // Преобразуем в DTO для ответа
     return mapToSubmissionResponse(savedSubmission);
   }
 

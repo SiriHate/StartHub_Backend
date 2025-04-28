@@ -20,7 +20,7 @@ public interface ProjectService {
 
   void updateProject(ProjectFullRequest project, Long id);
 
-  void deleteProjectById(String username, Long id);
+  void deleteProjectById(Long id);
 
   boolean toggleProjectLike(String username, Long projectId);
 
@@ -36,5 +36,6 @@ public interface ProjectService {
 
   Page<ProjectSummaryResponse> getProjectsByOwner(String username, String query, Pageable pageable);
 
-  Page<ProjectSummaryResponse> getProjectsByMember(String username, String query, Pageable pageable);
+  Page<ProjectSummaryResponse> getProjectsByMember(
+      String username, String query, Pageable pageable);
 }

@@ -65,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public List<CommentResponse> getProjectComments(Long projectId) {
     List<Comment> comments = commentRepository.findByProjectId(projectId);
     return comments.stream().map(commentMapper::toCommentResponse).toList();

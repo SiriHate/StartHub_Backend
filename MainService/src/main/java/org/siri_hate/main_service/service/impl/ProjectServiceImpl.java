@@ -64,6 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
       ProjectMember projectMember = new ProjectMember();
       projectMember.setUser(memberUser);
       projectMember.setRole(memberRequest.getRole());
+      projectMember.setProject(projectEntity);
       projectMembers.add(projectMember);
     }
     projectEntity.setMembers(projectMembers);
@@ -112,17 +113,14 @@ public class ProjectServiceImpl implements ProjectService {
             .findById(id)
             .orElseThrow(() -> new RuntimeException("No project with id " + id + " found"));
 
-    // Обновляем базовые поля проекта
     existingProject.setProjectName(request.getProjectName());
     existingProject.setProjectDescription(request.getProjectDescription());
     existingProject.setProjectLogoUrl(request.getProjectLogoUrl());
     existingProject.setCategory(
         projectCategoryService.getProjectCategoryEntityById(request.getCategory().getId()));
 
-    // Очищаем существующих участников
     existingProject.getMembers().clear();
-    
-    // Добавляем новых участников
+
     for (ProjectMemberRequest memberRequest : request.getMembers()) {
       User memberUser = userService.findOrCreateUser(memberRequest.getUsername());
       ProjectMember projectMember = new ProjectMember();
@@ -131,20 +129,17 @@ public class ProjectServiceImpl implements ProjectService {
       projectMember.setRole(memberRequest.getRole());
       existingProject.getMembers().add(projectMember);
     }
-    
+
     projectRepository.save(existingProject);
     projectSubscriberService.notifySubscribersAboutUpdate(id, existingProject.getProjectName());
   }
 
   @Override
   @Transactional
-  public void deleteProjectById(String username, Long id) {
+  public void deleteProjectById(Long id) {
     Optional<Project> projectOptional = projectRepository.findById(id);
     if (projectOptional.isEmpty()) {
       throw new RuntimeException("No project with id " + id + " found");
-    }
-    if (!(projectOptional.get().getUser().getUsername().equals(username))) {
-      throw new RuntimeException("User is not owner of project with id " + id);
     }
     projectRepository.delete(projectOptional.get());
   }
@@ -234,19 +229,23 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Override
   @Transactional
-  public Page<ProjectSummaryResponse> getProjectsByOwner(String username, String query, Pageable pageable) {
+  public Page<ProjectSummaryResponse> getProjectsByOwner(
+      String username, String query, Pageable pageable) {
     Specification<Project> spec = Specification.where(null);
-    
+
     if (query != null && !query.trim().isEmpty()) {
-      spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
-          criteriaBuilder.like(
-              criteriaBuilder.lower(root.get("projectName")),
-              query.toLowerCase() + "%"));
+      spec =
+          spec.and(
+              (root, criteriaQuery, criteriaBuilder) ->
+                  criteriaBuilder.like(
+                      criteriaBuilder.lower(root.get("projectName")), query.toLowerCase() + "%"));
     }
-    
-    spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
-        criteriaBuilder.equal(root.get("user").get("username"), username));
-    
+
+    spec =
+        spec.and(
+            (root, criteriaQuery, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("user").get("username"), username));
+
     Page<Project> projects = projectRepository.findAll(spec, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
@@ -256,21 +255,25 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Override
   @Transactional
-  public Page<ProjectSummaryResponse> getProjectsByMember(String username, String query, Pageable pageable) {
+  public Page<ProjectSummaryResponse> getProjectsByMember(
+      String username, String query, Pageable pageable) {
     Specification<Project> spec = Specification.where(null);
-    
+
     if (query != null && !query.trim().isEmpty()) {
-      spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
-          criteriaBuilder.like(
-              criteriaBuilder.lower(root.get("projectName")),
-              query.toLowerCase() + "%"));
+      spec =
+          spec.and(
+              (root, criteriaQuery, criteriaBuilder) ->
+                  criteriaBuilder.like(
+                      criteriaBuilder.lower(root.get("projectName")), query.toLowerCase() + "%"));
     }
-    
-    spec = spec.and((root, criteriaQuery, criteriaBuilder) -> {
-      Join<Project, ProjectMember> memberJoin = root.join("members");
-      return criteriaBuilder.equal(memberJoin.get("user").get("username"), username);
-    });
-    
+
+    spec =
+        spec.and(
+            (root, criteriaQuery, criteriaBuilder) -> {
+              Join<Project, ProjectMember> memberJoin = root.join("members");
+              return criteriaBuilder.equal(memberJoin.get("user").get("username"), username);
+            });
+
     Page<Project> projects = projectRepository.findAll(spec, pageable);
     if (projects.isEmpty()) {
       throw new NoSuchProjectFoundException("No projects found for user: " + username);
