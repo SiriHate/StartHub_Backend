@@ -12,12 +12,12 @@ import org.siri_hate.notification_service.model.enums.NotificationMessageType;
 @Data
 public class NotificationMessage {
 
-  @NotNull(message = "Message type should not be null")
-  private NotificationMessageType messageType;
+    @NotNull(message = "Message type should not be null")
+    private NotificationMessageType messageType;
 
-  @NotBlank(message = "User full name should not be null")
-  private String userFullName;
+    @NotBlank(message = "User full name should not be null")
+    private String userFullName;
 
-  @NotBlank(message = "User email should not be null")
-  private String userEmail;
+    @NotBlank(message = "User email should not be null")
+    private String userEmail;
 }

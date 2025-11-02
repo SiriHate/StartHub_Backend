@@ -23,7 +23,7 @@ public class PrivateChatController {
     public ResponseEntity<PrivateChatResponse> createPrivateChat(@RequestBody PrivateChatRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String firstUsername = authentication.getName();
-        
+
         PrivateChatResponse response = privateChatService.createPrivateChat(request, firstUsername);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -44,7 +44,7 @@ public class PrivateChatController {
     public ResponseEntity<Void> togglePrivateChatVisibility(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        
+
         privateChatService.togglePrivateChatVisibility(id, username);
         return ResponseEntity.noContent().build();
     }

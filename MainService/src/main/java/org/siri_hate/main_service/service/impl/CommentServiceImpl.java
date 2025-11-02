@@ -1,6 +1,6 @@
 package org.siri_hate.main_service.service.impl;
 
-import java.time.LocalDateTime;
+import org.siri_hate.main_service.model.dto.mapper.CommentMapper;
 import org.siri_hate.main_service.model.dto.request.comment.CommentRequest;
 import org.siri_hate.main_service.model.dto.response.comment.CommentResponse;
 import org.siri_hate.main_service.model.entity.Comment;
@@ -10,11 +10,11 @@ import org.siri_hate.main_service.repository.CommentRepository;
 import org.siri_hate.main_service.service.CommentService;
 import org.siri_hate.main_service.service.ProjectService;
 import org.siri_hate.main_service.service.UserService;
-import org.siri_hate.main_service.model.dto.mapper.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,10 +27,10 @@ public class CommentServiceImpl implements CommentService {
 
   @Autowired
   public CommentServiceImpl(
-      CommentRepository commentRepository,
-      ProjectService projectService,
-      UserService userService,
-      CommentMapper commentMapper) {
+          CommentRepository commentRepository,
+          ProjectService projectService,
+          UserService userService,
+          CommentMapper commentMapper) {
     this.commentRepository = commentRepository;
     this.projectService = projectService;
     this.userService = userService;
@@ -54,9 +54,9 @@ public class CommentServiceImpl implements CommentService {
   @Transactional
   public void deleteComment(Long commentId, String username) {
     Comment comment =
-        commentRepository
-            .findById(commentId)
-            .orElseThrow(() -> new RuntimeException("Comment not found with id: " + commentId));
+            commentRepository
+                    .findById(commentId)
+                    .orElseThrow(() -> new RuntimeException("Comment not found with id: " + commentId));
 
     if (!comment.getUser().getUsername().equals(username)) {
       throw new RuntimeException("User is not authorized to delete this comment");

@@ -1,154 +1,156 @@
 package org.siri_hate.user_service.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class YandexUserInfo {
 
-  private String id;
-  private String login;
-  @JsonProperty("client_id")
-  private String clientId;
-  @JsonProperty("display_name")
-  private String displayName;
-  @JsonProperty("real_name")
-  private String realName;
-  @JsonProperty("first_name")
-  private String firstName;
-  @JsonProperty("last_name")
-  private String lastName;
-  private String sex;
-  @JsonProperty("default_email")
-  private String defaultEmail;
-  private List<String> emails;
-  private String birthday;
-  @JsonProperty("default_phone")
-  private Phone defaultPhone;
-  private String psuid;
+    private String id;
+    private String login;
+    @JsonProperty("client_id")
+    private String clientId;
+    @JsonProperty("display_name")
+    private String displayName;
+    @JsonProperty("real_name")
+    private String realName;
+    @JsonProperty("first_name")
+    private String firstName;
+    @JsonProperty("last_name")
+    private String lastName;
+    private String sex;
+    @JsonProperty("default_email")
+    private String defaultEmail;
+    private List<String> emails;
+    private String birthday;
+    @JsonProperty("default_phone")
+    private Phone defaultPhone;
+    private String psuid;
 
-  public static class Phone {
-    private Long id;
-
-    private String number;
-
-    public Long getId() {
-      return id;
+    public String getId() {
+        return id;
     }
 
-    public void setId(Long id) {
-      this.id = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getNumber() {
-      return number;
+    public String getLogin() {
+        return login;
     }
 
-    public void setNumber(String number) {
-      this.number = number;
+    public void setLogin(String login) {
+        this.login = login;
     }
-  }
 
-  public String getId() {
-    return id;
-  }
+    public String getClientId() {
+        return clientId;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
-  public String getLogin() {
-    return login;
-  }
+    public String getDisplayName() {
+        return displayName;
+    }
 
-  public void setLogin(String login) {
-    this.login = login;
-  }
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-  public String getClientId() {
-    return clientId;
-  }
+    public String getRealName() {
+        return realName;
+    }
 
-  public void setClientId(String clientId) {
-    this.clientId = clientId;
-  }
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
 
-  public String getDisplayName() {
-    return displayName;
-  }
+    public String getFirstName() {
+        return firstName;
+    }
 
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-  public String getRealName() {
-    return realName;
-  }
+    public String getLastName() {
+        return lastName;
+    }
 
-  public void setRealName(String realName) {
-    this.realName = realName;
-  }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-  public String getFirstName() {
-    return firstName;
-  }
+    public String getSex() {
+        return sex;
+    }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 
-  public String getLastName() {
-    return lastName;
-  }
+    public String getDefaultEmail() {
+        return defaultEmail;
+    }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
+    public void setDefaultEmail(String defaultEmail) {
+        this.defaultEmail = defaultEmail;
+    }
 
-  public String getSex() {
-    return sex;
-  }
+    public List<String> getEmails() {
+        return emails;
+    }
 
-  public void setSex(String sex) {
-    this.sex = sex;
-  }
+    public void setEmails(List<String> emails) {
+        this.emails = emails;
+    }
 
-  public String getDefaultEmail() {
-    return defaultEmail;
-  }
+    public String getBirthday() {
+        return birthday;
+    }
 
-  public void setDefaultEmail(String defaultEmail) {
-    this.defaultEmail = defaultEmail;
-  }
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
 
-  public List<String> getEmails() {
-    return emails;
-  }
+    public Phone getDefaultPhone() {
+        return defaultPhone;
+    }
 
-  public void setEmails(List<String> emails) {
-    this.emails = emails;
-  }
+    public void setDefaultPhone(Phone defaultPhone) {
+        this.defaultPhone = defaultPhone;
+    }
 
-  public String getBirthday() {
-    return birthday;
-  }
+    public String getPsuid() {
+        return psuid;
+    }
 
-  public void setBirthday(String birthday) {
-    this.birthday = birthday;
-  }
+    public void setPsuid(String psuid) {
+        this.psuid = psuid;
+    }
 
-  public Phone getDefaultPhone() {
-    return defaultPhone;
-  }
+    public static class Phone {
 
-  public void setDefaultPhone(Phone defaultPhone) {
-    this.defaultPhone = defaultPhone;
-  }
+        private Long id;
 
-  public String getPsuid() {
-    return psuid;
-  }
+        private String number;
 
-  public void setPsuid(String psuid) {
-    this.psuid = psuid;
-  }
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getNumber() {
+            return number;
+        }
+
+        public void setNumber(String number) {
+            this.number = number;
+        }
+    }
 }

@@ -14,31 +14,31 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/main_service/projects")
 public class ProjectSubscriberController {
 
-  private final ProjectSubscriberService projectSubscriberService;
+    private final ProjectSubscriberService projectSubscriberService;
 
-  @Autowired
-  public ProjectSubscriberController(ProjectSubscriberService projectSubscriberService) {
-    this.projectSubscriberService = projectSubscriberService;
-  }
+    @Autowired
+    public ProjectSubscriberController(ProjectSubscriberService projectSubscriberService) {
+        this.projectSubscriberService = projectSubscriberService;
+    }
 
-  @PostMapping("/{projectId}/subscriptions")
-  public ResponseEntity<Void> subscribeToProject(@PathVariable Long projectId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    projectSubscriberService.subscribeToProject(projectId, authentication.getName());
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
+    @PostMapping("/{projectId}/subscriptions")
+    public ResponseEntity<Void> subscribeToProject(@PathVariable Long projectId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        projectSubscriberService.subscribeToProject(projectId, authentication.getName());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-  @DeleteMapping("/{projectId}/subscriptions")
-  public ResponseEntity<Void> unsubscribeFromProject(@PathVariable Long projectId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    projectSubscriberService.unsubscribeFromProject(projectId, authentication.getName());
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+    @DeleteMapping("/{projectId}/subscriptions")
+    public ResponseEntity<Void> unsubscribeFromProject(@PathVariable Long projectId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        projectSubscriberService.unsubscribeFromProject(projectId, authentication.getName());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-  @GetMapping("/{projectId}/subscriptions")
-  public ResponseEntity<Boolean> isUserSubscribed(@PathVariable Long projectId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    boolean isSubscribed = projectSubscriberService.isUserSubscribed(projectId, authentication.getName());
-    return new ResponseEntity<>(isSubscribed, HttpStatus.OK);
-  }
+    @GetMapping("/{projectId}/subscriptions")
+    public ResponseEntity<Boolean> isUserSubscribed(@PathVariable Long projectId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isSubscribed = projectSubscriberService.isUserSubscribed(projectId, authentication.getName());
+        return new ResponseEntity<>(isSubscribed, HttpStatus.OK);
+    }
 }

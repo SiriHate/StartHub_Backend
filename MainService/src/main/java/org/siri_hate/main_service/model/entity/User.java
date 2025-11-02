@@ -2,96 +2,90 @@ package org.siri_hate.main_service.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
 public class User {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    Long id;
 
-  @Column(name = "username", unique = true, nullable = false)
-  private String username;
+    @Column(name = "username", unique = true, nullable = false)
+    private String username;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  @JsonBackReference
-  private Set<Article> articles;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private Set<Article> articles;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  @JsonIgnore
-  private Set<News> news;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<News> news;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  @JsonIgnore
-  private Set<Project> ownedProjects;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Project> ownedProjects;
 
-  @ManyToMany(mappedBy = "user")
-  @JsonIgnore
-  private Set<Project> memberProjects;
+    @ManyToMany(mappedBy = "user")
+    @JsonIgnore
+    private Set<Project> memberProjects;
 
-  public User() {}
+    public User() {
+    }
 
-  public User(String username) {
-    this.username = username;
-  }
+    public User(String username) {
+        this.username = username;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public String getUsername() {
-    return username;
-  }
+    public String getUsername() {
+        return username;
+    }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-  public Set<Article> getArticles() {
-    return articles;
-  }
+    public Set<Article> getArticles() {
+        return articles;
+    }
 
-  public void setArticles(Set<Article> articles) {
-    this.articles = articles;
-  }
+    public void setArticles(Set<Article> articles) {
+        this.articles = articles;
+    }
 
-  public Set<News> getNews() {
-    return news;
-  }
+    public Set<News> getNews() {
+        return news;
+    }
 
-  public void setNews(Set<News> news) {
-    this.news = news;
-  }
+    public void setNews(Set<News> news) {
+        this.news = news;
+    }
 
-  public Set<Project> getOwnedProjects() {
-    return ownedProjects;
-  }
+    public Set<Project> getOwnedProjects() {
+        return ownedProjects;
+    }
 
-  public void setOwnedProjects(Set<Project> ownedProjects) {
-    this.ownedProjects = ownedProjects;
-  }
+    public void setOwnedProjects(Set<Project> ownedProjects) {
+        this.ownedProjects = ownedProjects;
+    }
 
-  public Set<Project> getMemberProjects() {
-    return memberProjects;
-  }
+    public Set<Project> getMemberProjects() {
+        return memberProjects;
+    }
 
-  public void setMemberProjects(Set<Project> memberProjects) {
-    this.memberProjects = memberProjects;
-  }
+    public void setMemberProjects(Set<Project> memberProjects) {
+        this.memberProjects = memberProjects;
+    }
 }

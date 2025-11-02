@@ -1,189 +1,181 @@
 package org.siri_hate.user_service.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.siri_hate.user_service.model.enums.AuthType;
+import org.springframework.security.core.GrantedAuthority;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import org.siri_hate.user_service.model.enums.AuthType;
-import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Table(name = "members")
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Member extends User {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-  @Column(name = "avatar_url")
-  private String avatarUrl;
+    @Column(name = "avatar_url")
+    private String avatarUrl;
 
-  @Column(name = "name", nullable = false)
-  private String name;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-  @ManyToOne
-  @JoinColumn(name = "specialization_id")
-  private SpecialistSpecialization specialization;
+    @ManyToOne
+    @JoinColumn(name = "specialization_id")
+    private SpecialistSpecialization specialization;
 
-  @Column(name = "about")
-  private String about;
+    @Column(name = "about")
+    private String about;
 
-  @Column(name = "email", nullable = false, unique = true)
-  private String email;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-  @Column(name = "phone", nullable = false, unique = true)
-  private String phone;
+    @Column(name = "phone", nullable = false, unique = true)
+    private String phone;
 
-  @Column(name = "birthday", nullable = false)
-  private LocalDate birthday;
+    @Column(name = "birthday", nullable = false)
+    private LocalDate birthday;
 
-  @Column(name = "is_hidden", nullable = false)
-  private Boolean profileHiddenFlag;
+    @Column(name = "is_hidden", nullable = false)
+    private Boolean profileHiddenFlag;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "auth_type", nullable = false)
-  private AuthType authType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_type", nullable = false)
+    private AuthType authType;
 
-  public Member() {}
+    public Member() {
+    }
 
-  public Member(
-      Long id,
-      String username,
-      String password,
-      String role,
-      Boolean isEnabled,
-      String avatarUrl,
-      String name,
-      SpecialistSpecialization specialization,
-      String about,
-      String email,
-      String phone,
-      LocalDate birthday,
-      Boolean profileHiddenFlag,
-      AuthType authType
-      ) {
-    super(id, username, password, role, isEnabled);
-    this.id = id;
-    this.avatarUrl = avatarUrl;
-    this.name = name;
-    this.specialization = specialization;
-    this.about = about;
-    this.email = email;
-    this.phone = phone;
-    this.birthday = birthday;
-    this.profileHiddenFlag = profileHiddenFlag;
-    this.authType = authType;
-  }
+    public Member(
+            Long id,
+            String username,
+            String password,
+            String role,
+            Boolean isEnabled,
+            String avatarUrl,
+            String name,
+            SpecialistSpecialization specialization,
+            String about,
+            String email,
+            String phone,
+            LocalDate birthday,
+            Boolean profileHiddenFlag,
+            AuthType authType
+    ) {
+        super(id, username, password, role, isEnabled);
+        this.id = id;
+        this.avatarUrl = avatarUrl;
+        this.name = name;
+        this.specialization = specialization;
+        this.about = about;
+        this.email = email;
+        this.phone = phone;
+        this.birthday = birthday;
+        this.profileHiddenFlag = profileHiddenFlag;
+        this.authType = authType;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public String getAvatarUrl() {
-    return avatarUrl;
-  }
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
 
-  public void setAvatarUrl(String avatarUrl) {
-    this.avatarUrl = avatarUrl;
-  }
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public SpecialistSpecialization getSpecialization() {
-    return specialization;
-  }
+    public SpecialistSpecialization getSpecialization() {
+        return specialization;
+    }
 
-  public void setSpecialization(SpecialistSpecialization specialization) {
-    this.specialization = specialization;
-  }
+    public void setSpecialization(SpecialistSpecialization specialization) {
+        this.specialization = specialization;
+    }
 
-  public String getAbout() {
-    return about;
-  }
+    public String getAbout() {
+        return about;
+    }
 
-  public void setAbout(String about) {
-    this.about = about;
-  }
+    public void setAbout(String about) {
+        this.about = about;
+    }
 
-  public String getEmail() {
-    return email;
-  }
+    public String getEmail() {
+        return email;
+    }
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-  public String getPhone() {
-    return phone;
-  }
+    public String getPhone() {
+        return phone;
+    }
 
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-  public LocalDate getBirthday() {
-    return birthday;
-  }
+    public LocalDate getBirthday() {
+        return birthday;
+    }
 
-  public void setBirthday(LocalDate birthday) {
-    this.birthday = birthday;
-  }
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
 
-  public Boolean getProfileHiddenFlag() {
-    return profileHiddenFlag;
-  }
+    public Boolean getProfileHiddenFlag() {
+        return profileHiddenFlag;
+    }
 
-  public void setProfileHiddenFlag(Boolean profileHiddenFlag) {
-    this.profileHiddenFlag = profileHiddenFlag;
-  }
+    public void setProfileHiddenFlag(Boolean profileHiddenFlag) {
+        this.profileHiddenFlag = profileHiddenFlag;
+    }
 
-  public AuthType getAuthType() {
-    return authType;
-  }
+    public AuthType getAuthType() {
+        return authType;
+    }
 
-  public void setAuthType(AuthType authType) {
-    this.authType = authType;
-  }
+    public void setAuthType(AuthType authType) {
+        this.authType = authType;
+    }
 
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of();
-  }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
 
-  @Override
-  public boolean isAccountNonExpired() {
-    return false;
-  }
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
 
-  @Override
-  public boolean isAccountNonLocked() {
-    return false;
-  }
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
 
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return false;
-  }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
 }

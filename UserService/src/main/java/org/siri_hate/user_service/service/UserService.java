@@ -9,12 +9,13 @@ import org.springframework.security.core.Authentication;
 
 public interface UserService {
 
-  UserLoginResponse userLogin(LoginForm loginForm);
+    UserLoginResponse userLogin(LoginForm loginForm);
 
-  UserLoginResponse userLoginViaYandex(YandexAuthRequest request);
+    UserLoginResponse userLoginViaYandex(YandexAuthRequest request);
 
-  User findMemberByUsername(String username);
+    User findMemberByUsername(String username);
 
-  CurrentUserResponse getCurrentUser(Authentication authentication);
-  void deleteUserByUsername(String username);
+    CurrentUserResponse getCurrentUser(Authentication authentication);
+
+    void deleteUserByUsername(String username);
 }

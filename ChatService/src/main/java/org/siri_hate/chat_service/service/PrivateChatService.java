@@ -1,7 +1,5 @@
 package org.siri_hate.chat_service.service;
 
-import org.siri_hate.chat_service.exception.ChatAlreadyExistsException;
-import org.siri_hate.chat_service.exception.ChatNotFoundException;
 import org.siri_hate.chat_service.model.dto.request.private_chat.PrivateChatRequest;
 import org.siri_hate.chat_service.model.dto.response.private_chat.PrivateChatResponse;
 import org.siri_hate.chat_service.model.entity.PrivateChat;
@@ -31,10 +29,10 @@ public class PrivateChatService {
     @Transactional
     public PrivateChatResponse createPrivateChat(PrivateChatRequest request, String firstUsername) {
         String secondUsername = request.getSecondUsername();
-        
-        if (privateChatRepository.existsByUser1UsernameAndUser2Username(firstUsername, secondUsername) || 
-            privateChatRepository.existsByUser1UsernameAndUser2Username(secondUsername, firstUsername)) {
-            throw new ChatAlreadyExistsException("Private chat between users " + firstUsername + " and " + secondUsername + " already exists");
+
+        if (privateChatRepository.existsByUser1UsernameAndUser2Username(firstUsername, secondUsername) ||
+                privateChatRepository.existsByUser1UsernameAndUser2Username(secondUsername, firstUsername)) {
+            throw new RuntimeException("Private chat between users " + firstUsername + " and " + secondUsername + " already exists");
         }
 
         User firstUser = userService.getOrCreateUser(firstUsername);
@@ -50,34 +48,34 @@ public class PrivateChatService {
 
     public PrivateChatResponse getPrivateChatById(Long id) {
         PrivateChat privateChat = privateChatRepository.findById(id)
-                .orElseThrow(() -> new ChatNotFoundException("Private chat not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Private chat not found with id: " + id));
         return privateChatMapper.toPrivateChatResponse(privateChat);
     }
 
     @Transactional
     public void deletePrivateChat(Long id) {
         if (!privateChatRepository.existsById(id)) {
-            throw new ChatNotFoundException("Private chat not found with id: " + id);
+            throw new RuntimeException("Private chat not found with id: " + id);
         }
         privateChatRepository.deleteById(id);
     }
 
     public PrivateChat getPrivateChatEntityById(Long id) {
         return privateChatRepository.findById(id)
-                .orElseThrow(() -> new ChatNotFoundException("Private chat not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Private chat not found with id: " + id));
     }
 
     @Transactional
     public void togglePrivateChatVisibility(Long id, String username) {
         PrivateChat privateChat = privateChatRepository.findById(id)
-                .orElseThrow(() -> new ChatNotFoundException("Private chat not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Private chat not found with id: " + id));
 
         if (privateChat.getUser1().getUsername().equals(username)) {
             privateChat.setHiddenByUser1(!privateChat.getHiddenByUser1());
         } else if (privateChat.getUser2().getUsername().equals(username)) {
             privateChat.setHiddenByUser2(!privateChat.getHiddenByUser2());
         } else {
-            throw new ChatNotFoundException("User " + username + " is not a participant of chat with id: " + id);
+            throw new RuntimeException("User " + username + " is not a participant of chat with id: " + id);
         }
 
         privateChatRepository.save(privateChat);

@@ -9,22 +9,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaConsumerService {
 
-  private final UserService userService;
-  private final Gson gson = new Gson();
+    private final UserService userService;
+    private final Gson gson = new Gson();
 
-  public KafkaConsumerService(UserService userService) {
-    this.userService = userService;
-  }
-
-  @KafkaListener(
-      topics = "${user.deletion.topic.s2m.name}",
-      groupId = "${spring.kafka.consumer.group-id}")
-  public void consumeUserDeletionMessage(String message) {
-    UserDeletionMessage userDeletionMessage = gson.fromJson(message, UserDeletionMessage.class);
-    try {
-      userService.deleteUserByUsername(userDeletionMessage.getUsername());
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    public KafkaConsumerService(UserService userService) {
+        this.userService = userService;
     }
-  }
+
+    @KafkaListener(
+            topics = "${user.deletion.topic.s2m.name}",
+            groupId = "${spring.kafka.consumer.group-id}")
+    public void consumeUserDeletionMessage(String message) {
+        UserDeletionMessage userDeletionMessage = gson.fromJson(message, UserDeletionMessage.class);
+        try {
+            userService.deleteUserByUsername(userDeletionMessage.getUsername());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -6,11 +6,11 @@ import org.siri_hate.user_service.kafka.messages.ProjectUpdateNotification;
 
 public interface KafkaProducerService {
 
-  void sendConfirmationToken(ConfirmationMessage confirmationMessage);
+    void sendConfirmationToken(ConfirmationMessage confirmationMessage);
 
-  void sendNotification(NotificationMessage notificationMessage);
+    void sendNotification(NotificationMessage notificationMessage);
 
-  void sendUserDeletionMessage(String username);
+    void sendUserDeletionMessage(String username);
 
-  void sendProjectUpdateNotification(ProjectUpdateNotification notification);
+    void sendProjectUpdateNotification(ProjectUpdateNotification notification);
 }

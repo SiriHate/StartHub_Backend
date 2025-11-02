@@ -9,15 +9,15 @@ import org.springframework.data.domain.Pageable;
 
 public interface ModeratorService {
 
-  void moderatorRegistration(ModeratorFullRequest moderator);
+    void moderatorRegistration(ModeratorFullRequest moderator);
 
-  Page<ModeratorSummaryResponse> getAllModerators(String username, Pageable pageable);
+    Page<ModeratorSummaryResponse> getAllModerators(String username, Pageable pageable);
 
-  ModeratorFullResponse getModeratorById(Long id);
+    ModeratorFullResponse getModeratorById(Long id);
 
-  ModeratorFullResponse moderatorUpdate(Long id, ModeratorFullRequest moderator);
+    ModeratorFullResponse moderatorUpdate(Long id, ModeratorFullRequest moderator);
 
-  void deleteModeratorById(Long id);
+    void deleteModeratorById(Long id);
 
-  void deleteModeratorByUsername(String username);
+    void deleteModeratorByUsername(String username);
 }

@@ -9,13 +9,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProjectRepository
-    extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
-  
-  Page<Project> findByModerationPassedTrue(Pageable pageable);
-  
-  Page<Project> findByModerationPassedFalse(Pageable pageable);
-  
-  Page<Project> findByUserUsername(String username, Pageable pageable);
-  
-  Page<Project> findByMembersUserUsername(String username, Pageable pageable);
+        extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
+
+    Page<Project> findByModerationPassedTrue(Pageable pageable);
+
+    Page<Project> findByModerationPassedFalse(Pageable pageable);
+
+    Page<Project> findByUserUsername(String username, Pageable pageable);
+
+    Page<Project> findByMembersUserUsername(String username, Pageable pageable);
 }

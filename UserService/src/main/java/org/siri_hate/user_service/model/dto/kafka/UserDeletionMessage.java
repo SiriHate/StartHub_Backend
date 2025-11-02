@@ -4,7 +4,8 @@ public class UserDeletionMessage {
 
     private String username;
 
-    public UserDeletionMessage() {}
+    public UserDeletionMessage() {
+    }
 
     public UserDeletionMessage(String username) {
         this.username = username;

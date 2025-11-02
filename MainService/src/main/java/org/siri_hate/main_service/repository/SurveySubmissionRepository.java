@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface SurveySubmissionRepository extends JpaRepository<SurveySubmission, Long> {
     boolean existsBySurveyAndRespondent(ProjectSurvey survey, User respondent);
-    
+
     List<SurveySubmission> findBySurvey(ProjectSurvey survey);
 } 

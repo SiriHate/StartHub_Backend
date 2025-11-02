@@ -1,13 +1,10 @@
 package org.siri_hate.chat_service.service;
 
-import org.siri_hate.chat_service.exception.ChatNotFoundException;
 import org.siri_hate.chat_service.model.dto.request.MessageRequest;
 import org.siri_hate.chat_service.model.entity.Message;
 import org.siri_hate.chat_service.repository.ChatRepository;
 import org.siri_hate.chat_service.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +26,7 @@ public class MessageService {
     public Message saveMessage(MessageRequest request, String sender) {
 
         if (!chatRepository.existsById(request.getChatId())) {
-            throw new ChatNotFoundException("Chat with id " + request.getChatId() + " not found");
+            throw new RuntimeException("Chat with id " + request.getChatId() + " not found");
         }
 
         Message message = new Message();

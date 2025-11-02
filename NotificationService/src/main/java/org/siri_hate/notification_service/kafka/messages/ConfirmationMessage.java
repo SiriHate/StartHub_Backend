@@ -12,15 +12,15 @@ import org.siri_hate.notification_service.model.enums.ConfirmationMessageType;
 @Data
 public class ConfirmationMessage {
 
-  @NotNull(message = "Message type should not be null")
-  private ConfirmationMessageType messageType;
+    @NotNull(message = "Message type should not be null")
+    private ConfirmationMessageType messageType;
 
-  @NotBlank(message = "User full name should not be null")
-  private String userFullName;
+    @NotBlank(message = "User full name should not be null")
+    private String userFullName;
 
-  @NotBlank(message = "Email should not be null")
-  private String userEmail;
+    @NotBlank(message = "Email should not be null")
+    private String userEmail;
 
-  @NotBlank(message = "Confirmation token should not be null")
-  private String userConfirmationToken;
+    @NotBlank(message = "Confirmation token should not be null")
+    private String userConfirmationToken;
 }

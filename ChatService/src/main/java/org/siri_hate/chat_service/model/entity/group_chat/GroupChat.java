@@ -1,13 +1,10 @@
 package org.siri_hate.chat_service.model.entity.group_chat;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import org.siri_hate.chat_service.model.entity.Chat;
+
 import java.util.HashSet;
 import java.util.Set;
-import org.siri_hate.chat_service.model.entity.Chat;
 
 @Entity
 @DiscriminatorValue("GROUP")
@@ -19,7 +16,8 @@ public class GroupChat extends Chat {
   @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<GroupChatParticipant> groupParticipants = new HashSet<>();
 
-  public GroupChat() {}
+  public GroupChat() {
+  }
 
   public GroupChat(String name) {
     this.name = name;

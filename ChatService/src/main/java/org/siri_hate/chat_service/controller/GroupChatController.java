@@ -23,7 +23,7 @@ public class GroupChatController {
     public ResponseEntity<GroupChatResponse> createGroupChat(@RequestBody GroupChatRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String creatorUsername = authentication.getName();
-        
+
         GroupChatResponse response = groupChatService.createGroupChat(request, creatorUsername);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

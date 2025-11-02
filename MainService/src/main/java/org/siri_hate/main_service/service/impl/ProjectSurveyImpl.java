@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,11 +37,11 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
 
   @Autowired
   public ProjectSurveyImpl(
-      ProjectSurveyRepository projectSurveyRepository,
-      ProjectRepository projectRepository,
-      ProjectSurveyMapper projectSurveyMapper,
-      UserRepository userRepository,
-      SurveySubmissionRepository surveySubmissionRepository) {
+          ProjectSurveyRepository projectSurveyRepository,
+          ProjectRepository projectRepository,
+          ProjectSurveyMapper projectSurveyMapper,
+          UserRepository userRepository,
+          SurveySubmissionRepository surveySubmissionRepository) {
     this.projectSurveyRepository = projectSurveyRepository;
     this.projectRepository = projectRepository;
     this.projectSurveyMapper = projectSurveyMapper;
@@ -52,10 +53,10 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
   @Transactional
   public ProjectSurveyResponse createSurvey(Long projectId, ProjectSurveyRequest request) {
     Project project =
-        projectRepository
-            .findById(projectId)
-            .orElseThrow(
-                () -> new EntityNotFoundException("Project not found with id: " + projectId));
+            projectRepository
+                    .findById(projectId)
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Project not found with id: " + projectId));
 
     if (project.getSurvey() != null) {
       throw new IllegalStateException("Survey already exists for this project");
@@ -77,10 +78,10 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
   @Transactional(readOnly = true)
   public ProjectSurveyResponse getSurvey(Long projectId) {
     Project project =
-        projectRepository
-            .findById(projectId)
-            .orElseThrow(
-                () -> new EntityNotFoundException("Project not found with id: " + projectId));
+            projectRepository
+                    .findById(projectId)
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Project not found with id: " + projectId));
 
     ProjectSurvey survey = project.getSurvey();
     if (survey == null) {
@@ -94,10 +95,10 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
   @Transactional
   public void deleteSurvey(Long projectId) {
     Project project =
-        projectRepository
-            .findById(projectId)
-            .orElseThrow(
-                () -> new EntityNotFoundException("Project not found with id: " + projectId));
+            projectRepository
+                    .findById(projectId)
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Project not found with id: " + projectId));
 
     ProjectSurvey survey = project.getSurvey();
     if (survey == null) {
@@ -115,12 +116,12 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
   @Override
   @Transactional
   public SurveySubmissionResponse submitSurveyAnswers(
-      String username, Long projectId, SurveySubmissionRequest request) {
+          String username, Long projectId, SurveySubmissionRequest request) {
     Project project =
-        projectRepository
-            .findById(projectId)
-            .orElseThrow(
-                () -> new EntityNotFoundException("Project not found with id: " + projectId));
+            projectRepository
+                    .findById(projectId)
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Project not found with id: " + projectId));
 
     ProjectSurvey survey = project.getSurvey();
     if (survey == null) {
@@ -128,13 +129,13 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
     }
 
     User user =
-        userRepository
-            .findUserByUsername(username)
-            .orElseThrow(
-                () -> new EntityNotFoundException("User not found with username: " + username));
+            userRepository
+                    .findUserByUsername(username)
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("User not found with username: " + username));
 
     boolean hasAlreadySubmitted =
-        surveySubmissionRepository.existsBySurveyAndRespondent(survey, user);
+            surveySubmissionRepository.existsBySurveyAndRespondent(survey, user);
     if (hasAlreadySubmitted) {
       throw new IllegalStateException("User has already submitted answers to this survey");
     }
@@ -145,26 +146,26 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
     submission.setSubmittedAt(LocalDateTime.now());
 
     List<SurveyAnswer> answers =
-        request.getAnswers().stream()
-            .map(
-                answerRequest -> {
-                  SurveyQuestion question =
-                      survey.getQuestions().stream()
-                          .filter(q -> q.getId().equals(answerRequest.getQuestionId()))
-                          .findFirst()
-                          .orElseThrow(
-                              () ->
-                                  new EntityNotFoundException(
-                                      "Question not found with id: "
-                                          + answerRequest.getQuestionId()));
+            request.getAnswers().stream()
+                    .map(
+                            answerRequest -> {
+                              SurveyQuestion question =
+                                      survey.getQuestions().stream()
+                                              .filter(q -> q.getId().equals(answerRequest.getQuestionId()))
+                                              .findFirst()
+                                              .orElseThrow(
+                                                      () ->
+                                                              new EntityNotFoundException(
+                                                                      "Question not found with id: "
+                                                                              + answerRequest.getQuestionId()));
 
-                  SurveyAnswer answer = new SurveyAnswer();
-                  answer.setSubmission(submission);
-                  answer.setQuestion(question);
-                  answer.setResponseText(answerRequest.getAnswerText());
-                  return answer;
-                })
-            .collect(Collectors.toList());
+                              SurveyAnswer answer = new SurveyAnswer();
+                              answer.setSubmission(submission);
+                              answer.setQuestion(question);
+                              answer.setResponseText(answerRequest.getAnswerText());
+                              return answer;
+                            })
+                    .collect(Collectors.toList());
 
     submission.setResponses(answers);
     SurveySubmission savedSubmission = surveySubmissionRepository.save(submission);
@@ -176,10 +177,10 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
   @Transactional(readOnly = true)
   public List<SurveySubmissionResponse> getAllSurveySubmissions(Long projectId, String sort) {
     Project project =
-        projectRepository
-            .findById(projectId)
-            .orElseThrow(
-                () -> new EntityNotFoundException("Project not found with id: " + projectId));
+            projectRepository
+                    .findById(projectId)
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Project not found with id: " + projectId));
 
     ProjectSurvey survey = project.getSurvey();
     if (survey == null) {
@@ -188,11 +189,11 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
 
     List<SurveySubmission> submissions = surveySubmissionRepository.findBySurvey(survey);
     List<SurveySubmissionResponse> responses =
-        submissions.stream().map(this::mapToSubmissionResponse).collect(Collectors.toList());
+            submissions.stream().map(this::mapToSubmissionResponse).collect(Collectors.toList());
 
     if (sort != null) {
       if (sort.equalsIgnoreCase("asc")) {
-        responses.sort((a, b) -> a.getSubmittedAt().compareTo(b.getSubmittedAt()));
+        responses.sort(Comparator.comparing(SurveySubmissionResponse::getSubmittedAt));
       } else if (sort.equalsIgnoreCase("desc")) {
         responses.sort((a, b) -> b.getSubmittedAt().compareTo(a.getSubmittedAt()));
       }
@@ -210,14 +211,14 @@ public class ProjectSurveyImpl implements ProjectSurveyService {
     response.setAverageRating(submission.getAverageRating());
 
     response.setAnswers(
-        submission.getResponses().stream()
-            .map(
-                answer ->
-                    new SurveySubmissionResponse.AnswerResponse(
-                        answer.getId(),
-                        answer.getQuestion().getQuestionText(),
-                        answer.getResponseText()))
-            .collect(Collectors.toList()));
+            submission.getResponses().stream()
+                    .map(
+                            answer ->
+                                    new SurveySubmissionResponse.AnswerResponse(
+                                            answer.getId(),
+                                            answer.getQuestion().getQuestionText(),
+                                            answer.getResponseText()))
+                    .collect(Collectors.toList()));
 
     return response;
   }

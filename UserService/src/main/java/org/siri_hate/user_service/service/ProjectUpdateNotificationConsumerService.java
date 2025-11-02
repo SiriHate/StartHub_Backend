@@ -28,7 +28,8 @@ public class ProjectUpdateNotificationConsumerService {
     @KafkaListener(topics = "${project.update.notification.topic.consumer}", groupId = "${spring.application.name}")
     @Transactional
     public void consumeProjectUpdateNotification(String message) {
-        ProjectUpdateNotification notification = gson.fromJson(message, ProjectUpdateNotification.class);
+        ProjectUpdateNotification notification = gson.fromJson(message,
+                ProjectUpdateNotification.class);
         String username = notification.getUsername();
         Member member = memberRepository.findMemberByUsername(username);
         if (member != null) {

@@ -12,58 +12,51 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
 @RequestMapping("/api/v1/user_service/admins")
 public class AdminController {
 
-  private final AdminService adminService;
+    private final AdminService adminService;
 
-  @Autowired
-  public AdminController(AdminService adminService) {
-    this.adminService = adminService;
-  }
+    @Autowired
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
+    }
 
-  @PostMapping
-  public ResponseEntity<AdminFullResponse> createAdmin(
-      @Validated @RequestBody AdminFullRequest admin) {
-    AdminFullResponse createdAdmin = adminService.createAdmin(admin);
-    return new ResponseEntity<>(createdAdmin, HttpStatus.CREATED);
-  }
+    @PostMapping
+    public ResponseEntity<AdminFullResponse> createAdmin(
+            @Validated @RequestBody AdminFullRequest admin) {
+        AdminFullResponse createdAdmin = adminService.createAdmin(admin);
+        return new ResponseEntity<>(createdAdmin, HttpStatus.CREATED);
+    }
 
-  @GetMapping
-  public ResponseEntity<Page<AdminSummaryResponse>> getAllAdmins(
-      @PageableDefault(size = 1) Pageable pageable) {
-    Page<AdminSummaryResponse> admins = adminService.getAllAdmins(pageable);
-    return new ResponseEntity<>(admins, HttpStatus.OK);
-  }
+    @GetMapping
+    public ResponseEntity<Page<AdminSummaryResponse>> getAllAdmins(
+            @PageableDefault(size = 1) Pageable pageable) {
+        Page<AdminSummaryResponse> admins = adminService.getAllAdmins(pageable);
+        return new ResponseEntity<>(admins, HttpStatus.OK);
+    }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<AdminFullResponse> getAdminById(@Positive @PathVariable Long id) {
-    AdminFullResponse admin = adminService.getAdminById(id);
-    return new ResponseEntity<>(admin, HttpStatus.OK);
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<AdminFullResponse> getAdminById(@Positive @PathVariable Long id) {
+        AdminFullResponse admin = adminService.getAdminById(id);
+        return new ResponseEntity<>(admin, HttpStatus.OK);
+    }
 
-  @PatchMapping("/{id}")
-  ResponseEntity<AdminFullResponse> updateAdminById(
-      @PathVariable Long id, @Validated @RequestBody AdminFullRequest admin) {
-    AdminFullResponse updatedAdmin = adminService.updateAdminById(id, admin);
-    return new ResponseEntity<>(updatedAdmin, HttpStatus.OK);
-  }
+    @PatchMapping("/{id}")
+    ResponseEntity<AdminFullResponse> updateAdminById(@PathVariable Long id,
+                                                      @Validated @RequestBody AdminFullRequest admin) {
+        AdminFullResponse updatedAdmin = adminService.updateAdminById(id, admin);
+        return new ResponseEntity<>(updatedAdmin, HttpStatus.OK);
+    }
 
-  @DeleteMapping("/{id}")
-  ResponseEntity<String> deleteAdminById(@Positive @PathVariable Long id) {
-    adminService.deleteAdminById(id);
-    return new ResponseEntity<>(
-        "Administrator has been successfully deleted", HttpStatus.NO_CONTENT);
-  }
+    @DeleteMapping("/{id}")
+    ResponseEntity<String> deleteAdminById(@Positive @PathVariable Long id) {
+        adminService.deleteAdminById(id);
+        return new ResponseEntity<>("Administrator has been successfully deleted",
+                HttpStatus.NO_CONTENT);
+    }
 }

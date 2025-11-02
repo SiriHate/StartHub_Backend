@@ -1,8 +1,6 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
-import java.util.List;
-import org.siri_hate.main_service.exception.NoSuchProjectCategoryException;
 import org.siri_hate.main_service.model.dto.mapper.ProjectCategoryMapper;
 import org.siri_hate.main_service.model.dto.request.category.ProjectCategoryRequest;
 import org.siri_hate.main_service.model.dto.response.category.ProjectCategoryFullResponse;
@@ -13,6 +11,8 @@ import org.siri_hate.main_service.service.ProjectCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProjectCategoryServiceImpl implements ProjectCategoryService {
 
@@ -21,8 +21,8 @@ public class ProjectCategoryServiceImpl implements ProjectCategoryService {
 
   @Autowired
   public ProjectCategoryServiceImpl(
-      ProjectCategoryRepository projectCategoryRepository,
-      ProjectCategoryMapper projectCategoryMapper) {
+          ProjectCategoryRepository projectCategoryRepository,
+          ProjectCategoryMapper projectCategoryMapper) {
     this.projectCategoryRepository = projectCategoryRepository;
     this.projectCategoryMapper = projectCategoryMapper;
   }
@@ -38,7 +38,7 @@ public class ProjectCategoryServiceImpl implements ProjectCategoryService {
   public List<ProjectCategorySummaryResponse> getAllProjectCategory() {
     List<ProjectCategory> projectCategories = projectCategoryRepository.findAll();
     if (projectCategories.isEmpty()) {
-      throw new NoSuchProjectCategoryException("No project categories found!");
+      throw new RuntimeException("No project categories found!");
     }
     return projectCategoryMapper.toProjectCategorySummaryResponseList(projectCategories);
   }
@@ -46,29 +46,29 @@ public class ProjectCategoryServiceImpl implements ProjectCategoryService {
   @Override
   public ProjectCategoryFullResponse getProjectCategoryById(Long id) {
     ProjectCategory projectCategory =
-        projectCategoryRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new NoSuchProjectCategoryException("No project category with id: " + id));
+            projectCategoryRepository
+                    .findById(id)
+                    .orElseThrow(
+                            () -> new RuntimeException("No project category with id: " + id));
     return projectCategoryMapper.toProjectCategoryFullResponse(projectCategory);
   }
 
   @Override
   public ProjectCategory getProjectCategoryEntityById(Long id) {
     return projectCategoryRepository
-        .findById(id)
-        .orElseThrow(
-            () -> new NoSuchProjectCategoryException("No project category with id: " + id));
+            .findById(id)
+            .orElseThrow(
+                    () -> new RuntimeException("No project category with id: " + id));
   }
 
   @Override
   @Transactional
   public void updateProjectCategory(Long id, ProjectCategoryRequest request) {
     ProjectCategory projectCategory =
-        projectCategoryRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new NoSuchProjectCategoryException("No project category with id: " + id));
+            projectCategoryRepository
+                    .findById(id)
+                    .orElseThrow(
+                            () -> new RuntimeException("No project category with id: " + id));
     projectCategoryMapper.updateProjectCategoryFromRequest(request, projectCategory);
     projectCategoryRepository.save(projectCategory);
   }
@@ -77,10 +77,10 @@ public class ProjectCategoryServiceImpl implements ProjectCategoryService {
   @Transactional
   public void deleteProjectCategory(Long id) {
     ProjectCategory projectCategory =
-        projectCategoryRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new NoSuchProjectCategoryException("No project category with id: " + id));
+            projectCategoryRepository
+                    .findById(id)
+                    .orElseThrow(
+                            () -> new RuntimeException("No project category with id: " + id));
     projectCategoryRepository.delete(projectCategory);
   }
 }

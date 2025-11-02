@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface GroupChatRepository extends JpaRepository<GroupChat, Long> {
     boolean existsByName(String name);
+
     List<GroupChat> findByGroupParticipantsUserUsername(String username);
 } 

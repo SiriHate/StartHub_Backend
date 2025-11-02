@@ -1,6 +1,5 @@
 package org.siri_hate.chat_service.controller;
 
-import java.security.Principal;
 import org.siri_hate.chat_service.model.dto.request.MessageRequest;
 import org.siri_hate.chat_service.model.dto.request.SubscribeRequest;
 import org.siri_hate.chat_service.model.entity.Message;
@@ -14,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -25,9 +25,9 @@ public class WebSocketController {
     private final ChatService chatService;
 
     @Autowired
-    public WebSocketController(SimpMessagingTemplate messagingTemplate, 
-                             MessageService messageService,
-                             ChatService chatService) {
+    public WebSocketController(SimpMessagingTemplate messagingTemplate,
+                               MessageService messageService,
+                               ChatService chatService) {
         this.messagingTemplate = messagingTemplate;
         this.messageService = messageService;
         this.chatService = chatService;

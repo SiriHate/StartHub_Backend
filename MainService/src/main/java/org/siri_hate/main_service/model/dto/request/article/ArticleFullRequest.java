@@ -5,53 +5,56 @@ import org.siri_hate.main_service.model.entity.category.ArticleCategory;
 
 public class ArticleFullRequest {
 
-  @NotBlank String title;
+    @NotBlank
+    String title;
 
-  String previewUrl;
+    String previewUrl;
 
-  ArticleCategory category;
+    ArticleCategory category;
 
-  @NotBlank String content;
+    @NotBlank
+    String content;
 
-  public ArticleFullRequest() {}
+    public ArticleFullRequest() {
+    }
 
-  public ArticleFullRequest(
-      String title, String previewUrl, ArticleCategory category, String content) {
-    this.title = title;
-    this.previewUrl = previewUrl;
-    this.category = category;
-    this.content = content;
-  }
+    public ArticleFullRequest(
+            String title, String previewUrl, ArticleCategory category, String content) {
+        this.title = title;
+        this.previewUrl = previewUrl;
+        this.category = category;
+        this.content = content;
+    }
 
-  public String getTitle() {
-    return title;
-  }
+    public String getTitle() {
+        return title;
+    }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-  public String getPreviewUrl() {
-    return previewUrl;
-  }
+    public String getPreviewUrl() {
+        return previewUrl;
+    }
 
-  public void setPreviewUrl(String previewUrl) {
-    this.previewUrl = previewUrl;
-  }
+    public void setPreviewUrl(String previewUrl) {
+        this.previewUrl = previewUrl;
+    }
 
-  public ArticleCategory getCategory() {
-    return category;
-  }
+    public ArticleCategory getCategory() {
+        return category;
+    }
 
-  public void setCategory(ArticleCategory category) {
-    this.category = category;
-  }
+    public void setCategory(ArticleCategory category) {
+        this.category = category;
+    }
 
-  public String getContent() {
-    return content;
-  }
+    public String getContent() {
+        return content;
+    }
 
-  public void setContent(String content) {
-    this.content = content;
-  }
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

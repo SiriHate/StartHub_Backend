@@ -8,7 +8,7 @@ import org.siri_hate.main_service.model.entity.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-  UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-  UserFullResponse toUserFullResponse(User user);
+    UserFullResponse toUserFullResponse(User user);
 }

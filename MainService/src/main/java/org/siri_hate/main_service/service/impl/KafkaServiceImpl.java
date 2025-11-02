@@ -10,30 +10,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaServiceImpl implements KafkaService {
 
-  private final KafkaTemplate<String, UserDeletionMessage> userDeletionKafkaTemplate;
-  private final KafkaTemplate<String, ProjectUpdateNotification> projectUpdateKafkaTemplate;
+    private final KafkaTemplate<String, UserDeletionMessage> userDeletionKafkaTemplate;
+    private final KafkaTemplate<String, ProjectUpdateNotification> projectUpdateKafkaTemplate;
 
-  @Value("${user.deletion.topic.m2s.name}")
-  private String userDeletionTopic;
+    @Value("${user.deletion.topic.m2s.name}")
+    private String userDeletionTopic;
 
-  @Value("${project.update.notification.topic}")
-  private String projectUpdateTopic;
+    @Value("${project.update.notification.topic}")
+    private String projectUpdateTopic;
 
-  public KafkaServiceImpl(
-      KafkaTemplate<String, UserDeletionMessage> userDeletionKafkaTemplate,
-      KafkaTemplate<String, ProjectUpdateNotification> projectUpdateKafkaTemplate) {
-    this.userDeletionKafkaTemplate = userDeletionKafkaTemplate;
-    this.projectUpdateKafkaTemplate = projectUpdateKafkaTemplate;
-  }
+    public KafkaServiceImpl(
+            KafkaTemplate<String, UserDeletionMessage> userDeletionKafkaTemplate,
+            KafkaTemplate<String, ProjectUpdateNotification> projectUpdateKafkaTemplate) {
+        this.userDeletionKafkaTemplate = userDeletionKafkaTemplate;
+        this.projectUpdateKafkaTemplate = projectUpdateKafkaTemplate;
+    }
 
-  @Override
-  public void sendUserDeletionMessage(String username) {
-    UserDeletionMessage message = new UserDeletionMessage(username);
-    userDeletionKafkaTemplate.send(userDeletionTopic, message);
-  }
+    @Override
+    public void sendUserDeletionMessage(String username) {
+        UserDeletionMessage message = new UserDeletionMessage(username);
+        userDeletionKafkaTemplate.send(userDeletionTopic, message);
+    }
 
-  @Override
-  public void sendProjectUpdateNotification(ProjectUpdateNotification notification) {
-    projectUpdateKafkaTemplate.send(projectUpdateTopic, notification);
-  }
+    @Override
+    public void sendProjectUpdateNotification(ProjectUpdateNotification notification) {
+        projectUpdateKafkaTemplate.send(projectUpdateTopic, notification);
+    }
 }

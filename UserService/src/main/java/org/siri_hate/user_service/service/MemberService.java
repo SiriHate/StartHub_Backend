@@ -2,11 +2,7 @@ package org.siri_hate.user_service.service;
 
 import org.siri_hate.user_service.model.dto.request.auth.ChangePasswordForm;
 import org.siri_hate.user_service.model.dto.request.auth.RecoveryPasswordRequest;
-import org.siri_hate.user_service.model.dto.request.member.MemberChangeAvatarRequest;
-import org.siri_hate.user_service.model.dto.request.member.MemberChangeProfileVisibilityRequest;
-import org.siri_hate.user_service.model.dto.request.member.MemberFullRequest;
-import org.siri_hate.user_service.model.dto.request.member.MemberProfileDataRequest;
-import org.siri_hate.user_service.model.dto.request.member.MemberRegistrationRequest;
+import org.siri_hate.user_service.model.dto.request.member.*;
 import org.siri_hate.user_service.model.dto.request.tokens.ChangePasswordTokenRequest;
 import org.siri_hate.user_service.model.dto.response.member.MemberFullResponse;
 import org.siri_hate.user_service.model.dto.response.member.MemberSummaryResponse;
@@ -15,39 +11,39 @@ import org.springframework.data.domain.Pageable;
 
 public interface MemberService {
 
-  void memberRegistration(MemberRegistrationRequest member);
+    void memberRegistration(MemberRegistrationRequest member);
 
-  void activateMemberAccount(Long id);
+    void activateMemberAccount(Long id);
 
-  void memberPasswordRecoveryRequest(RecoveryPasswordRequest recoveryPasswordRequest);
+    void memberPasswordRecoveryRequest(RecoveryPasswordRequest recoveryPasswordRequest);
 
-  void memberPasswordRecoveryConfirmation(ChangePasswordTokenRequest changePasswordTokenRequest);
+    void memberPasswordRecoveryConfirmation(ChangePasswordTokenRequest changePasswordTokenRequest);
 
-  void memberPasswordChange(String username, ChangePasswordForm changePasswordForm);
+    void memberPasswordChange(String username, ChangePasswordForm changePasswordForm);
 
-  Page<MemberSummaryResponse> getAllMembers(
-      String username,
-      String specialization,
-      Boolean profileHiddenFlag,
-      Pageable pageable);
+    Page<MemberSummaryResponse> getAllMembers(
+            String username,
+            String specialization,
+            Boolean profileHiddenFlag,
+            Pageable pageable);
 
-  MemberFullResponse getMemberById(Long id);
+    MemberFullResponse getMemberById(Long id);
 
-  MemberFullResponse getMemberByUsername(String username);
+    MemberFullResponse getMemberByUsername(String username);
 
-  MemberFullResponse memberUpdate(Long id, MemberFullRequest member);
+    MemberFullResponse memberUpdate(Long id, MemberFullRequest member);
 
-  void deleteMemberById(Long id);
+    void deleteMemberById(Long id);
 
-  void deleteMemberByUsername(String username);
+    void deleteMemberByUsername(String username);
 
-  void memberChangeAvatar(String username, MemberChangeAvatarRequest avatar);
+    void memberChangeAvatar(String username, MemberChangeAvatarRequest avatar);
 
-  MemberFullResponse memberChangePersonalInfo(
-      String username, MemberProfileDataRequest profileDataRequest);
+    MemberFullResponse memberChangePersonalInfo(
+            String username, MemberProfileDataRequest profileDataRequest);
 
-  MemberFullResponse changeMemberProfileVisibility(
-      MemberChangeProfileVisibilityRequest request, String username);
+    MemberFullResponse changeMemberProfileVisibility(
+            MemberChangeProfileVisibilityRequest request, String username);
 
-  Page<MemberSummaryResponse> searchMembersByName(String name, Pageable pageable);
+    Page<MemberSummaryResponse> searchMembersByName(String name, Pageable pageable);
 }

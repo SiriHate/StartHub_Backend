@@ -1,8 +1,8 @@
 package org.siri_hate.notification_service.model.mails.notification;
 
 import org.siri_hate.notification_service.model.mails.MailTemplate;
-import org.thymeleaf.context.Context;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 public class ProjectUpdateMail extends MailTemplate {
     private final String userFullName;

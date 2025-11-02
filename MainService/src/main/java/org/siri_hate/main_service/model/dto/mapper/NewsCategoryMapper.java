@@ -1,6 +1,5 @@
 package org.siri_hate.main_service.model.dto.mapper;
 
-import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
@@ -9,18 +8,20 @@ import org.siri_hate.main_service.model.dto.response.category.NewsCategoryFullRe
 import org.siri_hate.main_service.model.dto.response.category.NewsCategorySummaryResponse;
 import org.siri_hate.main_service.model.entity.category.NewsCategory;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface NewsCategoryMapper {
 
-  NewsCategoryMapper INSTANCE = Mappers.getMapper(NewsCategoryMapper.class);
+    NewsCategoryMapper INSTANCE = Mappers.getMapper(NewsCategoryMapper.class);
 
-  NewsCategory toNewsCategory(NewsCategoryRequest newsCategoryRequest);
+    NewsCategory toNewsCategory(NewsCategoryRequest newsCategoryRequest);
 
-  NewsCategoryFullResponse toNewsCategoryFullResponse(NewsCategory newsCategory);
+    NewsCategoryFullResponse toNewsCategoryFullResponse(NewsCategory newsCategory);
 
-  List<NewsCategorySummaryResponse> toNewsCategorySummaryResponseList(
-      List<NewsCategory> newsCategories);
+    List<NewsCategorySummaryResponse> toNewsCategorySummaryResponseList(
+            List<NewsCategory> newsCategories);
 
-  NewsCategory updateNewsCategoryFromRequest(
-      NewsCategoryRequest request, @MappingTarget NewsCategory newsCategory);
+    NewsCategory updateNewsCategoryFromRequest(
+            NewsCategoryRequest request, @MappingTarget NewsCategory newsCategory);
 }

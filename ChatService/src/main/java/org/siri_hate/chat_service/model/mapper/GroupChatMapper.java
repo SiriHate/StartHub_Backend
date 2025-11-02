@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import org.siri_hate.chat_service.model.dto.request.group_chat.GroupChatRequest;
 import org.siri_hate.chat_service.model.dto.response.group_chat.GroupChatResponse;
 import org.siri_hate.chat_service.model.entity.group_chat.GroupChat;
-import org.siri_hate.chat_service.model.entity.group_chat.GroupChatParticipant;
 
 @Mapper(componentModel = "spring")
 public interface GroupChatMapper {

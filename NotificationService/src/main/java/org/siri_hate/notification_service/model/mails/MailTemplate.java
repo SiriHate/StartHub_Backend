@@ -7,11 +7,11 @@ import org.thymeleaf.context.Context;
 @Data
 public abstract class MailTemplate {
 
-  protected String toEmailAddress;
+    protected String toEmailAddress;
 
-  protected String subject;
+    protected String subject;
 
-  protected String message;
+    protected String message;
 
-  public abstract void prepareMessage(Context context, TemplateEngine templateEngine);
+    public abstract void prepareMessage(Context context, TemplateEngine templateEngine);
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SpecialistSpecializationRepository
-    extends JpaRepository<SpecialistSpecialization, Long> {
+        extends JpaRepository<SpecialistSpecialization, Long> {
 
-  SpecialistSpecialization findSpecialistSpecializationsByName(String name);
+    SpecialistSpecialization findSpecialistSpecializationsByName(String name);
 }

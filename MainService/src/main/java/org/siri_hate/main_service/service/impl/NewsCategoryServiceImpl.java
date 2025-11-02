@@ -1,8 +1,6 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
-import java.util.List;
-import org.siri_hate.main_service.exception.NoSuchNewsCategoryException;
 import org.siri_hate.main_service.model.dto.mapper.NewsCategoryMapper;
 import org.siri_hate.main_service.model.dto.request.category.NewsCategoryRequest;
 import org.siri_hate.main_service.model.dto.response.category.NewsCategoryFullResponse;
@@ -13,6 +11,8 @@ import org.siri_hate.main_service.service.NewsCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NewsCategoryServiceImpl implements NewsCategoryService {
 
@@ -21,7 +21,7 @@ public class NewsCategoryServiceImpl implements NewsCategoryService {
 
   @Autowired
   public NewsCategoryServiceImpl(
-      NewsCategoryRepository newsCategoryRepository, NewsCategoryMapper newsCategoryMapper) {
+          NewsCategoryRepository newsCategoryRepository, NewsCategoryMapper newsCategoryMapper) {
     this.newsCategoryRepository = newsCategoryRepository;
     this.newsCategoryMapper = newsCategoryMapper;
   }
@@ -36,15 +36,15 @@ public class NewsCategoryServiceImpl implements NewsCategoryService {
   @Override
   public NewsCategory getNewsCategoryEntityById(Long id) {
     return newsCategoryRepository
-        .findById(id)
-        .orElseThrow(() -> new NoSuchNewsCategoryException("No news category with id: " + id));
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("No news category with id: " + id));
   }
 
   @Override
   public List<NewsCategorySummaryResponse> getAllNewsCategory() {
     List<NewsCategory> newsCategories = newsCategoryRepository.findAll();
     if (newsCategories.isEmpty()) {
-      throw new NoSuchNewsCategoryException("No news categories found!");
+      throw new RuntimeException("No news categories found!");
     }
     return newsCategoryMapper.toNewsCategorySummaryResponseList(newsCategories);
   }
@@ -52,9 +52,9 @@ public class NewsCategoryServiceImpl implements NewsCategoryService {
   @Override
   public NewsCategoryFullResponse getNewsCategoryById(Long id) {
     NewsCategory newsCategory =
-        newsCategoryRepository
-            .findById(id)
-            .orElseThrow(() -> new NoSuchNewsCategoryException("No news category with id: " + id));
+            newsCategoryRepository
+                    .findById(id)
+                    .orElseThrow(() -> new RuntimeException("No news category with id: " + id));
     return newsCategoryMapper.toNewsCategoryFullResponse(newsCategory);
   }
 
@@ -62,9 +62,9 @@ public class NewsCategoryServiceImpl implements NewsCategoryService {
   @Transactional
   public void updateNewsCategory(Long id, NewsCategoryRequest request) {
     NewsCategory newsCategory =
-        newsCategoryRepository
-            .findById(id)
-            .orElseThrow(() -> new NoSuchNewsCategoryException("No news category with id: " + id));
+            newsCategoryRepository
+                    .findById(id)
+                    .orElseThrow(() -> new RuntimeException("No news category with id: " + id));
     newsCategoryMapper.updateNewsCategoryFromRequest(request, newsCategory);
     newsCategoryRepository.save(newsCategory);
   }
@@ -73,9 +73,9 @@ public class NewsCategoryServiceImpl implements NewsCategoryService {
   @Transactional
   public void deleteNewsCategory(Long id) {
     NewsCategory newsCategory =
-        newsCategoryRepository
-            .findById(id)
-            .orElseThrow(() -> new NoSuchNewsCategoryException("No news category with id: " + id));
+            newsCategoryRepository
+                    .findById(id)
+                    .orElseThrow(() -> new RuntimeException("No news category with id: " + id));
     newsCategoryRepository.delete(newsCategory);
   }
 }

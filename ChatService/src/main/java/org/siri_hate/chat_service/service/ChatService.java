@@ -1,10 +1,6 @@
 package org.siri_hate.chat_service.service;
 
-import org.siri_hate.chat_service.exception.ChatAlreadyExistsException;
-import org.siri_hate.chat_service.exception.ChatNotFoundException;
-import org.siri_hate.chat_service.model.dto.request.ChatFullRequest;
 import org.siri_hate.chat_service.model.entity.Chat;
-import org.siri_hate.chat_service.model.entity.User;
 import org.siri_hate.chat_service.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,17 +16,16 @@ public class ChatService {
         this.chatRepository = chatRepository;
     }
 
-
     @Transactional
     public void deleteChat(Long chatId) {
         if (!chatRepository.existsById(chatId)) {
-            throw new ChatNotFoundException("Chat with id " + chatId + " not found");
+            throw new RuntimeException("Chat with id " + chatId + " not found");
         }
         chatRepository.deleteById(chatId);
     }
 
     public Chat getChatById(Long chatId) {
         return chatRepository.findById(chatId)
-                .orElseThrow(() -> new ChatNotFoundException("Chat with id " + chatId + " not found"));
+                .orElseThrow(() -> new RuntimeException("Chat with id " + chatId + " not found"));
     }
 } 

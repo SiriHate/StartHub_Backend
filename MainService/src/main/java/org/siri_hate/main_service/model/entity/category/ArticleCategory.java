@@ -1,11 +1,6 @@
 package org.siri_hate.main_service.model.entity.category;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "article_categories")
@@ -19,7 +14,8 @@ public class ArticleCategory {
   @Column(name = "name", unique = true, nullable = false)
   private String name;
 
-  public ArticleCategory() {}
+  public ArticleCategory() {
+  }
 
   public ArticleCategory(Long id, String name) {
     this.id = id;

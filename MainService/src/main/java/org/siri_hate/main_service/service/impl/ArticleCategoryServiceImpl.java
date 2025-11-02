@@ -1,8 +1,6 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
-import java.util.List;
-import org.siri_hate.main_service.exception.NoSuchArticleCategoryException;
 import org.siri_hate.main_service.model.dto.mapper.ArticleCategoryMapper;
 import org.siri_hate.main_service.model.dto.request.category.ArticleCategoryRequest;
 import org.siri_hate.main_service.model.dto.response.category.ArticleCategoryFullResponse;
@@ -14,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @Service
 public class ArticleCategoryServiceImpl implements ArticleCategoryService {
 
@@ -22,8 +22,8 @@ public class ArticleCategoryServiceImpl implements ArticleCategoryService {
 
   @Autowired
   public ArticleCategoryServiceImpl(
-      ArticleCategoryRepository articleCategoryRepository,
-      ArticleCategoryMapper articleCategoryMapper) {
+          ArticleCategoryRepository articleCategoryRepository,
+          ArticleCategoryMapper articleCategoryMapper) {
     this.articleCategoryRepository = articleCategoryRepository;
     this.articleCategoryMapper = articleCategoryMapper;
   }
@@ -39,7 +39,7 @@ public class ArticleCategoryServiceImpl implements ArticleCategoryService {
   public List<ArticleCategorySummaryResponse> getAllArticleCategory() {
     List<ArticleCategory> articleCategories = articleCategoryRepository.findAll();
     if (articleCategories.isEmpty()) {
-      throw new NoSuchArticleCategoryException("No article categories found!");
+      throw new RuntimeException("No article categories found!");
     }
     return articleCategoryMapper.toArticleCategorySummaryResponseList(articleCategories);
   }
@@ -47,29 +47,29 @@ public class ArticleCategoryServiceImpl implements ArticleCategoryService {
   @Override
   public ArticleCategoryFullResponse getArticleCategoryById(Long id) {
     ArticleCategory articleCategory =
-        articleCategoryRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new NoSuchArticleCategoryException("No article category with id: " + id));
+            articleCategoryRepository
+                    .findById(id)
+                    .orElseThrow(
+                            () -> new RuntimeException("No article category with id: " + id));
     return articleCategoryMapper.toArticleCategoryFullResponse(articleCategory);
   }
 
   @Override
   public ArticleCategory getArticleCategoryEntityById(Long id) {
     return articleCategoryRepository
-        .findById(id)
-        .orElseThrow(
-            () -> new NoSuchArticleCategoryException("No article category with id: " + id));
+            .findById(id)
+            .orElseThrow(
+                    () -> new RuntimeException("No article category with id: " + id));
   }
 
   @Override
   @Transactional
   public void updateArticleCategory(Long id, ArticleCategoryRequest request) {
     ArticleCategory articleCategory =
-        articleCategoryRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new NoSuchArticleCategoryException("No article category with id: " + id));
+            articleCategoryRepository
+                    .findById(id)
+                    .orElseThrow(
+                            () -> new RuntimeException("No article category with id: " + id));
     articleCategoryMapper.updateArticleCategoryFromRequest(request, articleCategory);
     articleCategoryRepository.save(articleCategory);
   }
@@ -78,10 +78,10 @@ public class ArticleCategoryServiceImpl implements ArticleCategoryService {
   @Transactional
   public void deleteArticleCategory(Long id) {
     ArticleCategory articleCategory =
-        articleCategoryRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new NoSuchArticleCategoryException("No article category with id: " + id));
+            articleCategoryRepository
+                    .findById(id)
+                    .orElseThrow(
+                            () -> new RuntimeException("No article category with id: " + id));
     articleCategoryRepository.delete(articleCategory);
   }
 }

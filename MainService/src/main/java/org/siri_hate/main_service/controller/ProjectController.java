@@ -15,92 +15,84 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
 @RequestMapping("/api/v1/main_service/projects")
 public class ProjectController {
 
-  private final ProjectService projectService;
+    private final ProjectService projectService;
 
-  @Autowired
-  public ProjectController(ProjectService projectService) {
-    this.projectService = projectService;
-  }
-
-  @PostMapping
-  public ResponseEntity<String> createProject(@RequestBody @Valid ProjectFullRequest project) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String username = authentication.getName();
-    projectService.createProject(username, project);
-    return new ResponseEntity<>("Project has been successfully created", HttpStatus.CREATED);
-  }
-
-  @GetMapping
-  public ResponseEntity<Page<ProjectSummaryResponse>> getAllProjects(
-      @RequestParam(required = false) String category,
-      @RequestParam(required = false) String query,
-      @RequestParam(required = false) Boolean moderationPassed,
-      @PageableDefault(size = 10) Pageable pageable) {
-    Page<ProjectSummaryResponse> projects;
-    if (moderationPassed != null) {
-      projects =
-          moderationPassed
-              ? projectService.getModeratedProjects(category, query, pageable)
-              : projectService.getUnmoderatedProjects(category, query, pageable);
-    } else {
-      projects = projectService.getProjectsByCategoryAndSearchQuery(category, query, pageable);
+    @Autowired
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
     }
-    return new ResponseEntity<>(projects, HttpStatus.OK);
-  }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<ProjectFullResponse> getProjectById(@PathVariable @Positive Long id) {
-    ProjectFullResponse project = projectService.getProjectInfoById(id);
-    return new ResponseEntity<>(project, HttpStatus.OK);
-  }
+    @PostMapping
+    public ResponseEntity<String> createProject(@RequestBody @Valid ProjectFullRequest project) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        projectService.createProject(username, project);
+        return new ResponseEntity<>("Project has been successfully created", HttpStatus.CREATED);
+    }
 
-  @PatchMapping("/{id}")
-  public ResponseEntity<String> updateProject(
-      @PathVariable @Positive Long id, @RequestBody @Valid ProjectFullRequest project) {
-    projectService.updateProject(project, id);
-    return new ResponseEntity<>("Project has been successfully updated", HttpStatus.OK);
-  }
+    @GetMapping
+    public ResponseEntity<Page<ProjectSummaryResponse>> getAllProjects(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Boolean moderationPassed,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<ProjectSummaryResponse> projects;
+        if (moderationPassed != null) {
+            projects =
+                    moderationPassed
+                            ? projectService.getModeratedProjects(category, query, pageable)
+                            : projectService.getUnmoderatedProjects(category, query, pageable);
+        } else {
+            projects = projectService.getProjectsByCategoryAndSearchQuery(category, query, pageable);
+        }
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteProjectById(@PathVariable @Positive Long id) {
-    projectService.deleteProjectById(id);
-    return new ResponseEntity<>("Project was successfully deleted", HttpStatus.NO_CONTENT);
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectFullResponse> getProjectById(@PathVariable @Positive Long id) {
+        ProjectFullResponse project = projectService.getProjectInfoById(id);
+        return new ResponseEntity<>(project, HttpStatus.OK);
+    }
 
-  @PostMapping("/{id}/likes")
-  public ResponseEntity<Boolean> toggleProjectLike(@PathVariable @Positive Long id) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String username = authentication.getName();
-    boolean isLiked = projectService.toggleProjectLike(username, id);
-    return new ResponseEntity<>(isLiked, HttpStatus.OK);
-  }
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updateProject(
+            @PathVariable @Positive Long id, @RequestBody @Valid ProjectFullRequest project) {
+        projectService.updateProject(project, id);
+        return new ResponseEntity<>("Project has been successfully updated", HttpStatus.OK);
+    }
 
-  @GetMapping("/{id}/likes/count")
-  public ResponseEntity<Long> getProjectLikesCount(@PathVariable @Positive Long id) {
-    Long likesCount = projectService.getProjectLikesCount(id);
-    return new ResponseEntity<>(likesCount, HttpStatus.OK);
-  }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProjectById(@PathVariable @Positive Long id) {
+        projectService.deleteProjectById(id);
+        return new ResponseEntity<>("Project was successfully deleted", HttpStatus.NO_CONTENT);
+    }
 
-  @PatchMapping("/{id}/moderationPassed")
-  public ResponseEntity<String> updateProjectModerationStatus(
-      @PathVariable @Positive Long id, @RequestBody Boolean moderationPassed) {
-    projectService.updateProjectModerationStatus(id, moderationPassed);
-    return new ResponseEntity<>(
-        "Project moderation status has been successfully updated", HttpStatus.OK);
-  }
+    @PostMapping("/{id}/likes")
+    public ResponseEntity<Boolean> toggleProjectLike(@PathVariable @Positive Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isLiked = projectService.toggleProjectLike(username, id);
+        return new ResponseEntity<>(isLiked, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/likes/count")
+    public ResponseEntity<Long> getProjectLikesCount(@PathVariable @Positive Long id) {
+        Long likesCount = projectService.getProjectLikesCount(id);
+        return new ResponseEntity<>(likesCount, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/moderationPassed")
+    public ResponseEntity<String> updateProjectModerationStatus(
+            @PathVariable @Positive Long id, @RequestBody Boolean moderationPassed) {
+        projectService.updateProjectModerationStatus(id, moderationPassed);
+        return new ResponseEntity<>(
+                "Project moderation status has been successfully updated", HttpStatus.OK);
+    }
 }

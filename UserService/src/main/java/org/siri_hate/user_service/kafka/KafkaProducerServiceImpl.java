@@ -12,45 +12,45 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaProducerServiceImpl implements KafkaProducerService {
 
-  private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-  @Value("${notification.topic.name}")
-  private String notificationTopicName;
+    @Value("${notification.topic.name}")
+    private String notificationTopicName;
 
-  @Value("${confirmation.topic.name}")
-  private String confirmationTopicName;
+    @Value("${confirmation.topic.name}")
+    private String confirmationTopicName;
 
-  @Value("${user.deletion.topic.s2m.name}")
-  private String userDeletionTopic;
+    @Value("${user.deletion.topic.s2m.name}")
+    private String userDeletionTopic;
 
-  @Value("${project.update.notification.topic.producer}")
-  private String projectUpdateNotificationTopic;
+    @Value("${project.update.notification.topic.producer}")
+    private String projectUpdateNotificationTopic;
 
-  @Autowired
-  public KafkaProducerServiceImpl(KafkaTemplate<String, Object> kafkaTemplate) {
-    this.kafkaTemplate = kafkaTemplate;
-  }
+    @Autowired
+    public KafkaProducerServiceImpl(KafkaTemplate<String, Object> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
-  @Override
-  public void sendConfirmationToken(ConfirmationMessage confirmationMessage) {
-    kafkaTemplate.send(confirmationTopicName, confirmationMessage);
-  }
+    @Override
+    public void sendConfirmationToken(ConfirmationMessage confirmationMessage) {
+        kafkaTemplate.send(confirmationTopicName, confirmationMessage);
+    }
 
-  @Override
-  public void sendNotification(NotificationMessage notificationMessage) {
-    kafkaTemplate.send(notificationTopicName, notificationMessage);
-  }
+    @Override
+    public void sendNotification(NotificationMessage notificationMessage) {
+        kafkaTemplate.send(notificationTopicName, notificationMessage);
+    }
 
-  @Override
-  public void sendUserDeletionMessage(String username) {
-    UserDeletionMessage message = new UserDeletionMessage(username);
-    kafkaTemplate.send(userDeletionTopic, message);
-  }
+    @Override
+    public void sendUserDeletionMessage(String username) {
+        UserDeletionMessage message = new UserDeletionMessage(username);
+        kafkaTemplate.send(userDeletionTopic, message);
+    }
 
-  @Override
-  public void sendProjectUpdateNotification(ProjectUpdateNotification notification) {
-    kafkaTemplate.send(projectUpdateNotificationTopic, notification);
-  }
+    @Override
+    public void sendProjectUpdateNotification(ProjectUpdateNotification notification) {
+        kafkaTemplate.send(projectUpdateNotificationTopic, notification);
+    }
 
 
 }

@@ -9,30 +9,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 
-  private final MailSenderServiceImpl mailSenderService;
+    private final MailSenderServiceImpl mailSenderService;
 
-  @Autowired
-  public KafkaConsumerServiceImpl(MailSenderServiceImpl mailSenderService) {
-    this.mailSenderService = mailSenderService;
-  }
+    @Autowired
+    public KafkaConsumerServiceImpl(MailSenderServiceImpl mailSenderService) {
+        this.mailSenderService = mailSenderService;
+    }
 
-  @Override
-  @KafkaListener(topics = "notification_topic", groupId = "consumers")
-  public void NotificationTopicListener(String message) throws MessagingException {
-    mailSenderService.sendNotificationMail(message);
-  }
+    @Override
+    @KafkaListener(topics = "notification_topic", groupId = "consumers")
+    public void NotificationTopicListener(String message) throws MessagingException {
+        mailSenderService.sendNotificationMail(message);
+    }
 
-  @Override
-  @KafkaListener(topics = "confirmation_topic", groupId = "consumers")
-  public void ConfirmationTopicListener(String message) throws MessagingException {
-    mailSenderService.sendConfirmationMail(message);
-  }
+    @Override
+    @KafkaListener(topics = "confirmation_topic", groupId = "consumers")
+    public void ConfirmationTopicListener(String message) throws MessagingException {
+        mailSenderService.sendConfirmationMail(message);
+    }
 
-  @Override
-  @KafkaListener(topics = "project_update_notification_s2n", groupId = "consumers")
-  public void ProjectUpdateTopicListener(String message) throws MessagingException {
-    mailSenderService.sendProjectUpdateMail(message);
-  }
+    @Override
+    @KafkaListener(topics = "project_update_notification_s2n", groupId = "consumers")
+    public void ProjectUpdateTopicListener(String message) throws MessagingException {
+        mailSenderService.sendProjectUpdateMail(message);
+    }
 }
 
 

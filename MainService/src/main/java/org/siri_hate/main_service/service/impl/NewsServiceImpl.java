@@ -1,10 +1,6 @@
 package org.siri_hate.main_service.service.impl;
 
 import jakarta.transaction.Transactional;
-import java.time.LocalDate;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import org.siri_hate.main_service.exception.NoSuchNewsFoundException;
 import org.siri_hate.main_service.model.dto.mapper.NewsMapper;
 import org.siri_hate.main_service.model.dto.request.news.NewsFullRequest;
 import org.siri_hate.main_service.model.dto.response.news.NewsFullResponse;
@@ -22,6 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @Service
 public class NewsServiceImpl implements NewsService {
 
@@ -32,10 +32,10 @@ public class NewsServiceImpl implements NewsService {
 
   @Autowired
   public NewsServiceImpl(
-      NewsRepository newsRepository,
-      NewsMapper newsMapper,
-      NewsCategoryService newsCategoryService,
-      @Lazy UserService userService) {
+          NewsRepository newsRepository,
+          NewsMapper newsMapper,
+          NewsCategoryService newsCategoryService,
+          @Lazy UserService userService) {
     this.newsRepository = newsRepository;
     this.newsMapper = newsMapper;
     this.newsCategoryService = newsCategoryService;
@@ -49,7 +49,7 @@ public class NewsServiceImpl implements NewsService {
     newsEntity.setUser(userService.findOrCreateUser(username));
     newsEntity.setPublicationDate(LocalDate.now());
     newsEntity.setCategory(
-        newsCategoryService.getNewsCategoryEntityById(news.getCategory().getId()));
+            newsCategoryService.getNewsCategoryEntityById(news.getCategory().getId()));
     newsEntity.setModerationPassed(false);
     newsRepository.save(newsEntity);
   }
@@ -65,23 +65,25 @@ public class NewsServiceImpl implements NewsService {
 
   @Override
   public Page<NewsSummaryResponse> getNewsByCategoryAndSearchQuery(
-      String category, String query, Pageable pageable) {
+          String category, String query, Pageable pageable) {
     Specification<News> spec =
-        Specification.where(NewsSpecification.titleStartsWith(query))
-            .and(NewsSpecification.hasCategory(category));
+            NewsSpecification.titleStartsWith(query)
+                    .and(NewsSpecification.hasCategory(category));
     Page<News> news = newsRepository.findAll(spec, pageable);
     if (news.isEmpty()) {
-      throw new NoSuchNewsFoundException("No news found");
+      throw new RuntimeException("No news found");
     }
     return newsMapper.toNewsSummaryResponsePage(news);
   }
 
   @Override
   @Transactional
-  public Page<NewsSummaryResponse> getModeratedNews(String category, String query, Pageable pageable) {
-    Specification<News> spec = Specification.where(NewsSpecification.titleStartsWith(query))
-        .and(NewsSpecification.hasCategory(category))
-        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isTrue(root.get("moderationPassed")));
+  public Page<NewsSummaryResponse> getModeratedNews(String category, String query,
+                                                    Pageable pageable) {
+    Specification<News> spec = NewsSpecification.titleStartsWith(query)
+            .and(NewsSpecification.hasCategory(category))
+            .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isTrue(
+                    root.get("moderationPassed")));
     Page<News> news = newsRepository.findAll(spec, pageable);
     if (news.isEmpty()) {
       throw new NoSuchElementException("No moderated news found");
@@ -91,10 +93,12 @@ public class NewsServiceImpl implements NewsService {
 
   @Override
   @Transactional
-  public Page<NewsSummaryResponse> getUnmoderatedNews(String category, String query, Pageable pageable) {
-    Specification<News> spec = Specification.where(NewsSpecification.titleStartsWith(query))
-        .and(NewsSpecification.hasCategory(category))
-        .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("moderationPassed")));
+  public Page<NewsSummaryResponse> getUnmoderatedNews(String category, String query,
+                                                      Pageable pageable) {
+    Specification<News> spec = NewsSpecification.titleStartsWith(query)
+            .and(NewsSpecification.hasCategory(category))
+            .and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.isFalse(
+                    root.get("moderationPassed")));
     Page<News> news = newsRepository.findAll(spec, pageable);
     if (news.isEmpty()) {
       throw new NoSuchElementException("No unmoderated news found");
@@ -104,21 +108,22 @@ public class NewsServiceImpl implements NewsService {
 
   @Override
   public Page<NewsSummaryResponse> getNewsByUser(String username, String query, Pageable pageable) {
-    Specification<News> spec = Specification.where(null);
-    
+    Specification<News> spec =
+            (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.conjunction();
+
     if (query != null && !query.trim().isEmpty()) {
       spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
-          criteriaBuilder.like(
-              criteriaBuilder.lower(root.get("title")),
-              query.toLowerCase() + "%"));
+              criteriaBuilder.like(
+                      criteriaBuilder.lower(root.get("title")),
+                      query.toLowerCase() + "%"));
     }
-    
+
     spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
-        criteriaBuilder.equal(root.get("user").get("username"), username));
-    
+            criteriaBuilder.equal(root.get("user").get("username"), username));
+
     Page<News> news = newsRepository.findAll(spec, pageable);
     if (news.isEmpty()) {
-      throw new NoSuchNewsFoundException("No news found for user: " + username);
+      throw new RuntimeException("No news found for user: " + username);
     }
     return newsMapper.toNewsSummaryResponsePage(news);
   }
@@ -127,9 +132,9 @@ public class NewsServiceImpl implements NewsService {
   @Transactional
   public void updateNews(Long id, NewsFullRequest newsFullRequest) {
     News existingNews =
-        newsRepository
-            .findById(id)
-            .orElseThrow(() -> new NoSuchElementException("News with id = " + id + " not found"));
+            newsRepository
+                    .findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("News with id = " + id + " not found"));
 
     newsMapper.newsUpdate(newsFullRequest, existingNews);
     newsRepository.save(existingNews);
@@ -149,9 +154,9 @@ public class NewsServiceImpl implements NewsService {
   @Transactional
   public void updateNewsModerationStatus(Long id, Boolean moderationPassed) {
     News news =
-        newsRepository
-            .findById(id)
-            .orElseThrow(() -> new NoSuchElementException("News with id = " + id + " not found"));
+            newsRepository
+                    .findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("News with id = " + id + " not found"));
     news.setModerationPassed(moderationPassed);
     newsRepository.save(news);
   }

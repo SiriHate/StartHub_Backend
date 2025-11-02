@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArticleRepository
-    extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
-  Page<Article> findByModerationPassed(Boolean moderationPassed, Pageable pageable);
-  
-  Page<Article> findByModerationPassedTrue(Pageable pageable);
-  
-  Page<Article> findByModerationPassedFalse(Pageable pageable);
-  
-  Page<Article> findByUserUsername(String username, Pageable pageable);
+        extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
+    Page<Article> findByModerationPassed(Boolean moderationPassed, Pageable pageable);
+
+    Page<Article> findByModerationPassedTrue(Pageable pageable);
+
+    Page<Article> findByModerationPassedFalse(Pageable pageable);
+
+    Page<Article> findByUserUsername(String username, Pageable pageable);
 }

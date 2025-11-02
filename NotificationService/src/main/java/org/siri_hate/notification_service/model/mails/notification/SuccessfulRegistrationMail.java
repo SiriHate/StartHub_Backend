@@ -11,17 +11,17 @@ import org.thymeleaf.context.Context;
 @EqualsAndHashCode(callSuper = true)
 public class SuccessfulRegistrationMail extends MailTemplate {
 
-  private String fullName;
+    private String fullName;
 
-  public SuccessfulRegistrationMail(String toEmailAddress, String fullName) {
-    this.toEmailAddress = toEmailAddress;
-    this.subject = EmailSubject.SUCCESSFUL_REGISTRATION_NOTIFICATION.getSubject();
-    this.fullName = fullName;
-  }
+    public SuccessfulRegistrationMail(String toEmailAddress, String fullName) {
+        this.toEmailAddress = toEmailAddress;
+        this.subject = EmailSubject.SUCCESSFUL_REGISTRATION_NOTIFICATION.getSubject();
+        this.fullName = fullName;
+    }
 
-  @Override
-  public void prepareMessage(Context context, TemplateEngine templateEngine) {
-    context.setVariable("fullName", fullName);
-    this.message = templateEngine.process("successful_registration_mail_template", context);
-  }
+    @Override
+    public void prepareMessage(Context context, TemplateEngine templateEngine) {
+        context.setVariable("fullName", fullName);
+        this.message = templateEngine.process("successful_registration_mail_template", context);
+    }
 }

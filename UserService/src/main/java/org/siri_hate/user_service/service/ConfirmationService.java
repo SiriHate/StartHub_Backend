@@ -4,17 +4,17 @@ import org.siri_hate.user_service.model.entity.Member;
 
 public interface ConfirmationService {
 
-  void sendRegistrationConfirmation(Member member);
+    void sendRegistrationConfirmation(Member member);
 
-  void sendChangePasswordConfirmation(Member member);
+    void sendChangePasswordConfirmation(Member member);
 
-  String generateConfirmationToken();
+    String generateConfirmationToken();
 
-  void checkConfirmationToken(String token);
+    void checkConfirmationToken(String token);
 
-  Long getUserIdByToken(String token);
+    Long getUserIdByToken(String token);
 
-  void deleteConfirmationTokenByTokenValue(String token);
+    void deleteConfirmationTokenByTokenValue(String token);
 
-  void findConfirmationTokenByTokenValue(String token);
+    void findConfirmationTokenByTokenValue(String token);
 }

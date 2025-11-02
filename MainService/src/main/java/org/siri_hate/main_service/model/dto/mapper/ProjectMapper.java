@@ -1,25 +1,23 @@
 package org.siri_hate.main_service.model.dto.mapper;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 import org.siri_hate.main_service.model.dto.request.project.ProjectFullRequest;
+import org.siri_hate.main_service.model.dto.response.comment.CommentResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectFullResponse;
 import org.siri_hate.main_service.model.dto.response.project.ProjectSummaryResponse;
-import org.siri_hate.main_service.model.dto.response.comment.CommentResponse;
-import org.siri_hate.main_service.model.entity.Project;
 import org.siri_hate.main_service.model.entity.Comment;
+import org.siri_hate.main_service.model.entity.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(
-    componentModel = "spring",
-    uses = {UserMapper.class, ProjectMemberMapper.class, CommentMapper.class})
+        componentModel = "spring",
+        uses = {UserMapper.class, ProjectMemberMapper.class, CommentMapper.class})
 public interface ProjectMapper {
 
   Project toProject(ProjectFullRequest project);
@@ -42,7 +40,7 @@ public interface ProjectMapper {
 
   default Page<ProjectSummaryResponse> toProjectSummaryResponsePage(Page<Project> projects) {
     List<ProjectSummaryResponse> summaryResponses =
-        toProjectSummaryResponseList(projects.getContent());
+            toProjectSummaryResponseList(projects.getContent());
     return new PageImpl<>(summaryResponses, projects.getPageable(), projects.getTotalElements());
   }
 
@@ -55,7 +53,7 @@ public interface ProjectMapper {
       return null;
     }
     return comments.stream()
-        .map(CommentMapper.INSTANCE::toCommentResponse)
-        .collect(Collectors.toList());
+            .map(CommentMapper.INSTANCE::toCommentResponse)
+            .collect(Collectors.toList());
   }
 }

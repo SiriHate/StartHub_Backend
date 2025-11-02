@@ -1,7 +1,6 @@
 package org.siri_hate.user_service.service.impl;
 
 import jakarta.transaction.Transactional;
-import java.util.List;
 import org.siri_hate.user_service.model.dto.mapper.SpecialistSpecializationMapper;
 import org.siri_hate.user_service.model.dto.request.specialization.SpecialistSpecializationRequest;
 import org.siri_hate.user_service.model.dto.response.specialization.SpecialistSpecializationFullResponse;
@@ -12,6 +11,8 @@ import org.siri_hate.user_service.service.SpecialistSpecializationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @Service
 public class SpecialistSpecializationServiceImpl implements SpecialistSpecializationService {
@@ -25,7 +26,7 @@ public class SpecialistSpecializationServiceImpl implements SpecialistSpecializa
     public SpecialistSpecializationServiceImpl(
             SpecialistSpecializationRepository specialistSpecializationRepository,
             SpecialistSpecializationMapper specialistSpecializationMapper
-                                              ) {
+    ) {
         this.specialistSpecializationRepository = specialistSpecializationRepository;
         this.specialistSpecializationMapper = specialistSpecializationMapper;
     }
@@ -44,16 +45,21 @@ public class SpecialistSpecializationServiceImpl implements SpecialistSpecializa
     public List<SpecialistSpecializationSummaryResponse> getAllSpecialistSpecialization() {
 
         List<SpecialistSpecialization> specialistSpecializations = specialistSpecializationRepository.findAll();
-        if (specialistSpecializations.isEmpty()) throw new RuntimeException("Specialist specializations not found");
-        return specialistSpecializationMapper.toSpecialistSpecializationSummaryResponseList(specialistSpecializations);
+        if (specialistSpecializations.isEmpty()) {
+            throw new RuntimeException("Specialist specializations not found");
+        }
+        return specialistSpecializationMapper.toSpecialistSpecializationSummaryResponseList(
+                specialistSpecializations);
     }
 
 
     @Override
     public SpecialistSpecializationFullResponse getSpecialistSpecializationById(Long id) {
-        SpecialistSpecialization specialistSpecialization = specialistSpecializationRepository.findById(id).orElseThrow(
+        SpecialistSpecialization specialistSpecialization = specialistSpecializationRepository.findById(
+                id).orElseThrow(
                 () -> new RuntimeException("Specialist specialization not found"));
-        return specialistSpecializationMapper.toSpecialistSpecializationFullResponse(specialistSpecialization);
+        return specialistSpecializationMapper.toSpecialistSpecializationFullResponse(
+                specialistSpecialization);
 
     }
 
@@ -68,7 +74,8 @@ public class SpecialistSpecializationServiceImpl implements SpecialistSpecializa
     @Override
     @Transactional
     public void updateSpecialistSpecialization(Long id) {
-        SpecialistSpecialization specialistSpecialization = specialistSpecializationRepository.findById(id).orElseThrow(
+        SpecialistSpecialization specialistSpecialization = specialistSpecializationRepository.findById(
+                id).orElseThrow(
                 () -> new RuntimeException("Specialist specialization not found"));
         specialistSpecializationRepository.save(specialistSpecialization);
 
@@ -78,7 +85,8 @@ public class SpecialistSpecializationServiceImpl implements SpecialistSpecializa
     @Override
     @Transactional
     public void deleteSpecialistSpecialization(Long id) {
-        SpecialistSpecialization specialistSpecialization = specialistSpecializationRepository.findById(id).orElseThrow(
+        SpecialistSpecialization specialistSpecialization = specialistSpecializationRepository.findById(
+                id).orElseThrow(
                 () -> new RuntimeException("Specialist specialization not found"));
         specialistSpecializationRepository.delete(specialistSpecialization);
 

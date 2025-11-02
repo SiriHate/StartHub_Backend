@@ -11,23 +11,22 @@ import org.thymeleaf.context.Context;
 @EqualsAndHashCode(callSuper = true)
 public class RecoveryPasswordMail extends MailTemplate {
 
-  private final String confirmationBaseUrl = System.getenv("CONFIRMATION_BASE_URL");
-  private final String confirmPasswordRecoveryUrl =
-      System.getenv("CONFIRMATION_PASSWORD_RECOVERY_URL");
-  private String fullName;
-  private String confirmationUrl;
+    private final String confirmationBaseUrl = System.getenv("CONFIRMATION_BASE_URL");
+    private final String confirmPasswordRecoveryUrl = System.getenv("CONFIRMATION_PASSWORD_RECOVERY_URL");
+    private String fullName;
+    private String confirmationUrl;
 
-  public RecoveryPasswordMail(String toEmailAddress, String fullName, String token) {
-    this.toEmailAddress = toEmailAddress;
-    this.fullName = fullName;
-    this.subject = EmailSubject.CHANGE_PASSWORD_CONFIRMATION.getSubject();
-    this.confirmationUrl = confirmationBaseUrl + confirmPasswordRecoveryUrl + token;
-  }
+    public RecoveryPasswordMail(String toEmailAddress, String fullName, String token) {
+        this.toEmailAddress = toEmailAddress;
+        this.fullName = fullName;
+        this.subject = EmailSubject.CHANGE_PASSWORD_CONFIRMATION.getSubject();
+        this.confirmationUrl = confirmationBaseUrl + confirmPasswordRecoveryUrl + token;
+    }
 
-  @Override
-  public void prepareMessage(Context context, TemplateEngine templateEngine) {
-    context.setVariable("fullName", fullName);
-    context.setVariable("confirmationUrl", this.confirmationUrl);
-    this.message = templateEngine.process("recovery_password_mail_template", context);
-  }
+    @Override
+    public void prepareMessage(Context context, TemplateEngine templateEngine) {
+        context.setVariable("fullName", fullName);
+        context.setVariable("confirmationUrl", this.confirmationUrl);
+        this.message = templateEngine.process("recovery_password_mail_template", context);
+    }
 }

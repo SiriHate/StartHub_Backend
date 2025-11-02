@@ -9,33 +9,33 @@ import org.springframework.data.domain.Pageable;
 
 public interface ProjectService {
 
-  void createProject(String username, ProjectFullRequest project);
+    void createProject(String username, ProjectFullRequest project);
 
-  Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
-      String category, String query, Pageable pageable);
+    Page<ProjectSummaryResponse> getProjectsByCategoryAndSearchQuery(
+            String category, String query, Pageable pageable);
 
-  ProjectFullResponse getProjectInfoById(Long id);
+    ProjectFullResponse getProjectInfoById(Long id);
 
-  Project getProjectById(Long id);
+    Project getProjectById(Long id);
 
-  void updateProject(ProjectFullRequest project, Long id);
+    void updateProject(ProjectFullRequest project, Long id);
 
-  void deleteProjectById(Long id);
+    void deleteProjectById(Long id);
 
-  boolean toggleProjectLike(String username, Long projectId);
+    boolean toggleProjectLike(String username, Long projectId);
 
-  Long getProjectLikesCount(Long projectId);
+    Long getProjectLikesCount(Long projectId);
 
-  Page<ProjectSummaryResponse> getModeratedProjects(
-      String category, String query, Pageable pageable);
+    Page<ProjectSummaryResponse> getModeratedProjects(
+            String category, String query, Pageable pageable);
 
-  Page<ProjectSummaryResponse> getUnmoderatedProjects(
-      String category, String query, Pageable pageable);
+    Page<ProjectSummaryResponse> getUnmoderatedProjects(
+            String category, String query, Pageable pageable);
 
-  void updateProjectModerationStatus(Long projectId, Boolean moderationPassed);
+    void updateProjectModerationStatus(Long projectId, Boolean moderationPassed);
 
-  Page<ProjectSummaryResponse> getProjectsByOwner(String username, String query, Pageable pageable);
+    Page<ProjectSummaryResponse> getProjectsByOwner(String username, String query, Pageable pageable);
 
-  Page<ProjectSummaryResponse> getProjectsByMember(
-      String username, String query, Pageable pageable);
+    Page<ProjectSummaryResponse> getProjectsByMember(
+            String username, String query, Pageable pageable);
 }

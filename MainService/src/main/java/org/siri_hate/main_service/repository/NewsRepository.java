@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NewsRepository extends JpaRepository<News, Long>, JpaSpecificationExecutor<News> {
 
-  Page<News> findByModerationPassedTrue(Pageable pageable);
+    Page<News> findByModerationPassedTrue(Pageable pageable);
 
-  Page<News> findByModerationPassedFalse(Pageable pageable);
-  
-  Page<News> findByUserUsername(String username, Pageable pageable);
+    Page<News> findByModerationPassedFalse(Pageable pageable);
+
+    Page<News> findByUserUsername(String username, Pageable pageable);
 }

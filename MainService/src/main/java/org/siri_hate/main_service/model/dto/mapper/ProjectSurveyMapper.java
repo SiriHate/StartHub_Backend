@@ -15,35 +15,35 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ProjectSurveyMapper {
 
-  ProjectSurveyMapper INSTANCE = Mappers.getMapper(ProjectSurveyMapper.class);
+    ProjectSurveyMapper INSTANCE = Mappers.getMapper(ProjectSurveyMapper.class);
 
-  @Mapping(target = "questions", source = "questions", qualifiedByName = "mapQuestions")
-  ProjectSurvey toProjectSurvey(ProjectSurveyRequest request);
+    @Mapping(target = "questions", source = "questions", qualifiedByName = "mapQuestions")
+    ProjectSurvey toProjectSurvey(ProjectSurveyRequest request);
 
-  @Mapping(target = "projectId", source = "project.id")
-  @Mapping(target = "questions", source = "questions", qualifiedByName = "mapQuestionResponses")
-  ProjectSurveyResponse toProjectSurveyResponse(ProjectSurvey survey);
+    @Mapping(target = "projectId", source = "project.id")
+    @Mapping(target = "questions", source = "questions", qualifiedByName = "mapQuestionResponses")
+    ProjectSurveyResponse toProjectSurveyResponse(ProjectSurvey survey);
 
-  @Named("mapQuestions")
-  default List<SurveyQuestion> mapQuestions(List<ProjectSurveyRequest.QuestionRequest> questions) {
-    List<SurveyQuestion> surveyQuestions = new ArrayList<>();
-    questions.forEach(
-        question -> {
-          SurveyQuestion surveyQuestion = new SurveyQuestion();
-          surveyQuestion.setQuestionText(question.getQuestionText());
-          surveyQuestions.add(surveyQuestion);
-        });
-    return surveyQuestions;
-  }
+    @Named("mapQuestions")
+    default List<SurveyQuestion> mapQuestions(List<ProjectSurveyRequest.QuestionRequest> questions) {
+        List<SurveyQuestion> surveyQuestions = new ArrayList<>();
+        questions.forEach(
+                question -> {
+                    SurveyQuestion surveyQuestion = new SurveyQuestion();
+                    surveyQuestion.setQuestionText(question.getQuestionText());
+                    surveyQuestions.add(surveyQuestion);
+                });
+        return surveyQuestions;
+    }
 
-  @Named("mapQuestionResponses")
-  default List<ProjectSurveyResponse.QuestionResponse> mapQuestionResponses(
-      List<SurveyQuestion> questions) {
-    return questions.stream()
-        .map(
-            question ->
-                new ProjectSurveyResponse.QuestionResponse(
-                    question.getId(), question.getQuestionText()))
-        .toList();
-  }
+    @Named("mapQuestionResponses")
+    default List<ProjectSurveyResponse.QuestionResponse> mapQuestionResponses(
+            List<SurveyQuestion> questions) {
+        return questions.stream()
+                .map(
+                        question ->
+                                new ProjectSurveyResponse.QuestionResponse(
+                                        question.getId(), question.getQuestionText()))
+                .toList();
+    }
 }

@@ -5,10 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +13,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter {
@@ -29,10 +30,10 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest request,
-      @NonNull HttpServletResponse response,
-      @NonNull FilterChain filterChain)
-      throws ServletException, IOException {
+          HttpServletRequest request,
+          @NonNull HttpServletResponse response,
+          @NonNull FilterChain filterChain)
+          throws ServletException, IOException {
 
     String authHeader = request.getHeader("Authorization");
     if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -43,7 +44,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
           if (claims != null) {
             List<GrantedAuthority> authorities = extractAuthorities(claims);
             UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+                    new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
           }
@@ -61,9 +62,9 @@ public class JWTAuthFilter extends OncePerRequestFilter {
       return List.of();
     }
     return Arrays.stream(rolesString.split(","))
-        .map(String::trim)
-        .filter(role -> !role.isEmpty())
-        .map(SimpleGrantedAuthority::new)
-        .collect(Collectors.toList());
+            .map(String::trim)
+            .filter(role -> !role.isEmpty())
+            .map(SimpleGrantedAuthority::new)
+            .collect(Collectors.toList());
   }
 }

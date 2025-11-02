@@ -21,46 +21,46 @@ import java.util.List;
 @RequestMapping("/api/v1/main_service/projects/{projectId}/surveys")
 public class ProjectSurveyController {
 
-  private final ProjectSurveyService projectSurveyService;
+    private final ProjectSurveyService projectSurveyService;
 
-  @Autowired
-  public ProjectSurveyController(ProjectSurveyService projectSurveyService) {
-    this.projectSurveyService = projectSurveyService;
-  }
+    @Autowired
+    public ProjectSurveyController(ProjectSurveyService projectSurveyService) {
+        this.projectSurveyService = projectSurveyService;
+    }
 
-  @PostMapping
-  public ResponseEntity<ProjectSurveyResponse> createSurvey(
-      @PathVariable Long projectId, @Valid @RequestBody ProjectSurveyRequest request) {
-    ProjectSurveyResponse response = projectSurveyService.createSurvey(projectId, request);
-    return new ResponseEntity<>(response, HttpStatus.CREATED);
-  }
+    @PostMapping
+    public ResponseEntity<ProjectSurveyResponse> createSurvey(
+            @PathVariable Long projectId, @Valid @RequestBody ProjectSurveyRequest request) {
+        ProjectSurveyResponse response = projectSurveyService.createSurvey(projectId, request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
-  @GetMapping
-  public ResponseEntity<ProjectSurveyResponse> getSurvey(@PathVariable Long projectId) {
-    ProjectSurveyResponse response = projectSurveyService.getSurvey(projectId);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+    @GetMapping
+    public ResponseEntity<ProjectSurveyResponse> getSurvey(@PathVariable Long projectId) {
+        ProjectSurveyResponse response = projectSurveyService.getSurvey(projectId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-  @DeleteMapping
-  public ResponseEntity<Void> deleteSurvey(@PathVariable Long projectId) {
-    projectSurveyService.deleteSurvey(projectId);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+    @DeleteMapping
+    public ResponseEntity<Void> deleteSurvey(@PathVariable Long projectId) {
+        projectSurveyService.deleteSurvey(projectId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-  @PostMapping("/submissions")
-  public ResponseEntity<SurveySubmissionResponse> submitSurveyAnswers(
-      @PathVariable Long projectId, @Valid @RequestBody SurveySubmissionRequest request) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    SurveySubmissionResponse response =
-        projectSurveyService.submitSurveyAnswers(authentication.getName(), projectId, request);
-    return new ResponseEntity<>(response, HttpStatus.CREATED);
-  }
+    @PostMapping("/submissions")
+    public ResponseEntity<SurveySubmissionResponse> submitSurveyAnswers(
+            @PathVariable Long projectId, @Valid @RequestBody SurveySubmissionRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SurveySubmissionResponse response =
+                projectSurveyService.submitSurveyAnswers(authentication.getName(), projectId, request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
-  @GetMapping("/submissions")
-  public ResponseEntity<List<SurveySubmissionResponse>> getAllSurveySubmissions(
-      @PathVariable Long projectId, @RequestParam(required = false) String sort) {
-    List<SurveySubmissionResponse> responses =
-        projectSurveyService.getAllSurveySubmissions(projectId, sort);
-    return new ResponseEntity<>(responses, HttpStatus.OK);
-  }
+    @GetMapping("/submissions")
+    public ResponseEntity<List<SurveySubmissionResponse>> getAllSurveySubmissions(
+            @PathVariable Long projectId, @RequestParam(required = false) String sort) {
+        List<SurveySubmissionResponse> responses =
+                projectSurveyService.getAllSurveySubmissions(projectId, sort);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
 }

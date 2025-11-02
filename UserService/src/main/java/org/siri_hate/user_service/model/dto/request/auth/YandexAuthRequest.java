@@ -2,29 +2,30 @@ package org.siri_hate.user_service.model.dto.request.auth;
 
 public class YandexAuthRequest {
 
-  private String token;
-  private String clientSecret;
+    private String token;
+    private String clientSecret;
 
-  public YandexAuthRequest() {}
+    public YandexAuthRequest() {
+    }
 
-  public YandexAuthRequest(String token, String clientSecret) {
-    this.token = token;
-    this.clientSecret = clientSecret;
-  }
+    public YandexAuthRequest(String token, String clientSecret) {
+        this.token = token;
+        this.clientSecret = clientSecret;
+    }
 
-  public String getToken() {
-    return token;
-  }
+    public String getToken() {
+        return token;
+    }
 
-  public void setToken(String token) {
-    this.token = token;
-  }
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-  public String getClientSecret() {
-    return clientSecret;
-  }
+    public String getClientSecret() {
+        return clientSecret;
+    }
 
-  public void setClientSecret(String clientSecret) {
-    this.clientSecret = clientSecret;
-  }
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
 }

@@ -20,56 +20,56 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/main_service/users")
 public class UserController {
 
-  private final UserService userService;
+    private final UserService userService;
 
-  @Autowired
-  public UserController(UserService userService) {
-    this.userService = userService;
-  }
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-  @GetMapping("/my/projects/owned")
-  public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsOwner(
-      @RequestParam(required = false) String query,
-      @PageableDefault(size = 10) Pageable pageable) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String username = authentication.getName();
-    Page<ProjectSummaryResponse> projects = userService.getProjectsAsOwner(username, query, pageable);
-    return new ResponseEntity<>(projects, HttpStatus.OK);
-  }
+    @GetMapping("/my/projects/owned")
+    public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsOwner(
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Page<ProjectSummaryResponse> projects = userService.getProjectsAsOwner(username, query, pageable);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
 
-  @GetMapping("/my/projects/member")
-  public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsMember(
-      @RequestParam(required = false) String query,
-      @PageableDefault(size = 10) Pageable pageable) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String username = authentication.getName();
-    Page<ProjectSummaryResponse> projects = userService.getProjectsAsMember(username, query, pageable);
-    return new ResponseEntity<>(projects, HttpStatus.OK);
-  }
+    @GetMapping("/my/projects/member")
+    public ResponseEntity<Page<ProjectSummaryResponse>> getProjectsAsMember(
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Page<ProjectSummaryResponse> projects = userService.getProjectsAsMember(username, query, pageable);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
 
-  @GetMapping("/my/articles")
-  public ResponseEntity<Page<ArticleSummaryResponse>> getMyArticles(
-      @RequestParam(required = false) String query,
-      @PageableDefault(size = 10) Pageable pageable) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String username = authentication.getName();
-    Page<ArticleSummaryResponse> articles = userService.getMyArticles(username, query, pageable);
-    return new ResponseEntity<>(articles, HttpStatus.OK);
-  }
+    @GetMapping("/my/articles")
+    public ResponseEntity<Page<ArticleSummaryResponse>> getMyArticles(
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Page<ArticleSummaryResponse> articles = userService.getMyArticles(username, query, pageable);
+        return new ResponseEntity<>(articles, HttpStatus.OK);
+    }
 
-  @GetMapping("/my/news")
-  public ResponseEntity<Page<NewsSummaryResponse>> getMyNews(
-      @RequestParam(required = false) String query,
-      @PageableDefault(size = 10) Pageable pageable) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String username = authentication.getName();
-    Page<NewsSummaryResponse> news = userService.getMyNews(username, query, pageable);
-    return new ResponseEntity<>(news, HttpStatus.OK);
-  }
+    @GetMapping("/my/news")
+    public ResponseEntity<Page<NewsSummaryResponse>> getMyNews(
+            @RequestParam(required = false) String query,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Page<NewsSummaryResponse> news = userService.getMyNews(username, query, pageable);
+        return new ResponseEntity<>(news, HttpStatus.OK);
+    }
 
-  @DeleteMapping("/{username}")
-  public ResponseEntity<Void> deleteUser(@PathVariable String username) {
-    userService.deleteUserByUsername(username);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+        userService.deleteUserByUsername(username);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

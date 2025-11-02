@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/user_service/auth")
 public class AuthController {
 
-  private final JWTService jwtService;
-  private final UserDetailsService userDetailsService;
+    private final JWTService jwtService;
+    private final UserDetailsService userDetailsService;
 
-  @Autowired
-  public AuthController(JWTService jwtService, UserDetailsService userDetailsService) {
-    this.jwtService = jwtService;
-    this.userDetailsService = userDetailsService;
-  }
+    @Autowired
+    public AuthController(JWTService jwtService, UserDetailsService userDetailsService) {
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
+    }
 
-  @GetMapping("/token/validate")
-  public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String authHeader) {
-    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      return ResponseEntity.ok(false);
+    @GetMapping("/token/validate")
+    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.ok(false);
+        }
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+        if (username == null) {
+            return ResponseEntity.ok(false);
+        }
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        boolean isValid = jwtService.validateToken(token, userDetails);
+        return ResponseEntity.ok(isValid);
     }
-    String token = authHeader.substring(7);
-    String username = jwtService.extractUsername(token);
-    if (username == null) {
-      return ResponseEntity.ok(false);
-    }
-    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-    boolean isValid = jwtService.validateToken(token, userDetails);
-    return ResponseEntity.ok(isValid);
-  }
 }
